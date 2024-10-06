@@ -58,7 +58,7 @@ Una red neuronal, de forma abstracta, es simplemente una función que toma una e
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=\textwidth]{RedNeuronal.png}
+    \includegraphics[width=\textwidth]{Figuras/RedNeuronal.png}
     \caption{Esquema de una red neuronal con 4 capas.}
     \label{fig:RedNeuronal}
 \end{figure}
@@ -142,6 +142,9 @@ Si usamos funciones de activación no lineales, como la función sigmoide, podem
 \section{Introducción a las ecuaciones en derivadas parciales}
 
 Las ecuaciones en derivadas parciales (EDPs) son ecuaciones que relacionan una función desconocida con sus derivadas parciales. Son fundamentales en la física y en la ingeniería, ya que permiten modelar fenómenos físicos y predecir su evolución en el tiempo. Las EDPs se dividen en dos tipos: las ecuaciones en derivadas parciales elípticas, que modelan fenómenos estacionarios, como la distribución de temperatura en un sólido, y las ecuaciones en derivadas parciales parabólicas, que modelan fenómenos que evolucionan en el tiempo, como la difusión de una sustancia en un fluido. En este trabajo, nos centraremos en las ecuaciones en derivadas parciales elípticas, que son las más sencillas de resolver mediante redes neuronales.
+\section{Forma fuerte y débil de una EDP}
+Una ecuación en derivadas parciales se puede escribir en forma fuerte o en forma débil. La forma fuerte de una ecuación en derivadas parciales es una ecuación diferencial que relaciona la función desconocida con sus derivadas parciales. Por ejemplo, la ecuación de Poisson, que modela la distribución de temperatura en un sólido, se puede escribir en forma fuerte como
+
 \section{Métodos numéricos tradicionales: el método de los elementos finitos}
 El método de los elementos finitos es uno de los métodos numéricos más utilizados para resolver ecuaciones en derivadas parciales. Consiste en dividir el dominio de la ecuación en un conjunto de elementos finitos, y aproximar la solución de la ecuación en cada elemento mediante una función polinómica. La solución de la ecuación se obtiene entonces como una combinación lineal de las soluciones en cada elemento. El método de los elementos finitos es muy eficaz para resolver ecuaciones en derivadas parciales elípticas, pero presenta algunas limitaciones, como la necesidad de discretizar el dominio de la ecuación y la dificultad de tratar con geometrías complejas. En este trabajo, exploraremos cómo las redes neuronales pueden superar estas limitaciones y proporcionar una alternativa eficaz y flexible para resolver ecuaciones en derivadas parciales.
 \colorbox{yellow}{Todo lo que sea necesario para poder entender el resto del trabajo.}
