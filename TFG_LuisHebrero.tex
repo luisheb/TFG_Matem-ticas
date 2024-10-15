@@ -58,7 +58,7 @@ Una red neuronal, de forma abstracta, es simplemente una función que toma una e
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=\textwidth]{Figuras/RedNeuronal.png}
+    \includegraphics[width=0.5\textwidth]{Figuras/RedNeuronal.png}
     \caption{Esquema de una red neuronal con 4 capas.}
     \label{fig:RedNeuronal}
 \end{figure}
@@ -75,47 +75,49 @@ En la tercera capa de la red neuronal, vemos que los valores que llegan de la ca
     \sigma(W^{[3]}\sigma(W^{[2]}x+b^{[2]})+b^{[3]})\in\mathbb{R}^3.
 \end{equation*}
 
-Finalmente, en la capa de salida recivirá de la tercera capa un vector perteneciente a $\mathbb{R}^3$, por lo que necesitaremos una matriz $W^{[4]}\in\mathbb{R}^{3\times3}$ y un vector $b^{[4]}\in\mathbb{R}^3$. Así, el valor de salida de nuestra red neuronal, esa $F$ de la que habíamos hablado al principio, será
+Finalmente, la capa de salida recibirá de la tercera capa un vector perteneciente a $\mathbb{R}^3$, por lo que necesitaremos una matriz $W^{[4]}\in\mathbb{R}^{3\times3}$ y un vector $b^{[4]}\in\mathbb{R}^3$. Así, el valor de salida de nuestra red neuronal, esa $F$ de la que habíamos hablado al principio, será
 \begin{equation}
     F(x)=\sigma(W^{[4]}\sigma(W^{[3]}\sigma(W^{[2]}x+b^{[2]})+b^{[3]})+b^{[4]})\in\mathbb{R}^3.
 \end{equation}\label{eq:RedNeuronal}
 
 En general, una red neuronal se puede representar como una composición de funciones, donde cada función es una capa de la red neuronal. 
 
-Nuestra intención con este tipo de funciones es ir variando los valores de las matrices $W$, también conocidos como pesos, para que la salida de nuestra red neuronal se acerque lo máximo posible a la salida deseada. 
+Nuestra intención con este tipo de funciones es ir variando los valores de las matrices $W$, también conocidos como pesos, y los vectores $b$ también conocidos como sesgos, para que la salida de nuestra red neuronal se acerque lo máximo posible a la salida deseada. 
 
 Para entender esto, vamos a utilizar la red neuronal de la Figura \ref{fig:RedNeuronal} para resolver un problema concreto muy sencillo de clasificación. Supongamos que tenemos una serie de puntos en el plano, de tres tipos distintos, como los de la Figura \ref{fig:Clasificacion}, y queremos clasificarlos en tres grupos, los puntos de tipo azul, rojo y amarillo.
 
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=\textwidth]{Figuras/pic_xy.png}
+    \includegraphics[width=0.5\textwidth]{Figuras/pic_xy.png}
     \caption{Puntos en el plano que marcan las dos categorías}
     \label{fig:Clasificacion}
 \end{figure}
 
-De este modo, nuestra red neuronal recivirá como entrada un punto del plano, y nos dirá a qué categoría pertenece. devolviendo $(1,0,0)^T$ si es de la categoría azul, $(0,1,0)^T$ si es de la categoría roja y $(0,0,1)^T$ si es de la categoría amarilla.
+De este modo, nuestra red neuronal recivirá como entrada un punto del plano, y nos dirá a qué categoría pertenece, devolviendo $(1,0,0)^T$ si es de la categoría azul, $(0,1,0)^T$ si es de la categoría roja y $(0,0,1)^T$ si es de la categoría amarilla.
 
-Lo siguiente que querremos hacer será entrenar la red neuronal, es decir, ajustar los pesos y sesgos de la red neuronal para que la salida se acerque lo máximo posible a la salida deseada. Es decir, que cuando se introduzca un punto de un tipo concreto, la salida lo asigne a la categoría adecuada. 
+Lo siguiente que queremos hacer será entrenar la red neuronal, es decir, ajustar los pesos y sesgos de la red neuronal para que la salida se acerque lo máximo posible a la salida deseada. Es decir, que cuando se introduzca un punto de un tipo concreto, la salida lo asigne a la categoría adecuada. 
 
 Designamos a $y(x)$ como la salida deseada de nuestra red neuronal, y a $F(x)$ como la salida real. Así, el error vendrá dado en función de los pesos y sesgos de la siguiente forma
 \begin{equation*}
     E(W^{[2]},W^{[3]},W^{[4]},b^{[2]},b^{[3]},b^{[4]})=\frac{1}{2}\sum_{x\in X}\|y(x)-F(x)\|^2,
 \end{equation*}
 
-Donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal, en nuestro caso, serán 15. Así, lo que querremos hacer es minimizar esta función de error, es decir, encontrar los pesos que minimicen la función $E$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado.
+Donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal, en nuestro caso, serán 15. Así, lo que queremos hacer es minimizar esta función de error, es decir, encontrar los pesos que minimicen la función $E$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=\textwidth]{Figuras/classifier_back.png}
+    \includegraphics[width=0.5\textwidth]{Figuras/classifier_back.png}
     \caption{Puntos en el plano que marcan las dos categorías}
     \label{fig:ClasificacionFinal}
 \end{figure}
 
-Más adelante entenderemos más en detalle como es este proceso de entrenamiento.
+Más adelante entenderemos con más detalle como es este proceso de entrenamiento.
 
 \subsection{Comentarios sobre la función sigmoide}
-Como el lector habŕa adelantado ya, las redes neuronales sirven úncamente para aproximar o encontrar funciones. No obstante, para que este objetivo tenga sentido, tenemos que poder aproximar todo tipo de funciones. De otra forma, igual podríamos estar entrenando una red neuronal para encontrar una función $F$ que por definición no puede encontrar.
+Como hemos visto con el ejemplo anterior, las redes neuronales se pueden utilizar para generar funciones. A su vez, estas funciones se utilizan para resolver problemas de forma aproximada. En el ejemplo de la Figura \ref{fig:RedNeuronal}, la función red neuronal clasifica cualquier parte del plano en una de las tres categorías sombreadas a partir del entrenamiento. Dicho entrenamiento fija los valores de los pesos y sesgos, y por tanto define la funcion rede neuronal (en el ejemplo define la funcion \ref{eq:RedNeuronal}).
+
+Como las redes neuronales se utilizan para aproximar problemas de tipos muy distintos, una de las características deseables es que sean  capaces de aproximar el conjunto de funciones "mayor posible".
 
 Para poder lograr este objetivo, se necesitan las funciones de activación. Como ejercicio, supongamos que en nuestra ecuación \ref{eq:RedNeuronal} en lugar de utilizar la función sigmoide, no utilizamos ninguna función de activación, es decir, que nuestra red neuronal es simplemente una composición de funciones lineales. En este caso, nuestra red tendría la siguiente forma
 
@@ -123,21 +125,23 @@ Para poder lograr este objetivo, se necesitan las funciones de activación. Como
     F(x)=W^{[4]}(W^{[3]}(W^{[2]}x+b^{[2]})+b^{[3]})+b^{[4]}\in\mathbb{R}^3.
 \end{equation*}
 
-Tratándose así, claramente de una función lineal. Por tanto, una función lineal sería incapaz de aproximar una no lineal. Para poder aproximar cualquier función, se necesitan funciones de activación no lineales. La función sigmoide es una de las más utilizadas, pero existen otras como la función tangente hiperbólica o la función ReLU. En este trabajo, nos centraremos en la función sigmoide, que se define como
+Claramente, una función lineal definida de forma global puede estar muy lejos de aproximar bien funciones generales. De este modo, parece por tanto razonables utilizar funciones de activación no lineales. La función sigmoide es una de las más utilizadas, pero existen otras como la función tangente hiperbólica o la función ReLU. En este trabajo, nos centraremos en la función sigmoide, que se define como
 \begin{equation*}
     \sigma(x)=\frac{1}{1+e^{-x}}.
 \end{equation*}
 
 Esta función tiene la ventaja de que su derivada es fácil de calcular, y es precisamente esta derivada la que se utiliza en el algoritmo de entrenamiento de la red neuronal.
 
-Si usamos funciones de activación no lineales, como la función sigmoide, podemos demostrar lo siguiente
-\begin{teor}
-    Sea $\sigma\in C(\mathbb{R})$. El conjunto de redes neuronales con $\sigma$ como funcion de activación, es denso en $C(\mathbb{R}^n)$ si y solo si $\sigma$ no es una función polinómica.
+Un resultado relevante para justificar el uso de funciones de activación no lineales es el siguiente es el propuesto por Pinkus\cite{Pinkus}. Este resultado es para neuronales de una sola capa, no obstante, si se cumple en una sola capa, es trivial la extensión a $n$ capas.
+
+\begin{teor}[Pinkus]
+    Sea $\sigma\in C(\mathbb{R})$ y sea conjunto $\mathcal{M}(\sigma) = \text{span}\{\sigma(w\cdot x + b): b \in \mathbb{R}, w \in \mathbb{R}^n\}$, se cumple que
+    
+    Para cualquier $f \in C(\mathbb{R}^n)$, cualquier conjunto compacto $K\in \mathbb{R}^n$ y cualquier $\epsilon > 0$, existe una funcion $g\in \mathcal{M}(\sigma)$ tal que $\max_{x\in K}|f(x)-g(x)|<\epsilon$. Si y solo si $\sigma$ no es una función polinómica.
 \end{teor}
-\colorbox{yellow}{FALTA DEMOSTRACIÓN!!! !!!Como se referencian bibliografía!!! }
+De forma más intuitva, cualquier función $f \in C(\mathbb{R}^n)$, se puede aproximar tan bien como se quiera con una red neuronal de una sola capa si y solo si la función de activación no es polinómica.
 
-\colorbox{yellow}{Lo de espacio topológico!!!}
-
+Este resultado nos aporta una intuición de por qué las funciones de activación no lineales son necesarias para aproximar funciones de forma general pues, de nos ser funciones no lineales, habría muchas funciones que no podríamos aproximar. 
 
 \section{Introducción a las ecuaciones en derivadas parciales}
 
@@ -305,7 +309,11 @@ Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula 
     \textsc{Stein, E.\,M. and Weiss, G.}
     \textit{Introduction to  Fourier analysis on Euclidean spaces.}
     Princeton Mathematical Series~32, Princeton University Press, Princeton, NJ, 1971.
-    
+
+\bibitem{Pinkus}
+    \textsc{Pinkus, A.}:
+    \textit{Approximation theory of the MLP model in neural networks.}
+    Acta Numerica, 8, (1999) 143--195.
     
 \end{thebibliography}
 \cleardoublepage
