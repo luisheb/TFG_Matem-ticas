@@ -18,6 +18,7 @@
 
 \theoremstyle{definition}
 \newtheorem{defin}[teor]{Definici\'on}
+\newtheorem{exmp}[teor]{Ejemplo}
 
 \title{Redes Neuronales: aproximación de EDPs}
 \author{Luis Hebrero Garicano}
@@ -117,7 +118,7 @@ Para entender esto, vamos a utilizar la red neuronal de la Figura \ref{fig:RedNe
     \label{fig:Clasificacion}
 \end{figure}
 
-De este modo, nuestra red neuronal recivirá como entrada un punto del plano, y nos dirá a qué categoría pertenece, devolviendo $(1,0,0)^T$ si es de la categoría azul, $(0,1,0)^T$ si es de la categoría roja y $(0,0,1)^T$ si es de la categoría amarilla.
+De este modo, nuestra red neuronal recibirá como entrada un punto del plano, y nos dirá a qué categoría pertenece, devolviendo $(1,0,0)^T$ si es de la categoría azul, $(0,1,0)^T$ si es de la categoría roja y $(0,0,1)^T$ si es de la categoría amarilla.
 
 Lo siguiente que queremos hacer será entrenar la red neuronal, es decir, ajustar los pesos y sesgos de la red neuronal para que la salida se acerque lo máximo posible a la salida deseada. Es decir, que cuando se introduzca un punto de un tipo concreto, la salida lo asigne a la categoría adecuada. 
 
@@ -138,7 +139,7 @@ Donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal, en
 Más adelante entenderemos con más detalle como es este proceso de entrenamiento.
 
 \subsection{Comentarios sobre la función sigmoide}
-Como hemos visto con el ejemplo anterior, las redes neuronales se pueden utilizar para generar funciones. A su vez, estas funciones se utilizan para resolver problemas de forma aproximada. En el ejemplo de la Figura \ref{fig:RedNeuronal}, la función red neuronal clasifica cualquier parte del plano en una de las tres categorías sombreadas a partir del entrenamiento. Dicho entrenamiento fija los valores de los pesos y sesgos, y por tanto define la funcion rede neuronal (en el ejemplo define la funcion \ref{eq:RedNeuronal}).
+Como hemos visto con el ejemplo anterior, las redes neuronales se pueden utilizar para generar funciones. A su vez, estas funciones se utilizan para resolver problemas de forma aproximada. En el ejemplo de la Figura \ref{fig:RedNeuronal}, la función red neuronal clasifica cualquier parte del plano en una de las tres categorías sombreadas a partir del entrenamiento. Dicho entrenamiento fija los valores de los pesos y sesgos, y por tanto define la función rede neuronal (en el ejemplo define la función \ref{eq:RedNeuronal}).
 
 Como las redes neuronales se utilizan para aproximar problemas de tipos muy distintos, una de las características deseables es que sean  capaces de aproximar el conjunto de funciones "mayor posible".
 
@@ -160,33 +161,127 @@ Un resultado relevante para justificar el uso de funciones de activación no lin
 \begin{teor}[Pinkus]
     Sea $\sigma\in C(\mathbb{R})$ y sea conjunto $\mathcal{M}(\sigma) = \text{span}\{\sigma(w\cdot x + b): b \in \mathbb{R}, w \in \mathbb{R}^n\}$, se cumple que
     
-    Para cualquier $f \in C(\mathbb{R}^n)$, cualquier conjunto compacto $K\in \mathbb{R}^n$ y cualquier $\epsilon > 0$, existe una funcion $g\in \mathcal{M}(\sigma)$ tal que $\max_{x\in K}|f(x)-g(x)|<\epsilon$. Si y solo si $\sigma$ no es una función polinómica.
+    Para cualquier $f \in C(\mathbb{R}^n)$, cualquier conjunto compacto $K\in \mathbb{R}^n$ y cualquier $\epsilon > 0$, existe una función $g\in \mathcal{M}(\sigma)$ tal que $\max_{x\in K}|f(x)-g(x)|<\epsilon$. Si y solo si $\sigma$ no es una función polinómica.
 \end{teor}
-De forma más intuitva, cualquier función $f \in C(\mathbb{R}^n)$, se puede aproximar tan bien como se quiera con una red neuronal de una sola capa si y solo si la función de activación no es polinómica.
+De forma más intuitiva, cualquier función $f \in C(\mathbb{R}^n)$, se puede aproximar tan bien como se quiera con una red neuronal de una sola capa si y solo si la función de activación no es polinómica.
 
 Este resultado nos aporta una intuición de por qué las funciones de activación no lineales son necesarias para aproximar funciones de forma general pues, de nos ser funciones no lineales, habría muchas funciones que no podríamos aproximar. 
+
+
+\section{Espacios de funciones}
+
+Para poder entender y formular de forma matemática el problema de aproximación de EDPs mediante redes neuronales, es necesario tener un conocimiento previo de los espacios de funciones en los que trabajamos. Como veremos más adelante al estudiar los problemas de frontera para EDPs elípticas, es importante tener una caracterización del espacio $H_1^0$. Para entenderlo, empezaremos por los espacios de Hilbert Soobolev.
+
+\begin{defin}
+    Seam $\Omega$ un conjunto abierto de $\mathbb{R}^n$. Definimos el espacio de Sobolev $H^1(\Omega)$ como el conjunto de funciones en el siguiente conjunto
+    \begin{equation}
+        H^1(\Omega)=\{u\in L^2(\Omega): \frac{\partial u}{\partial x_i}\in L^2(\Omega), \, i=1,\dots,n\}.
+    \end{equation}
+    En este espacio, se define la norma de funciones de con la siguiente ecuación
+    \begin{equation}
+        \|u\|_{H^1(\Omega)}=\left(\|u\|^2_{L_2(\Omega)} + \sum_{i=1}^{n}\left\|\frac{\partial u}{\partial x_i}\right\|^2_{L_2(\Omega)}\right)^{1/2}.
+    \end{equation}
+\end{defin}
+
+Dada esta definición, se define el espacio $H_0^1(\Omega)$ como el cierre de las funciones de $C_0^\infty(\Omega)$ en la norma de $H^1(\Omega)$. Es decir, $H_0^1(\Omega)$ es el conjunto de funciones $u\in H^1(\Omega)$ que se obtienen como límite en $H^1(\Omega)$ de una serie de funciones $\{u_m\}_{m=1}^\infty$ todas ellas en $C_0^\infty(\Omega)$. Así, de forma más simple, se puede demostrar que $H_0^1(\Omega)$ se trata del siguiente conjunto.
+
+\begin{equation}
+    H_0^1(\Omega)=\{u\in H^1(\Omega): u=0 \text{ en } \partial\Omega\}.
+\end{equation}
+
+Nótese que $H_0^1(\Omega)$ es un espacio de Hilbert con la misma norma y producto interno que $H^1(\Omega)$.
+
+
+
+\begin{exmp}
+    Es fácil ver por ejemplo que la función $u = x^2 + y^2 - 4$ pertenece a $H^1_0(C)$, siendo $C = \{(x,y)\in \mathbb{R}^2: x^2 + y^2 < 4\}$ el círculo abierto de radio 2 centrada en el origen. Esto se debe a que $u\in L_2(C)$ y además:
+    \begin{equation*}
+        \frac{\partial u}{\partial x} = 2x\in L_2(C), \quad \frac{\partial u}{\partial y} = 2y \in L_2(C), \quad u=0\text{ en  } \partial C.
+    \end{equation*}
+    Por tanto, $u\in H_0^1(C)$.
+\end{exmp}
 
 \section{Introducción a las ecuaciones en derivadas parciales}
 
 Las ecuaciones en derivadas parciales (EDPs) son ecuaciones que relacionan una función desconocida con sus derivadas parciales. Son fundamentales en la física y en la ingeniería, ya que permiten modelar fenómenos físicos y predecir su evolución en el tiempo. 
 
-Existen varios tipos de EDPs, no obstante, nosotros nos centraremos en las ecuación ellipticas. Estas se utilizan para resolver problemas de equilibrio, que implican encontrar la solución de una ecuación diferencial en un dominio cerrado con condiciones de frontera específicas. Estos problemas incluyen la distribución estacionaria de temperatura, el flujo de fluidos incompresibles no viscosos, la distribución de tensiones en sólidos en equilibrio, y el cálculo de campos eléctricos en regiones con densidad de carga. En general, se aplican cuando se busca determinar un potencial en situaciones estacionarias. 
+Existen varios tipos de EDPs, no obstante, nosotros nos centraremos en los problemas de frontera para ecuaciones en derivadas parciales elípticas. Estas se utilizan para resolver problemas de equilibrio, que implican encontrar la solución de una ecuación diferencial en un dominio acotado con condiciones de frontera específicas. Estos problemas incluyen la distribución estacionaria de temperatura, el flujo de fluidos incompresibles no viscosos, la distribución de tensiones en sólidos en equilibrio, y el cálculo de campos eléctricos en regiones con densidad de carga. En general, se aplican cuando se busca determinar un potencial en situaciones estacionarias. 
 
-Lo he sacado de aquí \href{https://www.ugr.es/~prodelas/ftp/ETSICCP/Resoluci%F3nNum%E9ricaEDPs.pdf}{Este enlace, \colorbox{yellow}{este tipo de cosas se citan?}}
+Lo he sacado de: \href{https://www.ugr.es/~prodelas/ftp/ETSICCP/Resoluci%F3nNum%E9ricaEDPs.pdf}{este enlace, \colorbox{yellow}{este tipo de cosas se citan?}}
 
 
 %se puede hablar de los espacios de funciones en los que trabajamos, que es el supp de una función. Poner un ejemplo de ecuación diferencial y por que no se puede encontrar su solución en forma fuerte
-
+Uno de los primero ejemplos de este tipo de ecuaciones es la ecuación de Poisson,
 \begin{equation*}
-    \nabla u = 0,
+    -\Delta  u = f,
+\end{equation*}
+donde $\Delta$ es el operador laplaciano, que se define como la suma de las segundas derivadas parciales de la función $u$:
+\begin{equation*}
+    \Delta u = \sum_{i=1}^{n}\frac{\partial^2 u}{\partial x_i^2}
 \end{equation*}
 
+Esta ecuación es una EDP elíptica pues cumple la siguiente definición general.
 
+\begin{defin}\label{def:EDP_eliptica}
+    Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales es elíptica si:
+    \begin{equation}\label{eq:EDP_eliptica}
+        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad x\in\Omega.
+    \end{equation}
+    Donde los coeficientes $a_{ij}(x)$, $b_i(x)$, $c(x)$ y $f$ son funciones que satisfacen las siguientes condiciones
+    \begin{align}
+        a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n\\
+        b_i, c \in C(\overline{\Omega}),& \qquad i = 1, \dots ,n \\
+        c \in C(\overline{\Omega}),& \\
+        f\in C(\overline{\Omega})&\label{eq:condiciones_EDP_eliptica_f}
+    \end{align}
+\end{defin}
 
+De entre los problemas elípticos definidos en \ref{def:EDP_eliptica}, como comentábamos, nos interesan las ecuaciones en derivadas parciales elípticas con condiciones de frontera, en concreto, las condiciones de frontera de Dirichlet.
+
+\begin{defin}    
+    El problema de condición de frontera de Dirichlet es concretamente el que tenemos una EDP elíptica como la definida en \ref{def:EDP_eliptica}, tal que, nuestra solución $u$, además de cumplir las ecuación \ref{eq:EDP_eliptica}, cumple la siguiente condición de frontera
+    \begin{equation}
+        u(x) = g(x), \qquad \forall x\in\partial\Omega.
+    \end{equation}
+    Asimismo, el problema homogéneo de Dirichlet es aquel en el que $g=0$. A lo largo del trabajo nos centraremos principalmente en es te tipo de EDPs.
+\end{defin}
 
 \section{Forma fuerte y débil de una EDP}
+
+En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. De forma intuitiva, esta es la que se obtiene directamente de la definición de la ecuación, y es la que relaciona la función desconocida con sus derivadas parciales. La solución de estas ecuaciones en forma fuerte es la que se conoce como solución clásica. De esto surge la siguiente definición.
+
+\begin{defin}
+    Una función $u \in C^2(\Omega)$ que cumples las condiciones de frontera de Dirichlet y satisface la ecuación \ref{eq:EDP_eliptica} en $\Omega$ se dice que es una solución clásica o fuerte de la ecuación \ref{eq:EDP_eliptica}. 
+\end{defin}
+
+No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en todo el dominio y que además cumpla las condiciones de frontera. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. A continuación, vemos un ejemplo que motiva la necesidad de recurrir a la formulación débil de una ecuación.
+
+\begin{exmp}
+    Supongamos que tenemos la siguiente ecuación de Poisson con una condición de frontera de Dirichlet homogénea,
+    \begin{equation*}
+        \begin{cases}
+            -\Delta u = f, & \text{en } \Omega,
+            \\
+            u = 0, & \text{en } \partial\Omega.
+        \end{cases}
+    \end{equation*}
+    Donde $\Omega$ es un conjunto acotado y abierto en $\mathbb{R}^n$. En este caso, no siempre es posible encontrar una solución en forma fuerte, es decir, una función $u$ que cumpla la ecuación en todo el dominio $\Omega$ y que además cumpla la condición de frontera. Por ejemplo, si $f$ no es una función suave, no se puede garantizar la existencia de una solución en forma fuerte pues estaríamos rompiendo las condiciones de \ref{eq:condiciones_EDP_eliptica_f}. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Así, surge la siguiente definición.
+\end{exmp}
+\begin{defin}\label{def:SolucionDebil}
+    Dadas las funciones $a_{ij} \in L_\infty(\Omega), \, i,j = 1,\dots, n, \, b_i \in L_\infty(\Omega), i= 1, \dots, n, \, c\in L_\infty(\Omega)$, y la función $f\in L_2(\Omega)$. Decimos que la función $u\in H^1_0(\Omega)$ es una solución débil de la ecuación \ref{eq:EDP_eliptica} si se cumples que, 
+    \begin{equation}\label{eq:SolucionDebil}
+        \begin{split}
+            \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  \\+ \int_\Omega c(x)u \varphi \,dx = \int_\Omega f(x)\varphi(x) dx, \qquad \forall \varphi \in H^1_0(\Omega).
+        \end{split}
+    \end{equation}
+\end{defin}
+
+Para pasar de forma fuerte a debil, lo primero que hacemos es 
+
+
+
 %Introducir la idea y usar el ejemplo del apartado anterior par ademostrar que no todas las ecuciones en forma fuerte tienen solución
-Una ecuación en derivadas parciales se puede escribir en forma fuerte o en forma débil. La forma fuerte de una ecuación en derivadas parciales es una ecuación diferencial que relaciona la función desconocida con sus derivadas parciales. Por ejemplo, la ecuación de Poisson, que modela la distribución de temperatura en un sólido, se puede escribir en forma fuerte como
+
 
 
 %quiza tenga sentido hablar de que ni siquiera en forma debil se puede encontrar la solución, y que por eso se recurre a métodos alternativos (metodos numéricos)
@@ -195,8 +290,17 @@ Una ecuación en derivadas parciales se puede escribir en forma fuerte o en form
 
 \section{Métodos numéricos tradicionales: el método de los elementos finitos}
 % hablar de como funciona en detalle, 
-El método de los elementos finitos es uno de los métodos numéricos más utilizados para resolver ecuaciones en derivadas parciales. Consiste en dividir el dominio de la ecuación en un conjunto de elementos finitos, y aproximar la solución de la ecuación en cada elemento mediante una función polinómica. La solución de la ecuación se obtiene entonces como una combinación lineal de las soluciones en cada elemento. El método de los elementos finitos es muy eficaz para resolver ecuaciones en derivadas parciales elípticas, pero presenta algunas limitaciones, como la necesidad de discretizar el dominio de la ecuación y la dificultad de tratar con geometrías complejas. En este trabajo, exploraremos cómo las redes neuronales pueden superar estas limitaciones y proporcionar una alternativa eficaz y flexible para resolver ecuaciones en derivadas parciales.
-\colorbox{yellow}{Todo lo que sea necesario para poder entender el resto del trabajo.}
+
+El método de los elementos finitos (MEF) es una técnica numérica para resolver ecuaciones diferenciales parciales, como las ecuaciones diferenciales elípticas con condiciones de frontera de Dirichlet. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
+
+Para un problema elíptico con condiciones de frontera, se parte de una ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma muy simplificada como:
+\begin{equation*}
+    a(u,v) = l(v) \quad \forall v\in H_0^1(\Omega),
+\end{equation*}
+Donde $u\in H_0^1(\Omega)$.
+
+Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Consecuentemente, se reemplaza el subespacio de funciones que habíamos llamado $V$ por un subespacio de dimensión finita $V_h$. Este subespacio se define como
+
 
 \chapter{Aproximación de EDPs mediante redes neuronales}\label{chap2}
 
