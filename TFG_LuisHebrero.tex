@@ -26,6 +26,8 @@
 \curso{2024-2025}
 
 
+
+
 %%%%%METADATOS: rellenar la info solicitada entre llaves
 \usepackage{hyperref}
 \hypersetup{
@@ -295,12 +297,100 @@ El método de los elementos finitos (MEF) es una técnica numérica para resolve
 
 Para un problema elíptico con condiciones de frontera, se parte de una ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma muy simplificada como:
 \begin{equation*}
-    a(u,v) = l(v) \quad \forall v\in H_0^1(\Omega),
+    a(u,v) = l(v) \quad \forall v\in V,
 \end{equation*}
-Donde $u\in H_0^1(\Omega)$.
+Donde $V$ es el espacio de funciones en el que están nuestras soluciones. En el caso del problema homogéneo, hemos visto que este espacio será $V = H_0^1(\Omega)$.
 
-Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Consecuentemente, se reemplaza el subespacio de funciones que habíamos llamado $V$ por un subespacio de dimensión finita $V_h$. Este subespacio se define como
+Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Por ejemplo, si estamos trabajando con un problema de una dimensión, con $\Omega =(0,1)$, dividimos $\overline{\Omega} = [0,1]$ en $N$ subintervalos $[x_i,x_{i+1}], \, i = 1, \dots, N-1$, como se hace en la Figura \ref{fig:DivisionOmega}.
 
+\begin{figure}
+    \centering
+    \label{fig:DivisionOmega}
+    \begin{tikzpicture}
+        \draw[thick] (0,0) -- (12,0); % Adjusted length of the line
+        \foreach \x in {0,2,4,6,8,10,12} % Adjusted positions of the ticks
+        \draw (\x cm,3pt) -- (\x cm,-3pt);
+        \draw (0,0) node[below=3pt] {$x_0 = 0$};
+        \draw (2,0) node[below=3pt] {$x_1$};
+        \draw (4,0) node[below=3pt] {$x_2$};
+        \draw (6,0) node[below=3pt] {$x_3$};
+        \draw (8,0) node[below=3pt] {$\dots$};
+        \draw (10,0) node[below=3pt] {$x_{N-2}$};
+        \draw (12,0) node[below=3pt] {$x_{N-1}=1$};
+    \end{tikzpicture}
+    \caption{División de $\Omega = (0,1)$ en $N$ elementos finitos}
+\end{figure}
+
+A esta subdivision, se le asocia una base de polinomios. Así, se reemplaza el subespacio de funciones que habíamos llamado $V$ por un subespacio de dimensión finita $V_h$ formado por polinomios a trozos  de grado fijo. Siguiendo nuestro ejemplo de antes, la base de polinomios que vamos a utilizar será la de los polinomio como los vistos en la Figura \ref{fig:BasePolinomios}. Definidos de la siguiente forma.
+\begin{equation*}
+    \phi_i(x) = \begin{cases}
+        \frac{x-x_{i-1}}{x_i-x_{i-1}}, & \text{si } x\in[x_{i-1},x_i],\\
+        \frac{x_{i+1}-x}{x_{i+1}-x_i}, & \text{si } x\in[x_i,x_{i+1}],\\
+        0, & \text{en otro caso}.
+    \end{cases} 
+\end{equation*}
+
+Así, en este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_N\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar los $u_h\in V_h$ tal que
+
+\begin{figure}
+    \centering
+    \label{fig:BasePolinomios}
+    \begin{tikzpicture}
+        \draw[thick] (0,0) -- (12,0); % Adjusted length of the line
+        \draw (6 cm,100pt) -- (6 cm,-3pt);
+        \draw (1 cm,3pt) -- (1 cm,-3pt);
+        \draw (11 cm,3pt) -- (11 cm,-3pt);
+        \draw[thick] (1,0) -- (6,100pt) -- (11,0);
+        \draw (1,0) node[below=3pt] {$x_{i-1}$};
+        \draw (6,0) node[below=3pt] {$x_i$};
+        \draw (11,0) node[below=3pt] {$x_{i+1}$};
+    \end{tikzpicture}
+    \caption{Polinomio $\phi_i$}
+\end{figure}
+
+
+\begin{equation*}
+    a(u_h,v_h) = l(v_h) \quad \forall v_h\in V_h,
+\end{equation*}
+
+
+De forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones infinito, como es $V$, se busca una solución en un espacio de funciones finito, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños en función de los cuales hemos construido nuestro nuevo espacio de funciones. 
+
+Al hacer esto, ahora, encontrar una solución se convierte en encontrar los coeficientes de los polinomios que forman nuestra base, es decir, los $U_i$ en la siguiente ecuación
+\begin{equation}
+    u_h = \sum_{i=1}^{N} U_i\phi_i.
+\end{equation}
+Es decir, resolver la ecuación diferencial se convierte en encontrar $U=(U_1,\dots, U_N) \in \mathbb{R}^N$ que cumplen:
+\begin{equation}
+    \sum_{i=1}^{N} a\left( \phi_i,\phi_j\right)U_i = l(\phi_j) \quad \forall j = 1,\dots,N.
+\end{equation}
+
+Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matriz de rigidez (con entradas $A_{ij}=a\left( \phi_i,\phi_j\right)$), y $b$ es el vector de términos fuerte (con entradas $b_j = l(\phi_j)$). A este nuevo sistema lineal se le pueden aplicar métodos numéricos tradicionales para resolverlo, como la factorización LU, o el método de Jacobi, encontrando así los coeficientes $U$ que nos dan $u_h$, la aproximación de $u$.
+
+\section{El problema elíptico autoadjunto}
+
+Un problema interesante en el ámbito de las ecuaciones elípticas es el llamado problema elíptico autoadjunto, el cual permite caracterizar las soluciones de las EDP elípticas como el mínimo de una función. Esto conecta de manera lógica con el enfoque de redes neuronales para aproximar soluciones, donde la función de coste de la red neuronal se puede definir como esta función. Al minimizarla, se obtiene una solución aproximada del problema original. No obstante, esto lo veremos más adelante en detalle. De momento, se define el problema elíptico autoadjunto de la siguiente forma.
+\begin{defin}
+    Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales es elíptica autoadjunta si es elíptica, es decir:
+    \begin{equation*}\label{eq:EDP_eliptica_autoadjunta}
+        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad x\in\Omega.
+    \end{equation*}
+    Donde los coeficientes $a_{ij}(x)$, $b_i(x)$, $c(x)$ y $f$ son funciones que satisfacen las siguientes condiciones
+    \begin{align*}
+        a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n\\
+        b_i, c \in C(\overline{\Omega}),& \qquad i = 1, \dots ,n \\
+        c \in C(\overline{\Omega}),& \\
+        f\in C(\overline{\Omega})&\label{eq:condiciones_EDP_eliptica_f}
+    \end{align*}
+    Y además, cumple la siguiente propiedad de simetría, es decir, que los coeficientes $a_{ij}$ son simétricos, es decir, 
+    \begin{equation}\label{eq:simetria_a}
+        a_{ij} = a_{ji}.
+    \end{equation}
+\end{defin}
+Resulta, que bajo esta condición, el problema elíptico autoadjunto se puede formular como un problema de minimización. En concreto, se puede demostrar que la solución de la ecuación \ref{eq:EDP_eliptica_autoadjunta} es el mínimo de la siguiente función
+\begin{equation}
+    J(u) = \frac{1}{2}\int_\Omega \left( \sum_{i,j=1}^{n} a_{ij}(x)\frac{\partial u}{\partial x_i}\frac{\partial u}{\partial x_j} + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u - f(x)u\right)dx.
+\end{equation}
 
 \chapter{Aproximación de EDPs mediante redes neuronales}\label{chap2}
 
