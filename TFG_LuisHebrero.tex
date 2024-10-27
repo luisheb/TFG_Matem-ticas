@@ -8,8 +8,10 @@
 \usepackage{tikz}
 \usepackage{listofitems} % for \readlist to create arrays
 \usepackage{hyperref}
+\usepackage{algorithmic}
+\usepackage{algorithm}
 
-\tikzstyle{mynode}=[thick,draw=blue,fill=blue!20,circle,minimum size=22]
+\tikzstyle{mynode}=[thick,draw=black,fill=blue!20,circle,minimum size=18]
 
 \newtheorem{teor}{Teorema}[chapter]
 \newtheorem{lema}[teor]{Lema}
@@ -61,7 +63,7 @@ Neural networks are a mathematical model inspired by the brain's functioning, pr
 \setcounter{page}{1}
 Para poder entender el las aproximaciones a las EDPs mediante redes neuronales, es necesario tener un conocimiento previo de las redes neuronales y de las ecuaciones en derivadas parciales. En este capítulo, se introducirán los conceptos básicos de ambos temas, así como las herramientas matemáticas necesarias para comprender el resto del trabajo.
 
-\section{Introducción a las redes neuronales}
+\section{Introducción a las redes neuronales}\label{sec:RedesNeuronales}
 Una red neuronal, de forma abstracta, es simplemente una función que toma una entrada y produce una salida. Es decir, una red neuronal, es una función $F$ que toma un vector de entrada $x$ y produce un vector de salida $y$, siendo $F: \mathbb{R}^n \rightarrow \mathbb{R}^m$. La red neuronal se compone de una serie de capas, cada una de las cuales está formada por un conjunto de neuronas. Cada neurona de una capa recibe una serie de entradas, las procesa y produce una salida. La salida de cada neurona se calcula mediante una función de activación, que puede ser de distintos tipos, como la función sigmoide, la función tangente hiperbólica o la función ReLU. Para entender este concepto nos vamos a centrar en el caso concreto de la red neuronal de la Figura \ref{fig:RedNeuronal}.
 
 
@@ -303,8 +305,19 @@ Para pasar de forma fuerte a débil, lo que hacemos es seguir el siguiente proce
     \end{equation}
 \end{defin}
 
-Para simplificar esta engorrosísima notación, nos interesa definir la siguiente forma bilineal
+Para simplificar esta engorrosa notación, nos interesa definir la siguiente forma bilineal y lineal. 
+\begin{equation}
+    a(u,\varphi) = \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  + \int_\Omega c(x)u \varphi \,dx,
+\end{equation}
+y,
+\begin{equation}
+    l(\varphi) = \int_\Omega f(x)\varphi(x) dx.
+\end{equation}
 
+De este modo, nuestro problema eliptico en forma debil con condiciones de frontera de Dirichlet en forma debil se puede expresar de la siguiente forma.
+\begin{equation}
+    a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H^1_0(\Omega).
+\end{equation}
 %Introducir la idea y usar el ejemplo del apartado anterior par ademostrar que no todas las ecuciones en forma fuerte tienen solución
 
 
@@ -320,7 +333,7 @@ El método de los elementos finitos (MEF) es una técnica numérica para resolve
 
 Para un problema elíptico con condiciones de frontera, se parte de una ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma muy simplificada como:
 \begin{equation*}
-    a(u,v) = l(v) \quad \forall v\in V,
+    a(u,\varphi) = l(\varphi) \quad \forall \varphi\in V,
 \end{equation*}
 Donde $V$ es el espacio de funciones en el que están nuestras soluciones. En el caso del problema homogéneo, hemos visto que este espacio será $V = H_0^1(\Omega)$.
 
@@ -405,19 +418,76 @@ Un problema interesante en el ámbito de las ecuaciones elípticas es el llamado
         c \in C(\overline{\Omega}),& \\
         f\in C(\overline{\Omega})&
     \end{align*}
-    Y además, cumple la siguiente propiedad de simetría, es decir, que los coeficientes $a_{ij}$ son simétricos, 
+    Y además, cumple las siguientes condiciones de simetría, 
     \begin{equation}\label{eq:simetria_a}
-        a_{ij} = a_{ji}.
+        \begin{split}
+            a_{ij} = a_{ji},\qquad &i,j = 1,\dots,n,\\
+            b_i = 0, \qquad &i = 1,\dots,n,
+        \end{split}
     \end{equation}
 \end{defin}
-Resulta, que bajo esta condición, el problema elíptico autoadjunto se puede formular como un problema de minimización. En concreto, se puede demostrar que la solución de la ecuación \ref{eq:EDP_eliptica_autoadjunta} es el mínimo de la siguiente función
+Bajo estas condiciones, nuestro problema de condición de frontera de Dirichlet se puede formular de la siguiente forma.
 \begin{equation}
-    J(u) = \frac{1}{2}a(u,v) - l(v), \quad v\in H_0^1(\Omega)
+    \begin{cases}
+        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + c(x)u = f(x), & x\in\Omega,\\
+        u(x) = g(x), & x\in\partial\Omega.
+    \end{cases}
 \end{equation}
+
+El problema elíptico autoadjunto es interesante porque permite caracterizar las soluciones de las EDPs elípticas como el mínimo de una función. Esto es así por el siguiente resultado.
+\begin{lema} \label{lema:MinimoFuncion}
+    Bajo las condiciones del problema elíptico autoadjunto y condiciones de frontera de Dirichlet, las siguientes afirmaciones son equivalentes:
+    \begin{enumerate}
+        \item encontrar $u\in H_0^1(\Omega)$ tal que $a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H_0^1(\Omega)$
+        \item Encontrar $u\in H_0^1(\Omega)$ tal que $J(u) \leq J(\varphi) \quad \forall\varphi\in H_0^1(\Omega)$, siendo $J(u)$ la siguiente función
+        \begin{equation*}
+            J(u) = \frac{1}{2}a(u,u) - l(u), \quad u\in H_0^1(\Omega)
+        \end{equation*}
+    \end{enumerate}
+\end{lema}
+Es importante darse cuenta de que, aunque estemos formulando el problema y las condiciones sobre la forma fuerte, la solución se puede calcular a partir de la forma débil. Esto es así porque, bajo estas condiciones, la solución de la forma débil es única y coincide con la de la forma fuerte. 
+
+\colorbox{yellow}{Esto es verdad no? Tampoco se si estas cosas hay que demostrarlas más...}
+
+\colorbox{yellow}{además tengo dudas de si demostrar este lema o no}
+
+HASTA AQUÍ CREO QUE TENGO TODOS LOS RECURSOS PARA PODER PONERME A HABLAR DE LAS REDES NEURONALES. AUNQUE NO SE SI DEBERÍA HABLAR DE ALGUNA COSA MÁS DE LAS EDPs, O SI DEBERÍA HABLAR DE ALGUNA COSA MÁS DE LAS REDES NEURONALES.
 
 \chapter{Aproximación de EDPs mediante redes neuronales}\label{chap2}
 
-\section{PINS }
+\section{PINS: Physics-Informed Neural Networks}
+
+Las PINS, o Physics-Informed Neural Networks, son una técnica que combina la resolución de ecuaciones en derivadas parciales con redes neuronales. La idea es que, en vez de resolver la ecuación diferencial directamente o con métodos numéricos tradicionales, se entrena una red neuronal para que aproxime la solución de la ecuación. Como habíamos comentado en la sección \ref{sec:RedesNeuronales}, las redes neuronales son capaces de aproximar cualquier función, por lo que, en teoría, pueden aproximar cualquier solución de una ecuación diferencial. De este modo, las PINS van a aprovechar esto, definiendo la aproximación de nuestra solución $\hat{u}$, como la salida de nuestra función red neuronal que habíamos llamado $F$.
+
+\begin{figure}[htbp]
+    \centering
+    \label{fig:PIN}
+    \begin{tikzpicture}[x=2.2cm,y=1.4cm]
+        \readlist\Nnod{1,5,5,5,1} % number of nodes per layer
+        % \Nnodlen = length of \Nnod (i.e. total number of layers)
+        % \Nnod[1] = element (number of nodes) at index 1
+        \foreachitem \N \in \Nnod{ % loop over layers
+        % \N     = current element in this iteration (i.e. number of nodes for this layer)
+        % \Ncnt  = index of current layer in this iteration
+            \foreach \i [evaluate={\x=\Ncnt; \y=\N/2-\i+0.5; \prev=int(\Ncnt-1);}] in {1,...,\N}{ % loop over nodes
+                \node[mynode] (N\Ncnt-\i) at (\x,\y) {};
+                \ifnum\Ncnt>1 % connect to previous layer
+                \foreach \j in {1,...,\Nnod[\prev]}{ % loop over nodes in previous layer
+                    \draw[thick] (N\prev-\j) -- (N\Ncnt-\i); % connect arrows directly
+                }
+                \fi % else: nothing to connect first layer
+            }
+      }
+      % Write labels
+    \end{tikzpicture}
+    \caption{Esquema de una PINS}
+\end{figure}
+
+Como hemos visto, la función de coste de una red neuronal, mide lo bien que la función red neuronal aproxima la función que queremos. En el caso de las PINS, la función de coste se define como la suma de dos términos. El primero de ellos, se encarga de verificar la ecuación diferencial, es decir, que la función red neuronal aproxima la ecuación diferencial en todo el dominio. El segundo término, se encarga de verificar las condiciones de frontera. De este modo, la función de coste de una PINS se define como
+    
+
+
+
 \section{El ``Deep Ritz Method''}
 
 \chapter{Resultados}\label{chap3}
