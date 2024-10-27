@@ -231,7 +231,7 @@ Esta ecuación es una EDP elíptica pues cumple la siguiente definición general
     \end{equation}
     Donde los coeficientes $a_{ij}(x)$, $b_i(x)$, $c(x)$ y $f$ son funciones que satisfacen las siguientes condiciones
     \begin{align}
-        a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n\\
+        a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n \label{eq:condiciones_EDP_eliptica_a} \\
         b_i, c \in C(\overline{\Omega}),& \qquad i = 1, \dots ,n \\
         c \in C(\overline{\Omega}),& \\
         f\in C(\overline{\Omega})&\label{eq:condiciones_EDP_eliptica_f}
@@ -247,6 +247,14 @@ De entre los problemas elípticos definidos en \ref{def:EDP_eliptica}, como come
     \end{equation}
     Asimismo, el problema homogéneo de Dirichlet es aquel en el que $g=0$. A lo largo del trabajo nos centraremos principalmente en es te tipo de EDPs.
 \end{defin}
+
+Con todo, el tipo de ecuaciones elípticas en el que nos vamos a centrar (entendiendo que se cumplen las condiciones de \ref{eq:condiciones_EDP_eliptica_a} - \ref{eq:condiciones_EDP_eliptica_f}) serán de la siguiente forma.
+\begin{equation}
+    \begin{cases}
+        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad & x\in\Omega \\
+        u(x) = 0, & x\in\partial\Omega.
+    \end{cases}
+\end{equation}
 
 \section{Forma fuerte y débil de una EDP}
 
@@ -267,8 +275,25 @@ No obstante, en muchos casos, no es posible encontrar una solución en forma fue
             u = 0, & \text{en } \partial\Omega.
         \end{cases}
     \end{equation*}
-    Donde $\Omega$ es un conjunto acotado y abierto en $\mathbb{R}^n$. En este caso, no siempre es posible encontrar una solución en forma fuerte, es decir, una función $u$ que cumpla la ecuación en todo el dominio $\Omega$ y que además cumpla la condición de frontera. Por ejemplo, si $f$ no es una función suave, no se puede garantizar la existencia de una solución en forma fuerte pues estaríamos rompiendo las condiciones de \ref{eq:condiciones_EDP_eliptica_f}. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Así, surge la siguiente definición.
+    Donde $\Omega$ es un conjunto acotado y abierto en $\mathbb{R}^n$. En este caso, no siempre es posible encontrar una solución en forma fuerte, es decir, una función $u$ que cumpla la ecuación en todo el dominio $\Omega$ y que además cumpla la condición de frontera. Por ejemplo, si $f$ no es una función suave, no se puede garantizar la existencia de una solución en forma fuerte pues estaríamos rompiendo las condiciones de \ref{eq:condiciones_EDP_eliptica_f}. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. 
 \end{exmp}
+
+
+Para pasar de forma fuerte a débil, lo que hacemos es seguir el siguiente proceso
+\begin{enumerate}
+    \item Multiplicamos a ambos lados de la igualdad por una función $\varphi \in C^\infty_0(\Omega)$ e integramos.
+    \begin{align*}
+        \int_\Omega\left(-\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u \right) \varphi  \,dx\\ =\int_\Omega f(x)\varphi  \,dx
+    \end{align*}
+    \item Expandimos la multiplicación e integramos por partes en la primera integral, llegando a
+    \begin{align*}
+        \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial \varphi }{\partial x_j} \frac{\partial u}{\partial x_i} + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i}\varphi  + \int_\Omega c(x)\varphi u  \,dx\\ =\int_\Omega f(x)\varphi  \,dx
+    \end{align*}
+    Con esta manipulación hemos conseguido una cosa muy interesante: ya no tenemos segundas derivadas de $u$, es decir, ya no necesitamos que $u\in C^2$. Para que esta igualdad tenga sentido, solo hace falta que $u\in L_2(\Omega)$ y que $\partial y /\partial x_i \in L_2(\Omega),\, i =1,\dots,n$. Nótese además que, para que se cumpla la condición de frontera de Dirichlet, $u=0 \in \partial\Omega$. Todo esto se traduce a que $u\in H_0^1(\Omega)$ Esto simplifica las condiciones del problema pues el espacio de funciones en el que puede estar $u$, ahora es mucho más amplio.
+    \item Para simplificar aun más el problema, nótese que $a_{ij}$ ya no aparecen tras derivadas de ningun tipo, luego no es necesario asumir que $a_{ij}\in C^1(\overline{\Omega})$, basta con que $a_{ij}\in L_\infty(\Omega)$. Por lo mismo, $b_i,\,c\in L_\infty(\Omega), i=1,\dots,n$ es suficiente.
+    \item Por último, nótese que $C^\infty_0(\Omega) \subset H^1_0(\Omega)$, luego se puede ver que teniendo $u,v\in H^1_0(\Omega)$, nuestra ecuación sigue teniendo sentido. Con todo esto, surge la siguiente definición de forma débil.
+\end{enumerate}
+
 \begin{defin}\label{def:SolucionDebil}
     Dadas las funciones $a_{ij} \in L_\infty(\Omega), \, i,j = 1,\dots, n, \, b_i \in L_\infty(\Omega), i= 1, \dots, n, \, c\in L_\infty(\Omega)$, y la función $f\in L_2(\Omega)$. Decimos que la función $u\in H^1_0(\Omega)$ es una solución débil de la ecuación \ref{eq:EDP_eliptica} si se cumples que, 
     \begin{equation}\label{eq:SolucionDebil}
@@ -278,9 +303,7 @@ No obstante, en muchos casos, no es posible encontrar una solución en forma fue
     \end{equation}
 \end{defin}
 
-Para pasar de forma fuerte a debil, lo primero que hacemos es 
-
-
+Para simplificar esta engorrosísima notación, nos interesa definir la siguiente forma bilineal
 
 %Introducir la idea y usar el ejemplo del apartado anterior par ademostrar que no todas las ecuciones en forma fuerte tienen solución
 
@@ -293,7 +316,7 @@ Para pasar de forma fuerte a debil, lo primero que hacemos es
 \section{Métodos numéricos tradicionales: el método de los elementos finitos}
 % hablar de como funciona en detalle, 
 
-El método de los elementos finitos (MEF) es una técnica numérica para resolver ecuaciones diferenciales parciales, como las ecuaciones diferenciales elípticas con condiciones de frontera de Dirichlet. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
+El método de los elementos finitos (MEF) es una técnica numérica para resolver ecuaciones diferenciales parciales. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
 
 Para un problema elíptico con condiciones de frontera, se parte de una ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma muy simplificada como:
 \begin{equation*}
@@ -354,7 +377,7 @@ Así, en este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\p
 \end{equation*}
 
 
-De forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones infinito, como es $V$, se busca una solución en un espacio de funciones finito, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños en función de los cuales hemos construido nuestro nuevo espacio de funciones. 
+De forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones infinito, como es $V$, se busca una solución en un espacio de funciones finito, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños a partir de los cuales hemos construido nuestro nuevo espacio de funciones. 
 
 Al hacer esto, ahora, encontrar una solución se convierte en encontrar los coeficientes de los polinomios que forman nuestra base, es decir, los $U_i$ en la siguiente ecuación
 \begin{equation}
@@ -380,16 +403,16 @@ Un problema interesante en el ámbito de las ecuaciones elípticas es el llamado
         a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n\\
         b_i, c \in C(\overline{\Omega}),& \qquad i = 1, \dots ,n \\
         c \in C(\overline{\Omega}),& \\
-        f\in C(\overline{\Omega})&\label{eq:condiciones_EDP_eliptica_f}
+        f\in C(\overline{\Omega})&
     \end{align*}
-    Y además, cumple la siguiente propiedad de simetría, es decir, que los coeficientes $a_{ij}$ son simétricos, es decir, 
+    Y además, cumple la siguiente propiedad de simetría, es decir, que los coeficientes $a_{ij}$ son simétricos, 
     \begin{equation}\label{eq:simetria_a}
         a_{ij} = a_{ji}.
     \end{equation}
 \end{defin}
 Resulta, que bajo esta condición, el problema elíptico autoadjunto se puede formular como un problema de minimización. En concreto, se puede demostrar que la solución de la ecuación \ref{eq:EDP_eliptica_autoadjunta} es el mínimo de la siguiente función
 \begin{equation}
-    J(u) = \frac{1}{2}\int_\Omega \left( \sum_{i,j=1}^{n} a_{ij}(x)\frac{\partial u}{\partial x_i}\frac{\partial u}{\partial x_j} + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u - f(x)u\right)dx.
+    J(u) = \frac{1}{2}a(u,v) - l(v), \quad v\in H_0^1(\Omega)
 \end{equation}
 
 \chapter{Aproximación de EDPs mediante redes neuronales}\label{chap2}
