@@ -10,7 +10,12 @@
 \usepackage{hyperref}
 \usepackage{algorithmic}
 \usepackage{algorithm}
+\usepackage{mdframed}
 
+\mdfsetup{%
+linecolor=white,
+backgroundcolor=gray!10,
+}
 \tikzstyle{mynode}=[thick,draw=black,fill=blue!20,circle,minimum size=18]
 
 \newtheorem{teor}{Teorema}[chapter]
@@ -61,7 +66,7 @@ Neural networks are a mathematical model inspired by the brain's functioning, pr
 
 \chapter{Introducción y preliminares}\label{chap1}
 \setcounter{page}{1}
-Para poder entender el las aproximaciones a las EDPs mediante redes neuronales, es necesario tener un conocimiento previo de las redes neuronales y de las ecuaciones en derivadas parciales. En este capítulo, se introducirán los conceptos básicos de ambos temas, así como las herramientas matemáticas necesarias para comprender el resto del trabajo.
+Para poder entender las aproximaciones a las EDPs mediante redes neuronales, es necesario tener un conocimiento previo de las redes neuronales y de las ecuaciones en derivadas parciales. En este capítulo, se introducirán los conceptos básicos de ambos temas, así como las herramientas matemáticas necesarias para comprender el resto del trabajo.
 
 \section{Introducción a las redes neuronales}\label{sec:RedesNeuronales}
 Una red neuronal, de forma abstracta, es simplemente una función que toma una entrada y produce una salida. Es decir, una red neuronal, es una función $F$ que toma un vector de entrada $x$ y produce un vector de salida $y$, siendo $F: \mathbb{R}^n \rightarrow \mathbb{R}^m$. La red neuronal se compone de una serie de capas, cada una de las cuales está formada por un conjunto de neuronas. Cada neurona de una capa recibe una serie de entradas, las procesa y produce una salida. La salida de cada neurona se calcula mediante una función de activación, que puede ser de distintos tipos, como la función sigmoide, la función tangente hiperbólica o la función ReLU. Para entender este concepto nos vamos a centrar en el caso concreto de la red neuronal de la Figura \ref{fig:RedNeuronal}.
@@ -143,11 +148,11 @@ Donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal, en
 Más adelante entenderemos con más detalle como es este proceso de entrenamiento.
 
 \subsection{Comentarios sobre la función sigmoide}
-Como hemos visto con el ejemplo anterior, las redes neuronales se pueden utilizar para generar funciones. A su vez, estas funciones se utilizan para resolver problemas de forma aproximada. En el ejemplo de la Figura \ref{fig:RedNeuronal}, la función red neuronal clasifica cualquier parte del plano en una de las tres categorías sombreadas a partir del entrenamiento. Dicho entrenamiento fija los valores de los pesos y sesgos, y por tanto define la función rede neuronal (en el ejemplo define la función \ref{eq:RedNeuronal}).
+Como hemos visto con el ejemplo anterior, las redes neuronales se pueden utilizar para generar funciones. A su vez, estas funciones se utilizan para resolver problemas de forma aproximada. En el ejemplo de la Figura \ref{fig:RedNeuronal}, la función red neuronal clasifica cualquier parte del plano en una de las tres categorías sombreadas a partir del entrenamiento. Dicho entrenamiento fija los valores de los pesos y sesgos, y por tanto define la función red neuronal (en el ejemplo define la función \eqref{eq:RedNeuronal}).
 
 Como las redes neuronales se utilizan para aproximar problemas de tipos muy distintos, una de las características deseables es que sean  capaces de aproximar el conjunto de funciones "mayor posible".
 
-Para poder lograr este objetivo, se necesitan las funciones de activación. Como ejercicio, supongamos que en nuestra ecuación \ref{eq:RedNeuronal} en lugar de utilizar la función sigmoide, no utilizamos ninguna función de activación, es decir, que nuestra red neuronal es simplemente una composición de funciones lineales. En este caso, nuestra red tendría la siguiente forma
+Para poder lograr este objetivo, se necesitan las funciones de activación. Como ejercicio, supongamos que en nuestra ecuación \eqref{eq:RedNeuronal} en lugar de utilizar la función sigmoide, no utilizamos ninguna función de activación, es decir, que nuestra red neuronal es simplemente una composición de funciones lineales. En este caso, nuestra red tendría la siguiente forma
 
 \begin{equation*}
     F(x)=W^{[4]}(W^{[3]}(W^{[2]}x+b^{[2]})+b^{[3]})+b^{[4]}\in\mathbb{R}^3.
@@ -160,7 +165,7 @@ Claramente, una función lineal definida de forma global puede estar muy lejos d
 
 Esta función tiene la ventaja de que su derivada es fácil de calcular, y es precisamente esta derivada la que se utiliza en el algoritmo de entrenamiento de la red neuronal.
 
-Un resultado relevante para justificar el uso de funciones de activación no lineales es el siguiente es el propuesto por Pinkus\cite{Pinkus}. Este resultado es para neuronales de una sola capa, no obstante, si se cumple en una sola capa, es trivial la extensión a $n$ capas.
+Un resultado relevante para justificar el uso de funciones de activación no lineales es el siguiente es el propuesto por Pinkus \cite[Theorem 3.1]{Pinkus}. Este resultado es para redes neuronales de una sola capa.
 
 \begin{teor}[Pinkus]
     Sea $\sigma\in C(\mathbb{R})$ y sea conjunto $\mathcal{M}(\sigma) = \text{span}\{\sigma(w\cdot x + b): b \in \mathbb{R}, w \in \mathbb{R}^n\}$, se cumple que
@@ -169,13 +174,40 @@ Un resultado relevante para justificar el uso de funciones de activación no lin
 \end{teor}
 De forma más intuitiva, cualquier función $f \in C(\mathbb{R}^n)$, se puede aproximar tan bien como se quiera con una red neuronal de una sola capa si y solo si la función de activación no es polinómica.
 
-Este resultado nos aporta una intuición de por qué las funciones de activación no lineales son necesarias para aproximar funciones de forma general pues, de nos ser funciones no lineales, habría muchas funciones que no podríamos aproximar. 
+Este resultado nos aporta una intuición de por qué las funciones de activación no lineales son necesarias para aproximar funciones de forma general pues, de no ser funciones no lineales, habría muchas funciones que no podríamos aproximar. 
 
+\section{Conceptos preliminares sobre las ecuaciones en derivadas parciales}
 
-\section{Espacios de funciones}
+En este trabajo nos vamos a centrar en las ecuaciones en derivadas parciales elípticas, definidas con la siguiente forma general.
 
-Para poder entender y formular de forma matemática el problema de aproximación de EDPs mediante redes neuronales, es necesario tener un conocimiento previo de los espacios de funciones en los que trabajamos. Como veremos más adelante al estudiar los problemas de frontera para EDPs elípticas, es importante tener una caracterización del espacio $H_1^0$. Para entenderlo, empezaremos por los espacios de Hilbert Soobolev.
+\begin{mdframed}
+\begin{defin}\label{def:EDP_eliptica}
+    Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales es elíptica si es de la siguiente forma:
+    \begin{equation}\label{eq:EDP_eliptica}
+        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad x\in\Omega.
+    \end{equation}
+    Donde los coeficientes $a_{ij}(x)$, $b_i(x)$, $c(x)$ y $f$ son funciones que satisfacen las siguientes condiciones
+\begin{align}
+    a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n \label{eq:condiciones_EDP_eliptica_a} \\
+    b_i, c \in C(\overline{\Omega}),& \qquad i = 1, \dots ,n \\
+    c \in C(\overline{\Omega}),& \\
+    f\in C(\overline{\Omega})&\label{eq:condiciones_EDP_eliptica_f}
+\end{align}
+Además, se cumples las condiciones de elipticidad uniforme, es decir
+\begin{equation}
+    \sum_{i,j=1}^n a_{ij}(x) \xi_i \xi_j \geq c_0 \sum_{i=1}^n \xi_i^2, \quad \forall \xi = (\xi_1, \ldots, \xi_n) \in \mathbb{R}^n, \quad x \in \overline{\Omega};
+\end{equation}
+\end{defin}
+\end{mdframed}
 
+Concretamente, a lo largo del trabajo, nos centraremos en problemas de condición de frontera de Dirichlet, es decir, problemas en los que se cumple que
+\begin{equation}
+    u(x) = c, \qquad \forall x\in\partial\Omega.
+\end{equation}
+
+En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en todo el dominio y que además cumpla las condiciones de frontera. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Este espacio de funciones es el espacio de Hilbert Sobolev. Para poder definirlo, primero veremos el espacio de Sobolev $H^1(\Omega)$.
+
+\begin{mdframed}
 \begin{defin}
     Seam $\Omega$ un conjunto abierto de $\mathbb{R}^n$. Definimos el espacio de Sobolev $H^1(\Omega)$ como el conjunto de funciones en el siguiente conjunto
     \begin{equation}
@@ -183,9 +215,198 @@ Para poder entender y formular de forma matemática el problema de aproximación
     \end{equation}
     En este espacio, se define la norma de funciones de con la siguiente ecuación
     \begin{equation}
-        \|u\|_{H^1(\Omega)}=\left(\|u\|^2_{L_2(\Omega)} + \sum_{i=1}^{n}\left\|\frac{\partial u}{\partial x_i}\right\|^2_{L_2(\Omega)}\right)^{1/2}.
+        \|u\|_{H^1(\Omega)}=\left(\|u\|^2_{L^2(\Omega)} + \sum_{i=1}^{n}\left\|\frac{\partial u}{\partial x_i}\right\|^2_{L^2(\Omega)}\right)^{1/2}.
     \end{equation}
 \end{defin}
+\end{mdframed}
+    
+Así, el espacio $H_0^1(\Omega)$ es el cierre de las funciones de $C_0^\infty(\Omega)$ en la norma de $H^1(\Omega)$. Es decir, $H_0^1(\Omega)$ es el conjunto de funciones $u\in H^1(\Omega)$ que se obtienen como límite en $H^1(\Omega)$ de una serie de funciones $\{u_m\}_{m=1}^\infty$ todas ellas en $C_0^\infty(\Omega)$. Así, si $\partial\Omega$ es suficientemente regular, $H_0^1(\Omega)$ es el siguiente conjunto.
+    
+\begin{equation}
+    H_0^1(\Omega)=\{u\in H^1(\Omega): u=0 \text{ en } \partial\Omega\}.
+\end{equation}
+
+Con esto, podemos definir la solución débil de una ecuación en derivadas parciales elíptica de la siguiente forma.
+\begin{mdframed}
+\begin{defin}\label{def:SolucionDebil}
+    Dadas las funciones $a_{ij} \in L^\infty(\Omega), \, i,j = 1,\dots, n, \, b_i \in L^\infty(\Omega), i= 1, \dots, n, \, c\in L^\infty(\Omega)$, y la función $f\in L^2(\Omega)$. Decimos que la función $u\in H^1_0(\Omega)$ es una solución débil de la ecuación \eqref{eq:EDP_eliptica} si se cumples que, 
+    \begin{equation}\label{eq:SolucionDebil}
+        \begin{split}
+            \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  \\+ \int_\Omega c(x)u \varphi \,dx = \int_\Omega f(x)\varphi(x) dx, \qquad \forall \varphi \in H^1_0(\Omega).
+        \end{split}
+    \end{equation}
+\end{defin}
+\end{mdframed}
+
+Para simplificar esta engorrosa notación, nos interesa definir la siguiente forma bilineal y lineal. 
+\begin{equation}
+    a(u,\varphi) = \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  + \int_\Omega c(x)u \varphi \,dx,
+\end{equation}
+y,
+\begin{equation}
+    l(\varphi) = \int_\Omega f(x)\varphi(x) dx.
+\end{equation}
+
+De este modo, nuestro problema elíptico en forma debil se puede expresar de la siguiente forma.
+
+\begin{equation}
+    a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H^1_0(\Omega).
+\end{equation}
+%Introducir la idea y usar el ejemplo del apartado anterior par ademostrar que no todas las ecuciones en forma fuerte tienen solución
+
+
+
+%quiza tenga sentido hablar de que ni siquiera en forma debil se puede encontrar la solución, y que por eso se recurre a métodos alternativos (metodos numéricos)
+
+%también puede tener sentido hablar de las ecuaciones en las que la solucion es el mínimo de una funcion, y que por eso se puede resolver con redes neuronales
+
+\section{Métodos numéricos tradicionales: el método de los elementos finitos}
+% hablar de como funciona en detalle, 
+
+El método de los elementos finitos (MEF) es una técnica numérica para resolver ecuaciones en derivadas parciales. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
+
+Para un problema elíptico con condiciones de frontera, se parte de una ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma muy simplificada como:
+\begin{equation*}
+    a(u,\varphi) = l(\varphi) \quad \forall \varphi\in V,
+\end{equation*}
+Donde $V$ es el espacio de funciones en el que están nuestras soluciones. En el caso del problema con condiciones homogéneas, este espacio será $V = H_0^1(\Omega)$.
+
+Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Por ejemplo, si estamos trabajando con un problema de una dimensión, con $\Omega =(0,1)$, dividimos $\overline{\Omega} = [0,1]$ en $N$ subintervalos $[x_i,x_{i+1}], \, i = 1, \dots, N-1$, como se hace en la Figura \ref{fig:DivisionOmega}.
+
+\begin{figure}
+    \centering
+    \label{fig:DivisionOmega}
+    \begin{tikzpicture}
+        \draw[thick] (0,0) -- (12,0); % Adjusted length of the line
+        \foreach \x in {0,2,4,6,8,10,12} % Adjusted positions of the ticks
+        \draw (\x cm,3pt) -- (\x cm,-3pt);
+        \draw (0,0) node[below=3pt] {$x_0 = 0$};
+        \draw (2,0) node[below=3pt] {$x_1$};
+        \draw (4,0) node[below=3pt] {$x_2$};
+        \draw (6,0) node[below=3pt] {$x_3$};
+        \draw (8,0) node[below=3pt] {$\dots$};
+        \draw (10,0) node[below=3pt] {$x_{N-2}$};
+        \draw (12,0) node[below=3pt] {$x_{N-1}=1$};
+    \end{tikzpicture}
+    \caption{División de $\Omega = (0,1)$ en $N$ elementos finitos}
+\end{figure}
+
+A esta subdivision, se le asocia una base de polinomios a trozos. Así, se reemplaza el subespacio de funciones que habíamos llamado $V$ por un subespacio de dimensión finita $V_h$ formado por polinomios a trozos  de grado fijo. Siguiendo nuestro ejemplo de antes, la base de polinomios que vamos a utilizar será la de los polinomios como los vistos en la Figura \ref{fig:BasePolinomios}. Definidos de la siguiente forma.
+\begin{equation*}
+    \phi_i(x) = \begin{cases}
+        \frac{x-x_{i-1}}{x_i-x_{i-1}}, & \text{si } x\in[x_{i-1},x_i],\\
+        \frac{x_{i+1}-x}{x_{i+1}-x_i}, & \text{si } x\in[x_i,x_{i+1}],\\
+        0, & \text{en otro caso}.
+    \end{cases} 
+\end{equation*}
+
+Así, en este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_N\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar los $u_h\in V_h$ tal que
+
+\begin{figure}
+    \centering
+    \label{fig:BasePolinomios}
+    \begin{tikzpicture}[scale=0.5]
+        \draw[thick] (0,0) -- (12,0); % Adjusted length of the line
+        \draw (6 cm,100pt) -- (6 cm,-5pt);
+        \draw (1 cm,5pt) -- (1 cm,-5pt);
+        \draw (11 cm,5pt) -- (11 cm,-5pt);
+        \draw[thick] (1,0) -- (6,100pt) -- (11,0);
+        \draw (1,0) node[below=3pt] {$x_{i-1}$};
+        \draw (6,0) node[below=3pt] {$x_i$};
+        \draw (11,0) node[below=3pt] {$x_{i+1}$};
+    \end{tikzpicture}
+    \caption{Polinomio $\phi_i$}
+\end{figure}
+
+\begin{equation*}
+    a(u_h,v_h) = l(v_h) \quad \forall v_h\in V_h,
+\end{equation*}
+
+
+De forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones infinito, como es $V$, se busca una solución en un espacio de funciones finito, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños a partir de los cuales hemos construido nuestro nuevo espacio de funciones. 
+
+Al hacer esto, ahora, encontrar una solución se convierte en encontrar los coeficientes en la base de polinomios a trozos, es decir, los $U_i$ en la siguiente ecuación
+\begin{equation}
+    u_h = \sum_{i=1}^{N} U_i\phi_i.
+\end{equation}
+Es decir, resolver la ecuación diferencial se convierte en encontrar $U=(U_1,\dots, U_N) \in \mathbb{R}^N$ que cumplen:
+\begin{equation}
+    \sum_{i=1}^{N} a\left( \phi_i,\phi_j\right)U_i = l(\phi_j) \quad \forall j = 1,\dots,N.
+\end{equation}
+
+Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matriz de rigidez (con entradas $A_{ij}=a\left( \phi_i,\phi_j\right)$), y $b$ es el vector de términos fuente (con entradas $b_j = l(\phi_j)$). A este nuevo sistema lineal se le pueden aplicar métodos numéricos tradicionales para resolverlo, como la factorización LU, encontrando así los coeficientes $U$ que nos dan $u_h$, la aproximación de $u$.
+
+\section{El problema elíptico autoadjunto}
+
+Vamos a considerar ahora un caso particular que es el llamado problema elíptico autoadjunto, el cual permite caracterizar las soluciones de las EDP elípticas como el mínimo de una función. Esto conecta de manera lógica con el enfoque de redes neuronales para aproximar soluciones, donde la función de coste de la red neuronal se puede definir como esta función. Al minimizarla, se obtiene una solución aproximada del problema original. No obstante, esto lo veremos más adelante en detalle. De momento, se define el problema elíptico autoadjunto de la siguiente forma.
+
+\begin{mdframed}
+\begin{defin}
+    Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales es elíptica autoadjunta si es elíptica, es decir, se cumplen las condiciones de la Definición \eqref{def:EDP_eliptica}, y además se cumplen las siguientes condiciones de simetría en los coeficientes.
+    \begin{equation}\label{eq:simetria_a}
+        \begin{split}
+            a_{ij} = a_{ji},\qquad &i,j = 1,\dots,n,\\
+            b_i = 0, \qquad &i = 1,\dots,n,
+        \end{split}
+    \end{equation}
+\end{defin}
+\end{mdframed}
+Bajo estas condiciones, nuestro problema se puede formular de la siguiente forma.
+\begin{equation}
+    \begin{cases}
+        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + c(x)u = f(x), & x\in\Omega,\\
+        u(x) = 0, & x\in\partial\Omega.
+    \end{cases}
+\end{equation}
+
+En un problema autoadjunto se pueden caracterizar las soluciones débiles como el mínimo de un funcional. Esto es así por el siguiente resultado.
+\begin{lema} \label{lema:MinimoFuncion}
+    Las siguientes afirmaciones son equivalentes:
+    \begin{enumerate}
+        \item Encontrar $u\in H_0^1(\Omega)$ tal que $a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H_0^1(\Omega)$
+        \item Encontrar $u\in H_0^1(\Omega)$ tal que $J(u) \leq J(\varphi) \quad \forall\varphi\in H_0^1(\Omega)$, siendo $J(u)$ la siguiente función
+        \begin{equation*}
+            J(u) = \frac{1}{2}a(u,u) - l(u), \quad u\in H_0^1(\Omega)
+        \end{equation*}
+    \end{enumerate}
+\end{lema}
+
+\chapter{Aproximación de EDPs mediante redes neuronales}\label{chap2}
+
+\section{PINN: Physics-Informed Neural Networks}
+
+Las PINN, o Physics-Informed Neural Networks, son una técnica que combina la resolución de ecuaciones en derivadas parciales con redes neuronales. La idea es que, en vez de resolver la ecuación diferencial directamente o con métodos numéricos tradicionales, se entrena una red neuronal para que aproxime la solución de la ecuación. Como habíamos comentado en la Sección \ref{sec:RedesNeuronales}, las redes neuronales son capaces de aproximar cualquier función, por lo que, en teoría, pueden aproximar cualquier solución de una ecuación diferencial. De este modo, las PINN van a aprovechar esto, definiendo la aproximación de nuestra solución $\hat{u}$, como la salida de nuestra función red neuronal que habíamos llamado $F$.
+
+\begin{figure}[htbp]
+    \centering
+    \label{fig:PIN}
+    \includegraphics[scale=0.8]{neural_network.pdf}
+    \caption{Esquema de una PINN}
+\end{figure}
+
+Como hemos visto, la función de coste de una red neuronal, mide lo bien que la función red neuronal aproxima la función que queremos. En el caso de las PINN, la función de coste se define como la suma de dos términos. El primero de ellos, se encarga de verificar la ecuación diferencial, es decir, que la función red neuronal aproxima la ecuación diferencial en todo el dominio. El segundo término, se encarga de verificar las condiciones de frontera. De este modo, la función de coste de una PINN se define como
+
+\section{El ``Deep Ritz Method''}
+
+\chapter{Resultados}\label{chap3}
+
+\chapter{Partes eliminadas - NO IMPRIMIR}
+\section{Espacios de funciones}
+
+Para poder entender y formular de forma matemática el problema de aproximación de EDPs mediante redes neuronales, es necesario tener un conocimiento previo de los espacios de funciones en los que trabajamos. Como veremos más adelante al estudiar los problemas de frontera para EDPs elípticas, es importante tener una caracterización del espacio $H_1^0$. Para entenderlo, empezaremos por los espacios de Hilbert Soobolev.
+
+\begin{mdframed}
+\begin{defin}
+    Seam $\Omega$ un conjunto abierto de $\mathbb{R}^n$. Definimos el espacio de Sobolev $H^1(\Omega)$ como el conjunto de funciones en el siguiente conjunto
+    \begin{equation}
+        H^1(\Omega)=\{u\in L^2(\Omega): \frac{\partial u}{\partial x_i}\in L^2(\Omega), \, i=1,\dots,n\}.
+    \end{equation}
+    En este espacio, se define la norma de funciones de con la siguiente ecuación
+    \begin{equation}
+        \|u\|_{H^1(\Omega)}=\left(\|u\|^2_{L^2(\Omega)} + \sum_{i=1}^{n}\left\|\frac{\partial u}{\partial x_i}\right\|^2_{L^2(\Omega)}\right)^{1/2}.
+    \end{equation}
+\end{defin}
+\end{mdframed}
 
 Dada esta definición, se define el espacio $H_0^1(\Omega)$ como el cierre de las funciones de $C_0^\infty(\Omega)$ en la norma de $H^1(\Omega)$. Es decir, $H_0^1(\Omega)$ es el conjunto de funciones $u\in H^1(\Omega)$ que se obtienen como límite en $H^1(\Omega)$ de una serie de funciones $\{u_m\}_{m=1}^\infty$ todas ellas en $C_0^\infty(\Omega)$. Así, de forma más simple, se puede demostrar que $H_0^1(\Omega)$ se trata del siguiente conjunto.
 
@@ -198,12 +419,13 @@ Nótese que $H_0^1(\Omega)$ es un espacio de Hilbert con la misma norma y produc
 
 
 \begin{exmp}
-    Es fácil ver por ejemplo que la función $u = x^2 + y^2 - 4$ pertenece a $H^1_0(C)$, siendo $C = \{(x,y)\in \mathbb{R}^2: x^2 + y^2 < 4\}$ el círculo abierto de radio 2 centrada en el origen. Esto se debe a que $u\in L_2(C)$ y además:
+    Es fácil ver por ejemplo que la función $u = x^2 + y^2 - 4$ pertenece a $H^1_0(C)$, siendo $C = \{(x,y)\in \mathbb{R}^2: x^2 + y^2 < 4\}$ el círculo abierto de radio 2 centrada en el origen. Esto se debe a que $u\in L^2(C)$ y además:
     \begin{equation*}
-        \frac{\partial u}{\partial x} = 2x\in L_2(C), \quad \frac{\partial u}{\partial y} = 2y \in L_2(C), \quad u=0\text{ en  } \partial C.
+        \frac{\partial u}{\partial x} = 2x\in L^2(C), \quad \frac{\partial u}{\partial y} = 2y \in L^2(C), \quad u=0\text{ en  } \partial C.
     \end{equation*}
     Por tanto, $u\in H_0^1(C)$.
 \end{exmp}
+
 
 \section{Introducción a las ecuaciones en derivadas parciales}
 
@@ -226,31 +448,36 @@ donde $\Delta$ es el operador laplaciano, que se define como la suma de las segu
 
 Esta ecuación es una EDP elíptica pues cumple la siguiente definición general.
 
-\begin{defin}\label{def:EDP_eliptica}
+
+\begin{mdframed}
+\begin{defin}
     Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales es elíptica si:
-    \begin{equation}\label{eq:EDP_eliptica}
+    \begin{equation}
         -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad x\in\Omega.
     \end{equation}
     Donde los coeficientes $a_{ij}(x)$, $b_i(x)$, $c(x)$ y $f$ son funciones que satisfacen las siguientes condiciones
     \begin{align}
-        a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n \label{eq:condiciones_EDP_eliptica_a} \\
+        a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n \\
         b_i, c \in C(\overline{\Omega}),& \qquad i = 1, \dots ,n \\
         c \in C(\overline{\Omega}),& \\
-        f\in C(\overline{\Omega})&\label{eq:condiciones_EDP_eliptica_f}
+        f\in C(\overline{\Omega})&
     \end{align}
 \end{defin}
+\end{mdframed}
 
 De entre los problemas elípticos definidos en \ref{def:EDP_eliptica}, como comentábamos, nos interesan las ecuaciones en derivadas parciales elípticas con condiciones de frontera, en concreto, las condiciones de frontera de Dirichlet.
 
+\begin{mdframed}
 \begin{defin}    
-    El problema de condición de frontera de Dirichlet es concretamente el que tenemos una EDP elíptica como la definida en \ref{def:EDP_eliptica}, tal que, nuestra solución $u$, además de cumplir las ecuación \ref{eq:EDP_eliptica}, cumple la siguiente condición de frontera
+    El problema de condición de frontera de Dirichlet es concretamente el que tenemos una EDP elíptica como la definida en \ref{def:EDP_eliptica}, tal que, nuestra solución $u$, además de cumplir las ecuación \eqref{eq:EDP_eliptica}, cumple la siguiente condición de frontera
     \begin{equation}
         u(x) = g(x), \qquad \forall x\in\partial\Omega.
     \end{equation}
     Asimismo, el problema homogéneo de Dirichlet es aquel en el que $g=0$. A lo largo del trabajo nos centraremos principalmente en es te tipo de EDPs.
 \end{defin}
+\end{mdframed}
 
-Con todo, el tipo de ecuaciones elípticas en el que nos vamos a centrar (entendiendo que se cumplen las condiciones de \ref{eq:condiciones_EDP_eliptica_a} - \ref{eq:condiciones_EDP_eliptica_f}) serán de la siguiente forma.
+Con todo, el tipo de ecuaciones elípticas en el que nos vamos a centrar (entendiendo que se cumplen las condiciones de \eqref{eq:condiciones_EDP_eliptica_a} - \eqref{eq:condiciones_EDP_eliptica_f}) serán de la siguiente forma.
 \begin{equation}
     \begin{cases}
         -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad & x\in\Omega \\
@@ -259,12 +486,13 @@ Con todo, el tipo de ecuaciones elípticas en el que nos vamos a centrar (entend
 \end{equation}
 
 \section{Forma fuerte y débil de una EDP}
-
 En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. De forma intuitiva, esta es la que se obtiene directamente de la definición de la ecuación, y es la que relaciona la función desconocida con sus derivadas parciales. La solución de estas ecuaciones en forma fuerte es la que se conoce como solución clásica. De esto surge la siguiente definición.
 
+\begin{mdframed}
 \begin{defin}
-    Una función $u \in C^2(\Omega)$ que cumples las condiciones de frontera de Dirichlet y satisface la ecuación \ref{eq:EDP_eliptica} en $\Omega$ se dice que es una solución clásica o fuerte de la ecuación \ref{eq:EDP_eliptica}. 
+    Una función $u \in C^2(\Omega)$ que cumples las condiciones de frontera de Dirichlet y satisface la ecuación \eqref{eq:EDP_eliptica} en $\Omega$ se dice que es una solución clásica o fuerte de la ecuación \eqref{eq:EDP_eliptica}. 
 \end{defin}
+\end{mdframed}
 
 No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en todo el dominio y que además cumpla las condiciones de frontera. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. A continuación, vemos un ejemplo que motiva la necesidad de recurrir a la formulación débil de una ecuación.
 
@@ -277,7 +505,7 @@ No obstante, en muchos casos, no es posible encontrar una solución en forma fue
             u = 0, & \text{en } \partial\Omega.
         \end{cases}
     \end{equation*}
-    Donde $\Omega$ es un conjunto acotado y abierto en $\mathbb{R}^n$. En este caso, no siempre es posible encontrar una solución en forma fuerte, es decir, una función $u$ que cumpla la ecuación en todo el dominio $\Omega$ y que además cumpla la condición de frontera. Por ejemplo, si $f$ no es una función suave, no se puede garantizar la existencia de una solución en forma fuerte pues estaríamos rompiendo la condición de \ref{eq:condiciones_EDP_eliptica_f}. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. 
+    Donde $\Omega$ es un conjunto acotado y abierto en $\mathbb{R}^n$. En este caso, no siempre es posible encontrar una solución en forma fuerte, es decir, una función $u$ que cumpla la ecuación en todo el dominio $\Omega$ y que además cumpla la condición de frontera. Por ejemplo, si $f$ no es una función suave, no se puede garantizar la existencia de una solución en forma fuerte pues estaríamos rompiendo la condición de \eqref{eq:condiciones_EDP_eliptica_f}. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. 
 \end{exmp}
 
 
@@ -291,343 +519,10 @@ Para pasar de forma fuerte a débil, lo que hacemos es seguir el siguiente proce
     \begin{align*}
         \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial \varphi }{\partial x_j} \frac{\partial u}{\partial x_i} + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i}\varphi  + \int_\Omega c(x)\varphi u  \,dx\\ =\int_\Omega f(x)\varphi  \,dx
     \end{align*}
-    Con esta manipulación hemos conseguido una cosa muy interesante: ya no tenemos segundas derivadas de $u$, es decir, ya no necesitamos que $u\in C^2$. Para que esta igualdad tenga sentido, solo hace falta que $u\in L_2(\Omega)$ y que $\partial y /\partial x_i \in L_2(\Omega),\, i =1,\dots,n$. Nótese además que, para que se cumpla la condición de frontera de Dirichlet, $u=0 \in \partial\Omega$. Todo esto se traduce a que $u\in H_0^1(\Omega)$ Esto simplifica las condiciones del problema pues el espacio de funciones en el que puede estar $u$, ahora es mucho más amplio.
-    \item Para simplificar aun más el problema, nótese que $a_{ij}$ ya no aparecen tras derivadas de ningun tipo, luego no es necesario asumir que $a_{ij}\in C^1(\overline{\Omega})$, basta con que $a_{ij}\in L_\infty(\Omega)$. Por lo mismo, $b_i,\,c\in L_\infty(\Omega), i=1,\dots,n$ es suficiente.
+    Con esta manipulación hemos conseguido una cosa muy interesante: ya no tenemos segundas derivadas de $u$, es decir, ya no necesitamos que $u\in C^2$. Para que esta igualdad tenga sentido, solo hace falta que $u\in L^2(\Omega)$ y que $\partial y /\partial x_i \in L^2(\Omega),\, i =1,\dots,n$. Nótese además que, para que se cumpla la condición de frontera de Dirichlet, $u=0 \in \partial\Omega$. Todo esto se traduce a que $u\in H_0^1(\Omega)$ Esto simplifica las condiciones del problema pues el espacio de funciones en el que puede estar $u$, ahora es mucho más amplio.
+    \item Para simplificar aun más el problema, nótese que $a_{ij}$ ya no aparecen tras derivadas de ningun tipo, luego no es necesario asumir que $a_{ij}\in C^1(\overline{\Omega})$, basta con que $a_{ij}\in L^\infty(\Omega)$. Por lo mismo, $b_i,\,c\in L^\infty(\Omega), i=1,\dots,n$ es suficiente.
     \item Por último, nótese que $C^\infty_0(\Omega) \subset H^1_0(\Omega)$, luego se puede ver que teniendo $u,v\in H^1_0(\Omega)$, nuestra ecuación sigue teniendo sentido. Con todo esto, surge la siguiente definición de forma débil.
 \end{enumerate}
-
-\begin{defin}\label{def:SolucionDebil}
-    Dadas las funciones $a_{ij} \in L_\infty(\Omega), \, i,j = 1,\dots, n, \, b_i \in L_\infty(\Omega), i= 1, \dots, n, \, c\in L_\infty(\Omega)$, y la función $f\in L_2(\Omega)$. Decimos que la función $u\in H^1_0(\Omega)$ es una solución débil de la ecuación \ref{eq:EDP_eliptica} si se cumples que, 
-    \begin{equation}\label{eq:SolucionDebil}
-        \begin{split}
-            \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  \\+ \int_\Omega c(x)u \varphi \,dx = \int_\Omega f(x)\varphi(x) dx, \qquad \forall \varphi \in H^1_0(\Omega).
-        \end{split}
-    \end{equation}
-\end{defin}
-
-Para simplificar esta engorrosa notación, nos interesa definir la siguiente forma bilineal y lineal. 
-\begin{equation}
-    a(u,\varphi) = \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  + \int_\Omega c(x)u \varphi \,dx,
-\end{equation}
-y,
-\begin{equation}
-    l(\varphi) = \int_\Omega f(x)\varphi(x) dx.
-\end{equation}
-
-De este modo, nuestro problema eliptico en forma debil con condiciones de frontera de Dirichlet en forma debil se puede expresar de la siguiente forma.
-\begin{equation}
-    a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H^1_0(\Omega).
-\end{equation}
-%Introducir la idea y usar el ejemplo del apartado anterior par ademostrar que no todas las ecuciones en forma fuerte tienen solución
-
-
-
-%quiza tenga sentido hablar de que ni siquiera en forma debil se puede encontrar la solución, y que por eso se recurre a métodos alternativos (metodos numéricos)
-
-%también puede tener sentido hablar de las ecuaciones en las que la solucion es el mínimo de una funcion, y que por eso se puede resolver con redes neuronales
-
-\section{Métodos numéricos tradicionales: el método de los elementos finitos}
-% hablar de como funciona en detalle, 
-
-El método de los elementos finitos (MEF) es una técnica numérica para resolver ecuaciones diferenciales parciales. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
-
-Para un problema elíptico con condiciones de frontera, se parte de una ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma muy simplificada como:
-\begin{equation*}
-    a(u,\varphi) = l(\varphi) \quad \forall \varphi\in V,
-\end{equation*}
-Donde $V$ es el espacio de funciones en el que están nuestras soluciones. En el caso del problema homogéneo, hemos visto que este espacio será $V = H_0^1(\Omega)$.
-
-Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Por ejemplo, si estamos trabajando con un problema de una dimensión, con $\Omega =(0,1)$, dividimos $\overline{\Omega} = [0,1]$ en $N$ subintervalos $[x_i,x_{i+1}], \, i = 1, \dots, N-1$, como se hace en la Figura \ref{fig:DivisionOmega}.
-
-\begin{figure}
-    \centering
-    \label{fig:DivisionOmega}
-    \begin{tikzpicture}
-        \draw[thick] (0,0) -- (12,0); % Adjusted length of the line
-        \foreach \x in {0,2,4,6,8,10,12} % Adjusted positions of the ticks
-        \draw (\x cm,3pt) -- (\x cm,-3pt);
-        \draw (0,0) node[below=3pt] {$x_0 = 0$};
-        \draw (2,0) node[below=3pt] {$x_1$};
-        \draw (4,0) node[below=3pt] {$x_2$};
-        \draw (6,0) node[below=3pt] {$x_3$};
-        \draw (8,0) node[below=3pt] {$\dots$};
-        \draw (10,0) node[below=3pt] {$x_{N-2}$};
-        \draw (12,0) node[below=3pt] {$x_{N-1}=1$};
-    \end{tikzpicture}
-    \caption{División de $\Omega = (0,1)$ en $N$ elementos finitos}
-\end{figure}
-
-A esta subdivision, se le asocia una base de polinomios. Así, se reemplaza el subespacio de funciones que habíamos llamado $V$ por un subespacio de dimensión finita $V_h$ formado por polinomios a trozos  de grado fijo. Siguiendo nuestro ejemplo de antes, la base de polinomios que vamos a utilizar será la de los polinomio como los vistos en la Figura \ref{fig:BasePolinomios}. Definidos de la siguiente forma.
-\begin{equation*}
-    \phi_i(x) = \begin{cases}
-        \frac{x-x_{i-1}}{x_i-x_{i-1}}, & \text{si } x\in[x_{i-1},x_i],\\
-        \frac{x_{i+1}-x}{x_{i+1}-x_i}, & \text{si } x\in[x_i,x_{i+1}],\\
-        0, & \text{en otro caso}.
-    \end{cases} 
-\end{equation*}
-
-Así, en este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_N\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar los $u_h\in V_h$ tal que
-
-\begin{figure}
-    \centering
-    \label{fig:BasePolinomios}
-    \begin{tikzpicture}
-        \draw[thick] (0,0) -- (12,0); % Adjusted length of the line
-        \draw (6 cm,100pt) -- (6 cm,-3pt);
-        \draw (1 cm,3pt) -- (1 cm,-3pt);
-        \draw (11 cm,3pt) -- (11 cm,-3pt);
-        \draw[thick] (1,0) -- (6,100pt) -- (11,0);
-        \draw (1,0) node[below=3pt] {$x_{i-1}$};
-        \draw (6,0) node[below=3pt] {$x_i$};
-        \draw (11,0) node[below=3pt] {$x_{i+1}$};
-    \end{tikzpicture}
-    \caption{Polinomio $\phi_i$}
-\end{figure}
-
-
-\begin{equation*}
-    a(u_h,v_h) = l(v_h) \quad \forall v_h\in V_h,
-\end{equation*}
-
-
-De forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones infinito, como es $V$, se busca una solución en un espacio de funciones finito, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños a partir de los cuales hemos construido nuestro nuevo espacio de funciones. 
-
-Al hacer esto, ahora, encontrar una solución se convierte en encontrar los coeficientes de los polinomios que forman nuestra base, es decir, los $U_i$ en la siguiente ecuación
-\begin{equation}
-    u_h = \sum_{i=1}^{N} U_i\phi_i.
-\end{equation}
-Es decir, resolver la ecuación diferencial se convierte en encontrar $U=(U_1,\dots, U_N) \in \mathbb{R}^N$ que cumplen:
-\begin{equation}
-    \sum_{i=1}^{N} a\left( \phi_i,\phi_j\right)U_i = l(\phi_j) \quad \forall j = 1,\dots,N.
-\end{equation}
-
-Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matriz de rigidez (con entradas $A_{ij}=a\left( \phi_i,\phi_j\right)$), y $b$ es el vector de términos fuerte (con entradas $b_j = l(\phi_j)$). A este nuevo sistema lineal se le pueden aplicar métodos numéricos tradicionales para resolverlo, como la factorización LU, o el método de Jacobi, encontrando así los coeficientes $U$ que nos dan $u_h$, la aproximación de $u$.
-
-\section{El problema elíptico autoadjunto}
-
-Un problema interesante en el ámbito de las ecuaciones elípticas es el llamado problema elíptico autoadjunto, el cual permite caracterizar las soluciones de las EDP elípticas como el mínimo de una función. Esto conecta de manera lógica con el enfoque de redes neuronales para aproximar soluciones, donde la función de coste de la red neuronal se puede definir como esta función. Al minimizarla, se obtiene una solución aproximada del problema original. No obstante, esto lo veremos más adelante en detalle. De momento, se define el problema elíptico autoadjunto de la siguiente forma.
-\begin{defin}
-    Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales es elíptica autoadjunta si es elíptica, es decir:
-    \begin{equation*}\label{eq:EDP_eliptica_autoadjunta}
-        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad x\in\Omega.
-    \end{equation*}
-    Donde los coeficientes $a_{ij}(x)$, $b_i(x)$, $c(x)$ y $f$ son funciones que satisfacen las siguientes condiciones
-    \begin{align*}
-        a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n\\
-        b_i, c \in C(\overline{\Omega}),& \qquad i = 1, \dots ,n \\
-        c \in C(\overline{\Omega}),& \\
-        f\in C(\overline{\Omega})&
-    \end{align*}
-    Y además, cumple las siguientes condiciones de simetría, 
-    \begin{equation}\label{eq:simetria_a}
-        \begin{split}
-            a_{ij} = a_{ji},\qquad &i,j = 1,\dots,n,\\
-            b_i = 0, \qquad &i = 1,\dots,n,
-        \end{split}
-    \end{equation}
-\end{defin}
-Bajo estas condiciones, nuestro problema de condición de frontera de Dirichlet se puede formular de la siguiente forma.
-\begin{equation}
-    \begin{cases}
-        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + c(x)u = f(x), & x\in\Omega,\\
-        u(x) = g(x), & x\in\partial\Omega.
-    \end{cases}
-\end{equation}
-
-El problema elíptico autoadjunto es interesante porque permite caracterizar las soluciones de las EDPs elípticas como el mínimo de una función. Esto es así por el siguiente resultado.
-\begin{lema} \label{lema:MinimoFuncion}
-    Bajo las condiciones del problema elíptico autoadjunto y condiciones de frontera de Dirichlet, las siguientes afirmaciones son equivalentes:
-    \begin{enumerate}
-        \item encontrar $u\in H_0^1(\Omega)$ tal que $a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H_0^1(\Omega)$
-        \item Encontrar $u\in H_0^1(\Omega)$ tal que $J(u) \leq J(\varphi) \quad \forall\varphi\in H_0^1(\Omega)$, siendo $J(u)$ la siguiente función
-        \begin{equation*}
-            J(u) = \frac{1}{2}a(u,u) - l(u), \quad u\in H_0^1(\Omega)
-        \end{equation*}
-    \end{enumerate}
-\end{lema}
-Es importante darse cuenta de que, aunque estemos formulando el problema y las condiciones sobre la forma fuerte, la solución se puede calcular a partir de la forma débil. Esto es así porque, bajo estas condiciones, la solución de la forma débil es única y coincide con la de la forma fuerte. 
-
-\colorbox{yellow}{Esto es verdad no? Tampoco se si estas cosas hay que demostrarlas más...}
-
-\colorbox{yellow}{además tengo dudas de si demostrar este lema o no}
-
-HASTA AQUÍ CREO QUE TENGO TODOS LOS RECURSOS PARA PODER PONERME A HABLAR DE LAS REDES NEURONALES. AUNQUE NO SE SI DEBERÍA HABLAR DE ALGUNA COSA MÁS DE LAS EDPs, O SI DEBERÍA HABLAR DE ALGUNA COSA MÁS DE LAS REDES NEURONALES.
-
-\chapter{Aproximación de EDPs mediante redes neuronales}\label{chap2}
-
-\section{PINS: Physics-Informed Neural Networks}
-
-Las PINS, o Physics-Informed Neural Networks, son una técnica que combina la resolución de ecuaciones en derivadas parciales con redes neuronales. La idea es que, en vez de resolver la ecuación diferencial directamente o con métodos numéricos tradicionales, se entrena una red neuronal para que aproxime la solución de la ecuación. Como habíamos comentado en la sección \ref{sec:RedesNeuronales}, las redes neuronales son capaces de aproximar cualquier función, por lo que, en teoría, pueden aproximar cualquier solución de una ecuación diferencial. De este modo, las PINS van a aprovechar esto, definiendo la aproximación de nuestra solución $\hat{u}$, como la salida de nuestra función red neuronal que habíamos llamado $F$.
-
-\begin{figure}[htbp]
-    \centering
-    \label{fig:PIN}
-    \begin{tikzpicture}[x=2.2cm,y=1.4cm]
-        \readlist\Nnod{1,5,5,5,1} % number of nodes per layer
-        % \Nnodlen = length of \Nnod (i.e. total number of layers)
-        % \Nnod[1] = element (number of nodes) at index 1
-        \foreachitem \N \in \Nnod{ % loop over layers
-        % \N     = current element in this iteration (i.e. number of nodes for this layer)
-        % \Ncnt  = index of current layer in this iteration
-            \foreach \i [evaluate={\x=\Ncnt; \y=\N/2-\i+0.5; \prev=int(\Ncnt-1);}] in {1,...,\N}{ % loop over nodes
-                \node[mynode] (N\Ncnt-\i) at (\x,\y) {};
-                \ifnum\Ncnt>1 % connect to previous layer
-                \foreach \j in {1,...,\Nnod[\prev]}{ % loop over nodes in previous layer
-                    \draw[thick] (N\prev-\j) -- (N\Ncnt-\i); % connect arrows directly
-                }
-                \fi % else: nothing to connect first layer
-            }
-      }
-      % Write labels
-    \end{tikzpicture}
-    \caption{Esquema de una PINS}
-\end{figure}
-
-Como hemos visto, la función de coste de una red neuronal, mide lo bien que la función red neuronal aproxima la función que queremos. En el caso de las PINS, la función de coste se define como la suma de dos términos. El primero de ellos, se encarga de verificar la ecuación diferencial, es decir, que la función red neuronal aproxima la ecuación diferencial en todo el dominio. El segundo término, se encarga de verificar las condiciones de frontera. De este modo, la función de coste de una PINS se define como
-    
-
-
-
-\section{El ``Deep Ritz Method''}
-
-\chapter{Resultados}\label{chap3}
-
-
-
-
-
-\headrule
-\newpage
-\section{Notas del formato}
-\begin{teorsin}
-[Cauchy--Schwarz]Nullam quis ante. 
-\end{teorsin}
-
-\begin{teor}\label{teor1}
-Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.
-\end{teor}
-
-\begin{defin}
-Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.
-\end{defin}
-\begin{lema}\label{lema1}
-Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.
-\end{lema}
-\begin{proof}
-Nullam quis ante. 
-\end{proof}
-
-
-\begin{lema}\label{lema2}
-Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.
-\end{lema}
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.
-
-
-\begin{proof}[\sc Demostraci\'on del lema {\rm \ref{lema2}}]
-Nullam quis ante:
-\begin{equation}
-2+2=4.\qedhere
-\end{equation}
-\end{proof}
-
-Lorem ipsum dolor sit amet, Teorema \ref{teor1}, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-\begin{align}\label{eq4}
-&e^{i\pi }+1=0,
-\\
-&2e^{i\pi }+2=0.\label{eq5}
-\end{align}
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-\begin{align}\nonumber
-0&=e^{i\pi }+1=e^{i\pi }+1=e^{i\pi }+1=e^{i\pi }+\sum_{n=1}^\infty \frac{1}{2^n}
-\\
-&=-1+\sum_{n=1}^\infty \frac{1}{2^n}=-1+1=0.\label{eq6}
-\end{align}
-et
-\begin{equation}\label{eq7}
-\begin{aligned}
-e^{i\pi }+1=0,
-\\
-e^{i\pi }+1=0.
-\end{aligned}
-\end{equation}
-
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-\begin{align*}
-e^{i\pi }+1&=0,
-\\
-e^{i\pi }+1&=0.
-\end{align*}
-Aenean massa: 
-\begin{equation}
-\left\{
-\begin{array}{l}
-e^{i\pi }+1=0,
-\\
-e^{i\pi }+1=0.
-\end{array}
-\right.
-\end{equation}
-
-
-Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-
-
-\chapter{El segundo cap\'{\i}tulo}\label{chap4}
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus.
-\begin{equation}\label{eq8}
-e^{i\pi }+1=0.
-\end{equation}
-Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-$$
-e^{i\pi }+1=0.
-$$
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.
-\begin{equation}
-e^{i\pi }+1=0.
-\end{equation}
-
-
-Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi.
-\begin{equation}
-e^{i\pi }+1=0.
-\end{equation}
-Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-$$
-e^{i\pi }+1=0.
-$$
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-
-\section{Uno m\'as}
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-$$
-e^{i\pi }+1=0.
-$$
-
-\section{Y otro}
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
-
-
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,
 
 \begin{thebibliography}{10}
 \addcontentsline{toc}{chapter}{\bibname}
