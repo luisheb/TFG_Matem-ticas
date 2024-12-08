@@ -11,6 +11,7 @@
 \usepackage{algorithmic}
 \usepackage{algorithm}
 \usepackage{mdframed}
+\usepackage{marginnote}
 
 \mdfsetup{%
 linecolor=white,
@@ -22,6 +23,8 @@ backgroundcolor=gray!10,
 \newtheorem{lema}[teor]{Lema}
 \newtheorem*{teorsin}{Teorema}
 
+
+\renewcommand*{\raggedrightmarginnote}{\raggedright}
 
 \theoremstyle{definition}
 \newtheorem{defin}[teor]{Definici\'on}
@@ -135,8 +138,9 @@ Designamos a $y(x)$ como la salida deseada de nuestra red neuronal, y a $F(x)$ c
 \begin{equation*}
     E(W^{[2]},W^{[3]},W^{[4]},b^{[2]},b^{[3]},b^{[4]})=\frac{1}{2}\sum_{x\in X}\|y(x)-F(x)\|^2,
 \end{equation*}
+donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal, en nuestro caso, serán 15. Esta función es conocida como función de coste.
 
-Donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal, en nuestro caso, serán 15. Así, lo que queremos hacer es minimizar esta función de error, es decir, encontrar los pesos que minimicen la función $E$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado.
+Así, lo que queremos hacer es minimizar esta función, es decir, encontrar los pesos que minimicen la función $E$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado.
 
 \begin{figure}[!ht]
     \centering
@@ -335,10 +339,49 @@ Es decir, resolver la ecuación diferencial se convierte en encontrar $U=(U_1,\d
 \end{equation}
 
 Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matriz de rigidez (con entradas $A_{ij}=a\left( \phi_i,\phi_j\right)$), y $b$ es el vector de términos fuente (con entradas $b_j = l(\phi_j)$). A este nuevo sistema lineal se le pueden aplicar métodos numéricos tradicionales para resolverlo, como la factorización LU, encontrando así los coeficientes $U$ que nos dan $u_h$, la aproximación de $u$.
+\begin{mdframed}
+\begin{exmp}
+    Veamos ahora un ejemplo concreto de la aplicación del FEM a través de la ecuación de Poisson. El objetivo es encontrar un campo escalar $ u $ sobre un dominio $\Omega \subset \mathbb{R}^n$ que satisfaga:
+    \begin{equation}
+    \begin{aligned}
+    - \nabla^2 u &= f \quad \text{en} \ \Omega, \\
+    u &= 0 \quad \text{en} \ \Gamma_D, \\
+    \nabla u \cdot n &= g \quad \text{en} \ \Gamma_N,
+    \end{aligned}
+    \end{equation}
+    donde $ f $ es un término fuente, $ g $ es un flujo en la frontera, $ n $ es el vector normal unitario, $\Gamma_D$ y $\Gamma_N$ son partes de la frontera donde se aplican las condiciones de contorno de Dirichlet y Neumann, respectivamente.
+
+    El método de elementos finitos (FEM) aproxima $ u $ transformando el problema en su forma debil y resolviéndolo en un espacio de funciones de dimensión finita. La forma fuerte del problema se convierte en:
+    \begin{equation}
+    a(u, v) = l(v) \quad \forall \ v \in V,
+    \end{equation}
+    donde:
+    \begin{itemize}
+        \item $ a(u, v) = \int_{\Omega} \nabla u \cdot \nabla v \, \text{d}x $
+        \item $ l(v) = \int_{\Omega} f v \, \text{d}x + \int_{\Gamma_N} g v \, \text{d}s $
+    \end{itemize}
+
+    Al discretizar el espacio $V$, el FEM transforma esta ecuación en un sistema de ecuaciones lineales que se puede resolver numéricamente. En este caso concreto usaremos un dominio rectangular $\Omega = [0,2] \times [0,1]$, en el que se imponen las siguientes condiciones:  
+    \begin{itemize}
+        \item Frontera de Dirichlet $\Gamma_D$ en los bordes verticales ($x=0$ y $x=2$) con $u=0$,  
+        \item Frontera de Neumann $\Gamma_N$ en los bordes horizontales ($y=0$ y $y=1$) con flujo $g(x) = \sin(5x)$.
+        \item Término fuente $f(x, y) = 10 \cdot\exp \left( - \frac{(x - 0.5)^2 + (y - 0.5)^2}{0.02} \right)$.  
+    \end{itemize}
+
+    Bajo estas condiciones, si usamos el paquete de python FEniCS, podemos resolver el problema obteniendo el siguiente resultado.
+    \begin{figure}[H] 
+        \centering
+        \includegraphics[width=0.5\textwidth]{Figuras/poisson.png}
+        \caption{Solución de la ecuación de Poisson}
+        \label{fig:poisson}
+    \end{figure}
+     Se puede apreciar en la Figura \ref{fig:poisson} la malla de elementos finitos utilizada para la aproximación de la solución, siendo esta la que da lugar a la base de polinomios a trozos que hemos mencionado anteriormente. 
+\end{exmp}
+\end{mdframed}
 
 \section{El problema elíptico autoadjunto}
 
-Vamos a considerar ahora un caso particular que es el llamado problema elíptico autoadjunto, el cual permite caracterizar las soluciones de las EDP elípticas como el mínimo de una función. Esto conecta de manera lógica con el enfoque de redes neuronales para aproximar soluciones, donde la función de coste de la red neuronal se puede definir como esta función. Al minimizarla, se obtiene una solución aproximada del problema original. No obstante, esto lo veremos más adelante en detalle. De momento, se define el problema elíptico autoadjunto de la siguiente forma.
+Vamos a considerar ahora un caso particular que es el llamado problema elíptico autoadjunto, el cual permite caracterizar las soluciones de las EDP elípticas como el mínimo de un funcional. Esto conecta de manera lógica con el enfoque de redes neuronales para aproximar soluciones, donde la función de coste de la red neuronal se puede definir como esta función. Al minimizarla, se obtiene una solución aproximada del problema original. No obstante, esto lo veremos más adelante en detalle. De momento, se define el problema elíptico autoadjunto de la siguiente forma.
 
 \begin{mdframed}
 \begin{defin}
@@ -374,17 +417,33 @@ En un problema autoadjunto se pueden caracterizar las soluciones débiles como e
 \chapter{Aproximación de EDPs mediante redes neuronales}\label{chap2}
 
 \section{PINN: Physics-Informed Neural Networks}
+\subsection{Introducción}
+Las PINN, o Physics-Informed Neural Networks, son una técnica que combina la resolución de ecuaciones en derivadas parciales con redes neuronales. La idea es que, en vez de resolver la ecuación diferencial directamente o con métodos numéricos tradicionales, se entrena una red neuronal para que aproxime la solución de la ecuación. 
 
-Las PINN, o Physics-Informed Neural Networks, son una técnica que combina la resolución de ecuaciones en derivadas parciales con redes neuronales. La idea es que, en vez de resolver la ecuación diferencial directamente o con métodos numéricos tradicionales, se entrena una red neuronal para que aproxime la solución de la ecuación. Como habíamos comentado en la Sección \ref{sec:RedesNeuronales}, las redes neuronales son capaces de aproximar cualquier función, por lo que, en teoría, pueden aproximar cualquier solución de una ecuación diferencial. De este modo, las PINN van a aprovechar esto, definiendo la aproximación de nuestra solución $\hat{u}$, como la salida de nuestra función red neuronal que habíamos llamado $F$.
-
+Como habíamos comentado en la Sección \ref{sec:RedesNeuronales}, las redes neuronales son capaces de aproximar cualquier función, por lo que, en teoría, pueden aproximar cualquier solución de una ecuación diferencial. De este modo, las PINN van a aprovechar esto, definiendo la aproximación de nuestra solución $\hat{u}$, como la salida de nuestra función red neuronal. Así, la función en la Figura \ref{fig:PIN} sería la aproximación de la solución de la ecuación diferencial.
 \begin{figure}[htbp]
     \centering
     \label{fig:PIN}
-    \includegraphics[scale=0.8]{neural_network.pdf}
+    \includegraphics[scale=0.7]{Figuras/neural_network_improved.pdf}
     \caption{Esquema de una PINN}
 \end{figure}
 
-Como hemos visto, la función de coste de una red neuronal, mide lo bien que la función red neuronal aproxima la función que queremos. En el caso de las PINN, la función de coste se define como la suma de dos términos. El primero de ellos, se encarga de verificar la ecuación diferencial, es decir, que la función red neuronal aproxima la ecuación diferencial en todo el dominio. El segundo término, se encarga de verificar las condiciones de frontera. De este modo, la función de coste de una PINN se define como
+\subsection{Formulación de las PINN}
+Consideramos una EDP parametrizada por $\lambda$, definida en función $u(\mathbf{x})$ con $\mathbf{x} = (x_1, \ldots, x_d)$, en un dominio $\Omega \subset \mathbb{R}^d$:
+\marginnote{Creo que habría \\que ser más \\coherente\\ con la notación introducida}
+\begin{equation} 
+    f\left(\mathbf{x}; \frac{\partial u}{\partial x_1}, \ldots, \frac{\partial u}{\partial x_d}, \frac{\partial^2 u}{\partial x_1^2}, \ldots, \frac{\partial^2 u}{\partial x_1 \partial x_d}, \ldots; \lambda\right) = 0, \quad \mathbf{x} \in \Omega,
+\end{equation}
+Con condición de frontera $u(\mathbf{x}) = g(\mathbf{x})$ en $\partial \Omega$. 
+La idea de las PINN es entrenar una red neuronal para que aproxime la solución de la ecuación diferencial. Para ello, se define una red neuronal $u_{\theta}(\mathbf{x})$ con pesos $\theta$ que aproxima la solución de la ecuación diferencial. Así, la función red neuronal se entrena para que aproxime la solución de la ecuación diferencial en todo el dominio. Para ello, se define una función de coste que mida el error de la red neuronal en aproximar la ecuación diferencial y las condiciones de frontera.
+
+Para apli
+El siguiente paso, sería definir una función de coste. Es decir, una función que nos diga como de buena es nuestra aproximación. En el caso de las PINN, la función de coste se define como la suma de dos términos. El primero de ellos, se encarga de verificar la ecuación diferencial, es decir, que la función red neuronal aproxima la ecuación diferencial en todo el dominio. El segundo término, se encarga de verificar las condiciones de frontera e iniciales.
+\begin{equation}
+    \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
+\end{equation}
+
+\subsection{Limitaciones de las PINN}
 
 \section{El ``Deep Ritz Method''}
 

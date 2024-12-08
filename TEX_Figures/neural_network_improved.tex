@@ -39,42 +39,46 @@
 \begin{document}
 
 \begin{tikzpicture}[x=2.2cm,y=1.4cm]
-  \message{^^JNeural network, shifted}
-  \readlist\Nnod{2,5,5,5,1} % array of number of nodes per layer
-  \readlist\Nstr{n,m,m,m,k} % array of string number of nodes per layer
-  \readlist\Cstr{\strut x,\sigma,\sigma,\sigma,\hat{u}} % array of coefficient symbol per layer
-  \def\yshift{0} % shift last node for dots
-  
-  \message{^^J  Layer}
-  \foreachitem \N \in \Nnod{ % loop over layers
-    \def\lay{\Ncnt} % alias of index of current layer
-    \pgfmathsetmacro\prev{int(\Ncnt-1)} % number of previous layer
-    \message{\lay,}
-    \foreach \i [evaluate={\c=int(\i==\N); \y=\N/2-\i-\c*\yshift;
-                 \index=int(\i);
-                 \x=\lay; \n=\nstyle;}] in {1,...,\N}{ % loop over nodes
-        % NODES
+    \message{^^JNeural network, shifted}
+    \readlist\Nnod{2,5,5,5,1} % array of number of nodes per layer
+    \readlist\Nstr{n,m,n,m,k} % array of string number of nodes per layer
+    \readlist\Cstr{\strut x,\sigma,\sigma,\sigma,\hat{u}} % array of coefficient symbol per layer
+    \def\yshift{0.5} % shift last node for dots
+    
+    \message{^^J  Layer}
+    \foreachitem \N \in \Nnod{ % loop over layers
+      \def\lay{\Ncnt} % alias of index of current layer
+      \pgfmathsetmacro\prev{int(\Ncnt-1)} % number of previous layer
+      \message{\lay,}
+      \foreach \i [evaluate={\c=int(\i==\N); \y=\N/2-\i-\c*\yshift;
+                   \index=(\i<\N?int(\i):"\Nstr[\lay]");
+                   \x=\lay; \n=\nstyle; \luis=int(\i) }] in {1,...,\N}{ % loop over nodes
+        
         \ifnum\lay=1
-            \ifnum\i=1
-                \node[node \n] (N\lay-\i) at (\x,\y) {$x$};
+            \ifnum\luis=1
+                \node[node \n] (N\lay-\luis) at (\x,\y) {$x$};
             \else
-                \node[node 1] (N\lay-\i) at (\x,\y) {$t$};
+                \node[node 1] (N\lay-\luis) at (\x,\y) {$t$};
             \fi
         \else   
             \node[node \n] (N\lay-\i) at (\x,\y) {$\Cstr[\lay]_{\index}$};
         \fi
-
+  
         % CONNECTIONS
         \ifnum\lay>1 % connect to previous layer
-            \foreach \j in {1,...,\Nnod[\prev]}{ % loop over nodes in previous layer
+          \foreach \j in {1,...,\Nnod[\prev]}{ % loop over nodes in previous layer
             \draw[connect,white,line width=1.2] (N\prev-\j) -- (N\lay-\i);
             \draw[connect] (N\prev-\j) -- (N\lay-\i);
             %\draw[connect] (N\prev-\j.0) -- (N\lay-\i.180); % connect to left
-            }
+          }
         \fi % else: nothing to connect first layer
-      
+        
+      }
+      \ifnum\N>2
+       \path (N\lay-\N) --++ (0,1+\yshift) node[midway,scale=1.5] {$\vdots$};
+      \fi
     }
-  }
+  
   
   % LABELS
   \node[above=5,align=center,mygreen!60!black] at (N1-1.90) {Entrada};

@@ -78,10 +78,11 @@ else:
     exit(0)
 
 from mpi4py import MPI
+from petsc4py import PETSc
 
 # +
 import numpy as np
-
+# mypy: ignore-errors
 import ufl
 from dolfinx import fem, io, mesh, plot
 from dolfinx.fem.petsc import LinearProblem
@@ -125,6 +126,8 @@ facets = mesh.locate_entities_boundary(
     dim=(msh.topology.dim - 1),
     marker=lambda x: np.isclose(x[0], 0.0) | np.isclose(x[0], 2.0),
 )
+boundary_facets = mesh.locate_entities_boundary(
+    msh, (msh.topology.dim - 1), lambda x: np.full(x.shape[1], True, dtype=bool))
 
 # We now find the degrees-of-freedom that are associated with the
 # boundary facets using {py:func}`locate_dofs_topological
@@ -136,7 +139,7 @@ dofs = fem.locate_dofs_topological(V=V, entity_dim=1, entities=facets)
 # {py:class}`DirichletBC <dolfinx.fem.DirichletBC>` class that
 # represents the boundary condition:
 
-bc = fem.dirichletbc(value=ScalarType(0), dofs=dofs, V=V)
+bc = fem.dirichletbc(PETSc.ScalarType(0), dofs=dofs, V=V)
 
 # Next, the variational problem is defined:
 
