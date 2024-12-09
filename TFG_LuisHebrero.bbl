@@ -1,0 +1,281 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{nty/global//global/global}
+  \entry{aikawa2024improving}{article}{}
+    \name{author}{3}{}{%
+      {{hash=AY}{%
+         family={Aikawa},
+         familyi={A\bibinitperiod},
+         given={Yuri},
+         giveni={Y\bibinitperiod},
+      }}%
+      {{hash=UN}{%
+         family={Ueda},
+         familyi={U\bibinitperiod},
+         given={Naonori},
+         giveni={N\bibinitperiod},
+      }}%
+      {{hash=TT}{%
+         family={Tanaka},
+         familyi={T\bibinitperiod},
+         given={Toshiyuki},
+         giveni={T\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{AYUNTT1}
+    \strng{fullhash}{AYUNTT1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \field{pages}{1\bibrangedash 22}
+    \field{title}{Improving the efficiency of training physics-informed neural networks using active learning}
+    \field{journaltitle}{New Generation Computing}
+    \field{year}{2024}
+  \endentry
+
+  \entry{hou2023enhancing}{article}{}
+    \name{author}{3}{}{%
+      {{hash=HJ}{%
+         family={Hou},
+         familyi={H\bibinitperiod},
+         given={Jie},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=LY}{%
+         family={Li},
+         familyi={L\bibinitperiod},
+         given={Ying},
+         giveni={Y\bibinitperiod},
+      }}%
+      {{hash=YS}{%
+         family={Ying},
+         familyi={Y\bibinitperiod},
+         given={Shihui},
+         giveni={S\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{HJLYYS1}
+    \strng{fullhash}{HJLYYS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{H}
+    \field{sortinithash}{H}
+    \field{number}{16}
+    \field{pages}{15233\bibrangedash 15261}
+    \field{title}{Enhancing PINNs for solving PDEs via adaptive collocation point movement and adaptive loss weighting}
+    \field{volume}{111}
+    \field{journaltitle}{Nonlinear Dynamics}
+    \field{year}{2023}
+  \endentry
+
+  \entry{krishnapriyan2021characterizingpossiblefailuremodes}{misc}{}
+    \name{author}{5}{}{%
+      {{hash=KAS}{%
+         family={Krishnapriyan},
+         familyi={K\bibinitperiod},
+         given={Aditi\bibnamedelima S.},
+         giveni={A\bibinitperiod\bibinitdelim S\bibinitperiod},
+      }}%
+      {{hash=GA}{%
+         family={Gholami},
+         familyi={G\bibinitperiod},
+         given={Amir},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=ZS}{%
+         family={Zhe},
+         familyi={Z\bibinitperiod},
+         given={Shandian},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=KRM}{%
+         family={Kirby},
+         familyi={K\bibinitperiod},
+         given={Robert\bibnamedelima M.},
+         giveni={R\bibinitperiod\bibinitdelim M\bibinitperiod},
+      }}%
+      {{hash=MMW}{%
+         family={Mahoney},
+         familyi={M\bibinitperiod},
+         given={Michael\bibnamedelima W.},
+         giveni={M\bibinitperiod\bibinitdelim W\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{KAS+1}
+    \strng{fullhash}{KASGAZSKRMMMW1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{K}
+    \field{sortinithash}{K}
+    \verb{eprint}
+    \verb 2109.01050
+    \endverb
+    \field{title}{Characterizing possible failure modes in physics-informed neural networks}
+    \verb{url}
+    \verb https://arxiv.org/abs/2109.01050
+    \endverb
+    \field{eprinttype}{arXiv}
+    \field{eprintclass}{cs.LG}
+    \field{year}{2021}
+  \endentry
+
+  \entry{matsubara2023goodlatticetrainingphysicsinformed}{misc}{}
+    \name{author}{2}{}{%
+      {{hash=MT}{%
+         family={Matsubara},
+         familyi={M\bibinitperiod},
+         given={Takashi},
+         giveni={T\bibinitperiod},
+      }}%
+      {{hash=YT}{%
+         family={Yaguchi},
+         familyi={Y\bibinitperiod},
+         given={Takaharu},
+         giveni={T\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{MTYT1}
+    \strng{fullhash}{MTYT1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{M}
+    \field{sortinithash}{M}
+    \verb{eprint}
+    \verb 2307.13869
+    \endverb
+    \field{title}{Good Lattice Training: Physics-Informed Neural Networks Accelerated by Number Theory}
+    \verb{url}
+    \verb https://arxiv.org/abs/2307.13869
+    \endverb
+    \field{eprinttype}{arXiv}
+    \field{eprintclass}{cs.LG}
+    \field{year}{2023}
+  \endentry
+
+  \entry{münzer2022curriculumtrainingbasedstrategydistributingcollocation}{misc}{}
+    \name{author}{2}{}{%
+      {{hash=MM}{%
+         family={Münzer},
+         familyi={M\bibinitperiod},
+         given={Marcus},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=BC}{%
+         family={Bard},
+         familyi={B\bibinitperiod},
+         given={Chris},
+         giveni={C\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{MMBC1}
+    \strng{fullhash}{MMBC1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{M}
+    \field{sortinithash}{M}
+    \verb{eprint}
+    \verb 2211.11396
+    \endverb
+    \field{title}{A Curriculum-Training-Based Strategy for Distributing Collocation Points during Physics-Informed Neural Network Training}
+    \verb{url}
+    \verb https://arxiv.org/abs/2211.11396
+    \endverb
+    \field{eprinttype}{arXiv}
+    \field{eprintclass}{cs.LG}
+    \field{year}{2022}
+  \endentry
+
+  \entry{pinkus1999approximation}{article}{}
+    \name{author}{1}{}{%
+      {{hash=PA}{%
+         family={Pinkus},
+         familyi={P\bibinitperiod},
+         given={Allan},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Cambridge University Press}%
+    }
+    \strng{namehash}{PA1}
+    \strng{fullhash}{PA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{P}
+    \field{sortinithash}{P}
+    \field{pages}{143\bibrangedash 195}
+    \field{title}{Approximation theory of the MLP model in neural networks}
+    \field{volume}{8}
+    \field{journaltitle}{Acta numerica}
+    \field{year}{1999}
+  \endentry
+
+  \entry{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}{misc}{}
+    \name{author}{4}{}{%
+      {{hash=SS}{%
+         family={Subramanian},
+         familyi={S\bibinitperiod},
+         given={Shashank},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=KRM}{%
+         family={Kirby},
+         familyi={K\bibinitperiod},
+         given={Robert\bibnamedelima M.},
+         giveni={R\bibinitperiod\bibinitdelim M\bibinitperiod},
+      }}%
+      {{hash=MMW}{%
+         family={Mahoney},
+         familyi={M\bibinitperiod},
+         given={Michael\bibnamedelima W.},
+         giveni={M\bibinitperiod\bibinitdelim W\bibinitperiod},
+      }}%
+      {{hash=GA}{%
+         family={Gholami},
+         familyi={G\bibinitperiod},
+         given={Amir},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{SS+1}
+    \strng{fullhash}{SSKRMMMWGA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{S}
+    \field{sortinithash}{S}
+    \verb{eprint}
+    \verb 2207.04084
+    \endverb
+    \field{title}{Adaptive Self-supervision Algorithms for Physics-informed Neural Networks}
+    \verb{url}
+    \verb https://arxiv.org/abs/2207.04084
+    \endverb
+    \field{eprinttype}{arXiv}
+    \field{eprintclass}{cs.LG}
+    \field{year}{2022}
+  \endentry
+\enddatalist
+\endinput

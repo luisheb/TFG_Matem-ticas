@@ -12,6 +12,9 @@
 \usepackage{algorithm}
 \usepackage{mdframed}
 \usepackage{marginnote}
+\usepackage[backend=bibtex, style=numeric]{biblatex} 
+\addbibresource{references.bib} % Link to your .bib file
+
 
 \mdfsetup{%
 linecolor=white,
@@ -169,7 +172,7 @@ Claramente, una función lineal definida de forma global puede estar muy lejos d
 
 Esta función tiene la ventaja de que su derivada es fácil de calcular, y es precisamente esta derivada la que se utiliza en el algoritmo de entrenamiento de la red neuronal.
 
-Un resultado relevante para justificar el uso de funciones de activación no lineales es el siguiente es el propuesto por Pinkus \cite[Theorem 3.1]{Pinkus}. Este resultado es para redes neuronales de una sola capa.
+Un resultado relevante para justificar el uso de funciones de activación no lineales es el siguiente es el propuesto por Pinkus \cite[Theorem 3.1]{pinkus1999approximation}. Este resultado es para redes neuronales de una sola capa.
 
 \begin{teor}[Pinkus]
     Sea $\sigma\in C(\mathbb{R})$ y sea conjunto $\mathcal{M}(\sigma) = \text{span}\{\sigma(w\cdot x + b): b \in \mathbb{R}, w \in \mathbb{R}^n\}$, se cumple que
@@ -438,18 +441,83 @@ Con condición de frontera $u(\mathbf{x}) = g(\mathbf{x})$ en $\partial \Omega$.
 \begin{equation}
     \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
 \end{equation}
-donde
+donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un término u otro y
 \begin{align}
     \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| f\left( \mathbf{x}; \frac{\partial \hat{u}}{\partial x_1}, \ldots, \frac{\partial \hat{u}}{\partial x_d}, \frac{\partial^2 \hat{u}}{\partial x_1^2}, \ldots, \frac{\partial^2 \hat{u}}{\partial x_1 \partial x_d}, \ldots; \lambda \right) \right\|_2^2, \\
     \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| B(\hat{u}, \mathbf{x}) \right\|_2^2,
 \end{align}
 
-En estas ecuaciones, $\mathcal{T}_f$ y $\mathcal{T}_b$ son conjuntos de puntos en los que se evaluarán las funciones de coste, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$. En el caso de $\mathcal{L}_f$, se evaluará en puntos del dominio pues $\mathcal{T}_f\subset\Omega$, mientras que en $\mathcal{L}_b$ se evaluará en puntos de la frontera, pues $\mathcal{T}_f\subset\partial\Omega$. Obviamente, estos conjuntos son necesarios pues a nivel computacional, calcular estas funciones coste, con derivadas parciales e integrales es muy costoso y en algunos casos imposible. Por otro lado, $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un término u otro. 
+En estas ecuaciones, $\mathcal{T}_f$ y $\mathcal{T}_b$ son conjuntos de puntos en los que se evaluarán las funciones de coste, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$, conocidos como puntos de colocación o ``collocation points''. En el caso de $\mathcal{L}_f$, se evaluará en puntos del dominio pues $\mathcal{T}_f\subset\Omega$, mientras que en $\mathcal{L}_b$ se evaluará en puntos de la frontera, pues $\mathcal{T}_f\subset\partial\Omega$. Obviamente, estos conjuntos son necesarios pues a nivel computacional es imposible calcular derivadas e integrales en un espacio continuo. Existe mucha literatura sobre como tomar estos puntos pues, al igual que en FEM la malla impacta el resultado, en las PINN, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
 
-Una de las ventajas principales de las PINN es que 
-    
+Dada la función de coste definida y la distribución de los puntos de colocación, el entrenamiento de la red neuronal se reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. Estos permiten ajustar iterativamente los parámetros de la red para aproximar la solución $\hat{u}$ a la ecuación en derivadas parciales y a las condiciones asociadas (iniciales y de contorno).
 
-\subsection{Limitaciones de las PINN}
+Una ventaja fundamental del uso de redes neuronales en este contexto es la diferenciación automática, una técnica numérica muy potente que facilita la obtención de las derivadas de $\hat{u}$ con respecto a sus entradas de forma exacta y eficiente. Este mecanismo elimina la necesidad de derivaciones simbólicas o aproximaciones numéricas de las derivadas, lo que simplifica significativamente el cálculo de las derivadas necesarias para formular la función de coste, tanto a nivel del término de residuo interno de la EDP como en los términos asociados a las condiciones de frontera o iniciales.
+
+A continuación, vamos a ver dos ejemplos para ver como se aplican las PINN a problemas concretos.
+
+\begin{mdframed}
+    \begin{exmp}
+        
+        Resolveremos una ecuación de calor:
+        \begin{equation*}
+        \frac{\partial u}{\partial t} = \alpha \frac{\partial^2 u}{\partial x^2}, \quad x \in [0, 1], \quad t \in [0, 1]
+        \end{equation*}
+        donde \(\alpha = 0.4\) es la constante de difusividad térmica. Con condiciones de frontera de Dirichlet:
+        \begin{equation*}
+        u(0, t) = u(1, t) = 0,
+        \end{equation*}
+        y condición inicial periódica (sinusoidal):
+        \begin{equation*}
+        u(x, 0) = \sin\left(\frac{n \pi x}{L}\right), \quad 0 < x < L, \quad n = 1, 2, \ldots
+        \end{equation*}
+        donde \(L = 1\) es la longitud de la barra y \(n = 1\) es la frecuencia de la condición inicial sinusoidal.
+        Para este problema, sabemos que la solución exacta es:
+        \begin{equation*}
+        u(x, t) = e^{-\frac{n^2 \pi^2 \alpha t}{L^2}} \sin\left(\frac{n \pi x}{L}\right).
+        \end{equation*}
+        Que si la vemos de forma gráfica, obtenemos la Figura \ref{fig:calor_exacta}.
+        \begin{figure}[H] 
+            \centering
+            \includegraphics[width=0.5\textwidth]{Figuras/calor_exacta.png}
+            \caption{Solución de la ecuación de calor}
+            \label{fig:calor_exacta}
+        \end{figure}
+        Si nos ayudamos de la librería DeepXDE, podemos programar la red neuronal y entrenarla para que aproxime la solución de la ecuación de calor. El resultado obtenido es el obtenido en la Figura \ref{fig:calor_estimacion}.
+        \begin{figure}[H] 
+            \centering
+            \includegraphics[width=0.5\textwidth]{Figuras/calor_estimacion.png}
+            \caption{Aproximación de la solución de la ecuación de calor}
+            \label{fig:calor_estimacion}
+        \end{figure}
+
+    \end{exmp}
+\end{mdframed}
+
+No obstante, las PINN pueden presentar errores elevados incluso en sistemas físicos relativamente simples. El problema, según se diagnostica en \cite{krishnapriyan2021characterizingpossiblefailuremodes} radica en el uso de restricciones demasiado suaves en $\mathcal{L}$, lo cual provoca que la función de perdida sea difícil de optimizar. A continuación, vemos uno de los ejemplos que presentan en el paper en los que las PINN fallan.
+
+\begin{mdframed}
+    \begin{exmp}
+        Consideremos la ecuación de Poisson en una dimensión, con condiciones de frontera de Dirichlet homogéneas. Es decir, queremos encontrar $u(x)$ tal que
+        \begin{equation}
+            \begin{cases}
+                -\frac{d^2 u}{dx^2} = f(x), & x\in(0,1),\\
+                u(0) = u(1) = 0.
+            \end{cases}
+        \end{equation}
+        Para resolver este problema con una PINN, se puede definir la función de coste como
+        \begin{equation}
+            \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
+        \end{equation}
+        donde
+        \begin{align}
+            \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{x \in \mathcal{T}_f} \left\| -\frac{d^2 \hat{u}}{dx^2} - f(x) \right\|_2^2, \\
+            \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{x \in \mathcal{T}_b} \left\| \hat{u}(x) \right\|_2^2.
+        \end{align}
+        En este caso, $\mathcal{T}_f$ y $\mathcal{T}_b$ serán conjuntos de puntos en los que se evaluarán las funciones de coste, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$. Para entrenar la red neuronal, se resolverá un problema de optimización para encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$.
+    \end{exmp}
+\end{mdframed}
+
+Esta dificultad para aproximar soluciones de EDPs elípticas con PINN se debe a que las redes neuronales no son capaces de aproximar correctamente las condiciones de frontera. Para solucionar este problema, se han propuesto diferentes técnicas, como la inclusión de términos de regularización en la función de coste o la utilización de redes neuronales con arquitecturas específicas. No ob
 
 \section{El ``Deep Ritz Method''}
 
@@ -589,25 +657,7 @@ Para pasar de forma fuerte a débil, lo que hacemos es seguir el siguiente proce
     \item Por último, nótese que $C^\infty_0(\Omega) \subset H^1_0(\Omega)$, luego se puede ver que teniendo $u,v\in H^1_0(\Omega)$, nuestra ecuación sigue teniendo sentido. Con todo esto, surge la siguiente definición de forma débil.
 \end{enumerate}
 
-\begin{thebibliography}{10}
-\addcontentsline{toc}{chapter}{\bibname}
-
-\bibitem{Abel} 
-    \textsc{Abel, N.\,H.}: 
-    Beweis eines Ausdrucks, von welchem die Binomial-Formel ein einzelner Fall ist. 
-    \textit{J. Reine angew. Math.} {\bf1} (1826), 159--160.
-
-\bibitem{S-W}
-    \textsc{Stein, E.\,M. and Weiss, G.}
-    \textit{Introduction to  Fourier analysis on Euclidean spaces.}
-    Princeton Mathematical Series~32, Princeton University Press, Princeton, NJ, 1971.
-
-\bibitem{Pinkus}
-    \textsc{Pinkus, A.}:
-    \textit{Approximation theory of the MLP model in neural networks.}
-    Acta Numerica, 8, (1999) 143--195.
-    
-\end{thebibliography}
+\printbibliography
 \cleardoublepage
 
 

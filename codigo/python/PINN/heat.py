@@ -1,6 +1,9 @@
 """Backend supported: tensorflow.compat.v1, tensorflow, pytorch, paddle"""
 import deepxde as dde
 import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
 
 
 def heat_eq_exact_solution(x, t):
@@ -35,6 +38,33 @@ def gen_exact_solution():
 
     # Save solution:
     np.savez("heat_eq_data", x=x, t=t, usol=usol)
+
+def plot_exact_solution():
+    # Load the data
+    data = np.load("heat_eq_data.npz")
+    x = data['x']
+    t = data['t']
+    usol = data['usol']
+
+    # Create a meshgrid for plotting
+    X, T = np.meshgrid(x, t, indexing='ij')
+
+    # Plot the surface
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    surf = ax.plot_surface(X, T, usol, cmap='viridis')
+
+    # Add labels and title
+    ax.set_xlabel('x')
+    ax.set_ylabel('t')
+    ax.set_zlabel('u(x,t)')
+    ax.set_title('Solución exacta de la ecuación del calor')
+
+    # Add a color bar
+    fig.colorbar(surf)
+
+    # Show the plot
+    plt.show()
 
 
 def gen_testdata():
@@ -97,6 +127,8 @@ model.compile("adam", lr=1e-3)
 model.train(iterations=20000)
 model.compile("L-BFGS")
 losshistory, train_state = model.train()
+
+print(train_state)
 
 # Plot/print the results
 dde.saveplot(losshistory, train_state, issave=True, isplot=True)
