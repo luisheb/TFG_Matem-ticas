@@ -438,20 +438,20 @@ Consideramos una EDP parametrizada por $\lambda$, definida en función $u(\mathb
     f\left(\mathbf{x}; \frac{\partial u}{\partial x_1}, \ldots, \frac{\partial u}{\partial x_d}, \frac{\partial^2 u}{\partial x_1^2}, \ldots, \frac{\partial^2 u}{\partial x_1 \partial x_d}, \ldots; \lambda\right) = 0, \quad \mathbf{x} \in \Omega,
 \end{equation}
 Con condición de frontera $u(\mathbf{x}) = g(\mathbf{x})$ en $\partial \Omega$. Para poder construir y ajustar los pesos de la red neuronal es esencial tener una función de coste, es decir, una función que nos diga como de buena es nuestra aproximación. En el caso de las PINN, la función de coste se define como la suma de dos términos ajustados por unos pesos. El primero de ellos, se encarga de verificar la ecuación diferencial, es decir, que la función red neuronal aproxima la ecuación diferencial en todo el dominio. El segundo término, se encarga de verificar las condiciones de frontera e iniciales.
-\begin{equation}
+\begin{equation} \label{eq:L_PINN}
     \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
 \end{equation}
 donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un término u otro y
 \begin{align}
-    \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| f\left( \mathbf{x}; \frac{\partial \hat{u}}{\partial x_1}, \ldots, \frac{\partial \hat{u}}{\partial x_d}, \frac{\partial^2 \hat{u}}{\partial x_1^2}, \ldots, \frac{\partial^2 \hat{u}}{\partial x_1 \partial x_d}, \ldots; \lambda \right) \right\|_2^2, \\
+    \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| f\left( \mathbf{x}; \frac{\partial \hat{u}}{\partial x_1}, \ldots, \frac{\partial \hat{u}}{\partial x_d}, \frac{\partial^2 \hat{u}}{\partial x_1^2}, \ldots, \frac{\partial^2 \hat{u}}{\partial x_1 \partial x_d}, \ldots; \lambda \right) \right\|_2^2, \\ 
     \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| B(\hat{u}, \mathbf{x}) \right\|_2^2,
 \end{align}
 
 En estas ecuaciones, $\mathcal{T}_f$ y $\mathcal{T}_b$ son conjuntos de puntos en los que se evaluarán las funciones de coste, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$, conocidos como puntos de colocación o ``collocation points''. En el caso de $\mathcal{L}_f$, se evaluará en puntos del dominio pues $\mathcal{T}_f\subset\Omega$, mientras que en $\mathcal{L}_b$ se evaluará en puntos de la frontera, pues $\mathcal{T}_f\subset\partial\Omega$. Obviamente, estos conjuntos son necesarios pues a nivel computacional es imposible calcular derivadas e integrales en un espacio continuo. Existe mucha literatura sobre como tomar estos puntos pues, al igual que en FEM la malla impacta el resultado, en las PINN, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
 
-Dada la función de coste definida y la distribución de los puntos de colocación, el entrenamiento de la red neuronal se reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. Estos permiten ajustar iterativamente los parámetros de la red para aproximar la solución $\hat{u}$ a la ecuación en derivadas parciales y a las condiciones asociadas (iniciales y de contorno).
+Dada la función de coste definida y la distribución de los puntos de colocación, el entrenamiento de la red neuronal se reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. 
 
-Una ventaja fundamental del uso de redes neuronales en este contexto es la diferenciación automática, una técnica numérica muy potente que facilita la obtención de las derivadas de $\hat{u}$ con respecto a sus entradas de forma exacta y eficiente. Este mecanismo elimina la necesidad de derivaciones simbólicas o aproximaciones numéricas de las derivadas, lo que simplifica significativamente el cálculo de las derivadas necesarias para formular la función de coste, tanto a nivel del término de residuo interno de la EDP como en los términos asociados a las condiciones de frontera o iniciales.
+Una ventaja fundamental del uso de redes neuronales en este contexto es la diferenciación automática, una técnica numérica muy potente que facilita la obtención de las derivadas de $\hat{u}$ con respecto a sus entradas de forma exacta y eficiente.
 
 A continuación, vamos a ver dos ejemplos para ver como se aplican las PINN a problemas concretos.
 
@@ -493,33 +493,53 @@ A continuación, vamos a ver dos ejemplos para ver como se aplican las PINN a pr
     \end{exmp}
 \end{mdframed}
 
-No obstante, las PINN pueden presentar errores elevados incluso en sistemas físicos relativamente simples. El problema, según se diagnostica en \cite{krishnapriyan2021characterizingpossiblefailuremodes} radica en el uso de restricciones demasiado suaves en $\mathcal{L}$, lo cual provoca que la función de perdida sea difícil de optimizar. A continuación, vemos uno de los ejemplos que presentan en Xu et al. en los que las PINN fallan.
+No obstante, las PINN pueden presentar errores elevados incluso en sistemas físicos relativamente simples. El problema, según se diagnostican Xu et al. en \cite{krishnapriyan2021characterizingpossiblefailuremodes} radica en el uso de restricciones demasiado suaves en $\mathcal{L}$, lo cual provoca que la función de perdida sea difícil de optimizar. A continuación, vemos uno de los ejemplos que presentan en Xu et al. en los que las PINN fallan.
 
 \begin{mdframed}
     \begin{exmp}
-        Consideremos la ecuación de Poisson en una dimensión, con condiciones de frontera de Dirichlet homogéneas. Es decir, queremos encontrar $u(x)$ tal que
-        \begin{equation}
-            \begin{cases}
-                -\frac{d^2 u}{dx^2} = f(x), & x\in(0,1),\\
-                u(0) = u(1) = 0.
-            \end{cases}
-        \end{equation}
-        Para resolver este problema con una PINN, se puede definir la función de coste como
-        \begin{equation}
-            \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
-        \end{equation}
-        donde
-        \begin{align}
-            \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{x \in \mathcal{T}_f} \left\| -\frac{d^2 \hat{u}}{dx^2} - f(x) \right\|_2^2, \\
-            \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{x \in \mathcal{T}_b} \left\| \hat{u}(x) \right\|_2^2.
-        \end{align}
-        En este caso, $\mathcal{T}_f$ y $\mathcal{T}_b$ serán conjuntos de puntos en los que se evaluarán las funciones de coste, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$. Para entrenar la red neuronal, se resolverá un problema de optimización para encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$.
+        Consideramos un problema de convección unidimensional, una EDP hiperbólica:
+        \begin{equation*}
+            \frac{\partial u}{\partial t} + \beta \frac{\partial u}{\partial x} = 0, \quad x \in \Omega, \; t \in [0, T],
+        \end{equation*}
+        \begin{equation*}
+            u(x, 0) = h(x), \quad x \in \Omega.
+        \end{equation*}
+        Aquí, $\beta$ es el coeficiente de convección y $h(x)$ es la condición inicial. Para un $\beta$ constante y condiciones de contorno periódicas, este problema tiene una solución analítica simple:
+        \begin{equation*}
+            u_{\text{analytical}}(x, t) = \mathcal{F}^{-1} \big( \mathcal{F}(h(x)) e^{-i k \beta t} \big),
+        \end{equation*}
+        donde $\mathcal{F}$ es la transformada de Fourier, $i = \sqrt{-1}$ y $k$ denota la frecuencia en el dominio de Fourier. La función de pérdida general para este problema (correspondiente a la Ecuación \eqref{eq:L_PINN}) es
+        \begin{equation*}
+            \mathcal{L}(\theta) = \frac{1}{N_u} \sum_{i=1}^{N_u} \left( \hat{u} - u^0_i \right)^2 
+            + \frac{1}{N_f} \sum_{i=1}^{N_f} \lambda_i \left( \frac{\partial \hat{u}}{\partial t} + \beta \frac{\partial \hat{u}}{\partial x} \right)^2 + \mathcal{L}_B,
+        \end{equation*}
+        donde $\hat{u}$ es la salida de la red neuronal, y $\mathcal{L}_B$ es la pérdida de contorno. Para condiciones de contorno periódicas con $\Omega = [0, 2\pi]$, esta pérdida es:
+        \begin{equation*}
+            \mathcal{L}_B = \frac{1}{N_B} \sum_{i=1}^{N_B} \left( \hat{u}(\theta, 0, t) - \hat{u}(\theta, 2\pi, t) \right)^2.
+        \end{equation*}
+        Usamos las siguientes condiciones iniciales y de contorno periódico simples:
+        \begin{align*}
+            u(x, 0) = \sin(x),\\
+            u(0, t) = u(2\pi, t).
+        \end{align*}
+        Si usamos la librería propuesta por Xu et al. en el Repositorio \cite{c2021failure} para resolver este problema, obtenemos la aproximación se puede ver en la Figura \ref{fig:error_PINN_temporal}. En esta, se puede observar que la aproximación y la solución exacta no coinciden y además, el error es muy elevado para $\beta > 1$.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.9\textwidth]{Figuras/error_PINN_temporal.png}
+            \caption{Solución de la ecuación de convección}
+            \label{fig:error_PINN_temporal}
+        \end{figure}
+
     \end{exmp}
 \end{mdframed}
 
-Esta dificultad para aproximar soluciones de EDPs elípticas con PINN se debe a que las redes neuronales no son capaces de aproximar correctamente las condiciones de frontera. Para solucionar este problema, se han propuesto diferentes técnicas, como la inclusión de términos de regularización en la función de coste o la utilización de redes neuronales con arquitecturas específicas. No ob
+Con esto, vemos que pese a que las PINN muestran buenos resultados en muchos problemas, en otros, presentan errores elevados. El problema principal radica en la formulación fuerte de las ecuaciones diferenciales, la cual exige que la red neuronal se ajuste a la solución exacta en todos los puntos del dominio. Este enfoque puede ser demasiado restrictivo y dificultar la optimización de la función de coste. 
+
+
 
 \section{El ``Deep Ritz Method''}
+
+El método ``Deep Ritz'' es una técnica numérica basada en las redes neuronales, que busca encontrar una solución a una ecuación en derivadas parciales utilizando su forma débil. Este método es más coherente con la formulación matemática del problema, y evita las restricciones demasiado fuertes que presentan las PINN.
 
 \chapter{Resultados}\label{chap3}
 
