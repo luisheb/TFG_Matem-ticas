@@ -194,16 +194,16 @@ En este trabajo nos vamos a centrar en las ecuaciones en derivadas parciales el�
         -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad x\in\Omega.
     \end{equation}
     Donde los coeficientes $a_{ij}(x)$, $b_i(x)$, $c(x)$ y $f$ son funciones que satisfacen las siguientes condiciones
-\begin{align}
-    a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n \label{eq:condiciones_EDP_eliptica_a} \\
-    b_i, c \in C(\overline{\Omega}),& \qquad i = 1, \dots ,n \\
-    c \in C(\overline{\Omega}),& \\
-    f\in C(\overline{\Omega})&\label{eq:condiciones_EDP_eliptica_f}
-\end{align}
-Además, se cumples las condiciones de elipticidad uniforme, es decir
-\begin{equation}
-    \sum_{i,j=1}^n a_{ij}(x) \xi_i \xi_j \geq c_0 \sum_{i=1}^n \xi_i^2, \quad \forall \xi = (\xi_1, \ldots, \xi_n) \in \mathbb{R}^n, \quad x \in \overline{\Omega};
-\end{equation}
+    \begin{align}
+        a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n \label{eq:condiciones_EDP_eliptica_a} \\
+        b_i, c \in C(\overline{\Omega}),& \qquad i = 1, \dots ,n \\
+        c \in C(\overline{\Omega}),& \\
+        f\in C(\overline{\Omega})&\label{eq:condiciones_EDP_eliptica_f}
+    \end{align}
+    y además cumplen la condicione de elipticidad uniforme, es decir
+    \begin{equation}
+        \sum_{i,j=1}^n a_{ij}(x) \xi_i \xi_j \geq c_0 \sum_{i=1}^n \xi_i^2, \quad \forall \xi = (\xi_1, \ldots, \xi_n) \in \mathbb{R}^n, \quad x \in \overline{\Omega};
+    \end{equation}
 \end{defin}
 \end{mdframed}
 
@@ -227,8 +227,7 @@ En la formulación que hemos dado de las ecuaciones en derivadas parciales elíp
 \end{defin}
 \end{mdframed}
     
-Así, el espacio $H_0^1(\Omega)$ es el cierre de las funciones de $C_0^\infty(\Omega)$ en la norma de $H^1(\Omega)$. Es decir, $H_0^1(\Omega)$ es el conjunto de funciones $u\in H^1(\Omega)$ que se obtienen como límite en $H^1(\Omega)$ de una serie de funciones $\{u_m\}_{m=1}^\infty$ todas ellas en $C_0^\infty(\Omega)$. Así, si $\partial\Omega$ es suficientemente regular, $H_0^1(\Omega)$ es el siguiente conjunto.
-    
+Así, el espacio $H_0^1(\Omega)$ es el cierre de las funciones de $C_0^\infty(\Omega)$ en la norma de $H^1(\Omega)$. Es decir, $H_0^1(\Omega)$ es el conjunto de funciones $u\in H^1(\Omega)$ que se obtienen como límite en $H^1(\Omega)$ de una serie de funciones $\{u_m\}_{m=1}^\infty$ todas ellas en $C_0^\infty(\Omega)$. De este modo, si $\partial\Omega$ es suficientemente regular, $H_0^1(\Omega)$ es el siguiente conjunto.
 \begin{equation}
     H_0^1(\Omega)=\{u\in H^1(\Omega): u=0 \text{ en } \partial\Omega\}.
 \end{equation}
@@ -236,7 +235,7 @@ Así, el espacio $H_0^1(\Omega)$ es el cierre de las funciones de $C_0^\infty(\O
 Con esto, podemos definir la solución débil de una ecuación en derivadas parciales elíptica de la siguiente forma.
 \begin{mdframed}
 \begin{defin}\label{def:SolucionDebil}
-    Dadas las funciones $a_{ij} \in L^\infty(\Omega), \, i,j = 1,\dots, n, \, b_i \in L^\infty(\Omega), i= 1, \dots, n, \, c\in L^\infty(\Omega)$, y la función $f\in L^2(\Omega)$. Decimos que la función $u\in H^1_0(\Omega)$ es una solución débil de la ecuación \eqref{eq:EDP_eliptica} si se cumples que, 
+    Dadas las funciones $a_{ij} \in L^\infty(\Omega), \, i,j = 1,\dots, n, \, b_i \in L^\infty(\Omega), i= 1, \dots, n, \, c\in L^\infty(\Omega)$, y la función $f\in L^2(\Omega)$. Decimos que la función $u\in H^1_0(\Omega)$ es una solución débil de la ecuación \eqref{eq:EDP_eliptica} si se cumple que, 
     \begin{equation}\label{eq:SolucionDebil}
         \begin{split}
             \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  \\+ \int_\Omega c(x)u \varphi \,dx = \int_\Omega f(x)\varphi(x) dx, \qquad \forall \varphi \in H^1_0(\Omega).
@@ -255,7 +254,6 @@ y,
 \end{equation}
 
 De este modo, nuestro problema elíptico en forma debil se puede expresar de la siguiente forma.
-
 \begin{equation}
     a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H^1_0(\Omega).
 \end{equation}
@@ -297,7 +295,6 @@ Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdom
     \end{tikzpicture}
     \caption{División de $\Omega = (0,1)$ en $N$ elementos finitos}
 \end{figure}
-
 A esta subdivision, se le asocia una base de polinomios a trozos. Así, se reemplaza el subespacio de funciones que habíamos llamado $V$ por un subespacio de dimensión finita $V_h$ formado por polinomios a trozos  de grado fijo. Siguiendo nuestro ejemplo de antes, la base de polinomios que vamos a utilizar será la de los polinomios como los vistos en la Figura \ref{fig:BasePolinomios}. Definidos de la siguiente forma.
 \begin{equation*}
     \phi_i(x) = \begin{cases}
@@ -307,8 +304,7 @@ A esta subdivision, se le asocia una base de polinomios a trozos. Así, se reemp
     \end{cases} 
 \end{equation*}
 
-Así, en este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_N\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar los $u_h\in V_h$ tal que
-
+En este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_N\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar los $u_h\in V_h$ tal que
 \begin{figure}
     \centering
     \label{fig:BasePolinomios}
@@ -324,15 +320,13 @@ Así, en este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\p
     \end{tikzpicture}
     \caption{Polinomio $\phi_i$}
 \end{figure}
-
 \begin{equation*}
     a(u_h,v_h) = l(v_h) \quad \forall v_h\in V_h,
 \end{equation*}
 
-
 De forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones infinito, como es $V$, se busca una solución en un espacio de funciones finito, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños a partir de los cuales hemos construido nuestro nuevo espacio de funciones. 
 
-Al hacer esto, ahora, encontrar una solución se convierte en encontrar los coeficientes en la base de polinomios a trozos, es decir, los $U_i$ en la siguiente ecuación
+Ahora, encontrar una solución se convierte en encontrar los coeficientes en la base de polinomios a trozos, es decir, los $U_i$ en la siguiente ecuación
 \begin{equation}
     u_h = \sum_{i=1}^{N} U_i\phi_i.
 \end{equation}
