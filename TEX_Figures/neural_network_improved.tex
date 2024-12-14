@@ -40,7 +40,7 @@
 
 \begin{tikzpicture}[x=2.2cm,y=1.4cm]
     \message{^^JNeural network, shifted}
-    \readlist\Nnod{2,5,5,5,1} % array of number of nodes per layer
+    \readlist\Nnod{1,5,5,5,1} % array of number of nodes per layer
     \readlist\Nstr{n,m,n,m,} % array of string number of nodes per layer
     \readlist\Cstr{\strut x,\sigma,\sigma,\sigma,\hat{u}} % array of coefficient symbol per layer
     \def\yshift{0.5} % shift last node for dots
@@ -81,7 +81,7 @@
   
   
   % LABELS
-  \node[above=5,align=center,mygreen!60!black] at (N1-1.90) {Entrada};
+  \node[above=20,align=center,mygreen!60!black] at (N1-1.90) {Entrada};
   \node[above=2,align=center,myblue!60!black] at (N3-1.90) {Capas Ocultas};
   \node[above=10,align=center,myred!60!black] at (N\Nnodlen-1.90) {Salida};
   

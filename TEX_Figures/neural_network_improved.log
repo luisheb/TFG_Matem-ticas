@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.11.23)  8 DEC 2024 18:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.11.23)  14 DEC 2024 20:09
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -412,15 +412,15 @@ L3 programming layer <2024-01-22>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 14482 strings out of 476006
- 296048 string characters out of 5791059
- 1955975 words of memory out of 5000000
- 36250 multiletter control sequences out of 15000+600000
+ 14470 strings out of 476006
+ 295850 string characters out of 5791059
+ 1953975 words of memory out of 5000000
+ 36238 multiletter control sequences out of 15000+600000
  558523 words of font info for 38 fonts, out of 8000000 for 9000
  107 hyphenation exceptions out of 8191
  117i,7n,121p,483b,869s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb>
-Output written on neural_network_improved.pdf (1 page, 43260 bytes).
+Output written on neural_network_improved.pdf (1 page, 42891 bytes).
 PDF statistics:
  31 PDF objects out of 1000 (max. 8388607)
  19 compressed objects within 1 object stream

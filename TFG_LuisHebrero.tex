@@ -129,7 +129,7 @@ Para entender esto, vamos a utilizar la red neuronal de la Figura \ref{fig:RedNe
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.5\textwidth]{Figuras/pic_xy.png}
-    \caption{Puntos en el plano que marcan las dos categorías}
+    \caption{Puntos en el plano que marcan las tres categorías}
     \label{fig:Clasificacion}
 \end{figure}
 
@@ -148,7 +148,7 @@ Así, lo que queremos hacer es minimizar esta función, es decir, encontrar los 
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.5\textwidth]{Figuras/classifier_back.png}
-    \caption{Puntos en el plano que marcan las dos categorías}
+    \caption{Puntos en el plano que marcan las tres categorías}
     \label{fig:ClasificacionFinal}
 \end{figure}
 
@@ -165,25 +165,25 @@ Para poder lograr este objetivo, se necesitan las funciones de activación. Como
     F(x)=W^{[4]}(W^{[3]}(W^{[2]}x+b^{[2]})+b^{[3]})+b^{[4]}\in\mathbb{R}^3.
 \end{equation*}
 
-Claramente, una función lineal definida de forma global puede estar muy lejos de aproximar bien funciones generales. De este modo, parece por tanto razonables utilizar funciones de activación no lineales. La función sigmoide es una de las más utilizadas, pero existen otras como la función tangente hiperbólica o la función ReLU. En este trabajo, nos centraremos en la función sigmoide, que se define como
+Claramente, una función lineal definida de forma global puede estar muy lejos de aproximar bien funciones generales. De este modo, parece por tanto razonable utilizar funciones de activación no lineales. La función sigmoide es una de las más utilizadas, pero existen otras como la función tangente hiperbólica o la función ReLU. En este trabajo, nos centraremos en la función sigmoide, que se define como
 \begin{equation*}
     \sigma(x)=\frac{1}{1+e^{-x}}.
 \end{equation*}
 
 Esta función tiene la ventaja de que su derivada es fácil de calcular, y es precisamente esta derivada la que se utiliza en el algoritmo de entrenamiento de la red neuronal.
 
-Un resultado relevante para justificar el uso de funciones de activación no lineales es el siguiente es el propuesto por Pinkus \cite[Theorem 3.1]{pinkus1999approximation}. Este resultado es para redes neuronales de una sola capa.
+Un resultado relevante para justificar el uso de funciones de activación no lineales es el siguiente propuesto por Pinkus \cite[Theorem 3.1]{pinkus1999approximation}. Este resultado es para redes neuronales de una sola capa.
 
 \begin{teor}[Pinkus]
     Sea $\sigma\in C(\mathbb{R})$ y sea conjunto $\mathcal{M}(\sigma) = \text{span}\{\sigma(w\cdot x + b): b \in \mathbb{R}, w \in \mathbb{R}^n\}$, se cumple que
     
-    Para cualquier $f \in C(\mathbb{R}^n)$, cualquier conjunto compacto $K\in \mathbb{R}^n$ y cualquier $\epsilon > 0$, existe una función $g\in \mathcal{M}(\sigma)$ tal que $\max_{x\in K}|f(x)-g(x)|<\epsilon$. Si y solo si $\sigma$ no es una función polinómica.
+    Para cualquier $f \in C(\mathbb{R}^n)$, cualquier conjunto compacto $K\in \mathbb{R}^n$ y cualquier $\epsilon > 0$, existe una función $g\in \mathcal{M}(\sigma)$ tal que $\max_{x\in K}|f(x)-g(x)|<\epsilon$ si y solo si $\sigma$ no es una función polinómica.
 \end{teor}
 De forma más intuitiva, cualquier función $f \in C(\mathbb{R}^n)$, se puede aproximar tan bien como se quiera con una red neuronal de una sola capa si y solo si la función de activación no es polinómica.
 
 Este resultado nos aporta una intuición de por qué las funciones de activación no lineales son necesarias para aproximar funciones de forma general pues, de no ser funciones no lineales, habría muchas funciones que no podríamos aproximar. 
 
-\section{Conceptos preliminares sobre las ecuaciones en derivadas parciales}
+\section{Conceptos preliminares sobre las ecuaciones en derivadas parciales} \label{sec:EDPs}
 
 En este trabajo nos vamos a centrar en las ecuaciones en derivadas parciales elípticas, definidas con la siguiente forma general.
 
@@ -200,7 +200,7 @@ En este trabajo nos vamos a centrar en las ecuaciones en derivadas parciales el�
         c \in C(\overline{\Omega}),& \\
         f\in C(\overline{\Omega})&\label{eq:condiciones_EDP_eliptica_f}
     \end{align}
-    y además cumplen la condicione de elipticidad uniforme, es decir
+    y además cumplen la condición de elipticidad uniforme, es decir
     \begin{equation}
         \sum_{i,j=1}^n a_{ij}(x) \xi_i \xi_j \geq c_0 \sum_{i=1}^n \xi_i^2, \quad \forall \xi = (\xi_1, \ldots, \xi_n) \in \mathbb{R}^n, \quad x \in \overline{\Omega};
     \end{equation}
@@ -209,25 +209,25 @@ En este trabajo nos vamos a centrar en las ecuaciones en derivadas parciales el�
 
 Concretamente, a lo largo del trabajo, nos centraremos en problemas de condición de frontera de Dirichlet, es decir, problemas en los que se cumple que
 \begin{equation}
-    u(x) = c, \qquad \forall x\in\partial\Omega.
+    u(x) = g(x), \qquad \forall x\in\partial\Omega.
 \end{equation}
 
-En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en todo el dominio y que además cumpla las condiciones de frontera. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Este espacio de funciones es el espacio de Hilbert Sobolev. Para poder definirlo, primero veremos el espacio de Sobolev $H^1(\Omega)$.
+En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en todo el dominio y que además cumpla las condiciones de frontera. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. 
 
 \begin{mdframed}
 \begin{defin}
-    Seam $\Omega$ un conjunto abierto de $\mathbb{R}^n$. Definimos el espacio de Sobolev $H^1(\Omega)$ como el conjunto de funciones en el siguiente conjunto
+    Sea $\Omega$ un conjunto abierto de $\mathbb{R}^n$. Definimos el espacio de Sobolev $H^1(\Omega)$ como el conjunto de funciones en el siguiente conjunto
     \begin{equation}
         H^1(\Omega)=\{u\in L^2(\Omega): \frac{\partial u}{\partial x_i}\in L^2(\Omega), \, i=1,\dots,n\}.
     \end{equation}
-    En este espacio, se define la norma de funciones de con la siguiente ecuación
+    En este espacio, se define la siguiente norma
     \begin{equation}
         \|u\|_{H^1(\Omega)}=\left(\|u\|^2_{L^2(\Omega)} + \sum_{i=1}^{n}\left\|\frac{\partial u}{\partial x_i}\right\|^2_{L^2(\Omega)}\right)^{1/2}.
     \end{equation}
 \end{defin}
 \end{mdframed}
     
-Así, el espacio $H_0^1(\Omega)$ es el cierre de las funciones de $C_0^\infty(\Omega)$ en la norma de $H^1(\Omega)$. Es decir, $H_0^1(\Omega)$ es el conjunto de funciones $u\in H^1(\Omega)$ que se obtienen como límite en $H^1(\Omega)$ de una serie de funciones $\{u_m\}_{m=1}^\infty$ todas ellas en $C_0^\infty(\Omega)$. De este modo, si $\partial\Omega$ es suficientemente regular, $H_0^1(\Omega)$ es el siguiente conjunto.
+Definimos demás el espacio $H_0^1(\Omega)$. Este espacio es el cierre de las funciones de $C_0^\infty(\Omega)$ en la norma de $H^1(\Omega)$. Es decir, $H_0^1(\Omega)$ es el conjunto de funciones $u\in H^1(\Omega)$ que se obtienen como límite en $H^1(\Omega)$ de una serie de funciones $\{u_m\}_{m=1}^\infty$ todas ellas en $C_0^\infty(\Omega)$. De este modo, si $\partial\Omega$ es suficientemente regular, $H_0^1(\Omega)$ es el siguiente conjunto:
 \begin{equation}
     H_0^1(\Omega)=\{u\in H^1(\Omega): u=0 \text{ en } \partial\Omega\}.
 \end{equation}
@@ -248,12 +248,12 @@ Para simplificar esta engorrosa notación, nos interesa definir la siguiente for
 \begin{equation}
     a(u,\varphi) = \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  + \int_\Omega c(x)u \varphi \,dx,
 \end{equation}
-y,
+y el funcional lineal,
 \begin{equation}
     l(\varphi) = \int_\Omega f(x)\varphi(x) dx.
 \end{equation}
 
-De este modo, nuestro problema elíptico en forma debil se puede expresar de la siguiente forma.
+De este modo, nuestro problema elíptico en forma debil se puede expresar de la siguiente manera.
 \begin{equation}
     a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H^1_0(\Omega).
 \end{equation}
@@ -270,11 +270,11 @@ De este modo, nuestro problema elíptico en forma debil se puede expresar de la 
 
 El método de los elementos finitos (MEF) es una técnica numérica para resolver ecuaciones en derivadas parciales. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
 
-Para un problema elíptico con condiciones de frontera, se parte de una ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma muy simplificada como:
+Para un problema elíptico con condiciones de frontera, se parte de la ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma muy simplificada como:
 \begin{equation*}
     a(u,\varphi) = l(\varphi) \quad \forall \varphi\in V,
 \end{equation*}
-Donde $V$ es el espacio de funciones en el que están nuestras soluciones. En el caso del problema con condiciones homogéneas, este espacio será $V = H_0^1(\Omega)$.
+donde $V$ es el espacio de funciones en el que están nuestras soluciones. En el caso del problema con condiciones homogéneas, este espacio será $V = H_0^1(\Omega)$.
 
 Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Por ejemplo, si estamos trabajando con un problema de una dimensión, con $\Omega =(0,1)$, dividimos $\overline{\Omega} = [0,1]$ en $N$ subintervalos $[x_i,x_{i+1}], \, i = 1, \dots, N-1$, como se hace en la Figura \ref{fig:DivisionOmega}.
 
@@ -295,7 +295,7 @@ Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdom
     \end{tikzpicture}
     \caption{División de $\Omega = (0,1)$ en $N$ elementos finitos}
 \end{figure}
-A esta subdivision, se le asocia una base de polinomios a trozos. Así, se reemplaza el subespacio de funciones que habíamos llamado $V$ por un subespacio de dimensión finita $V_h$ formado por polinomios a trozos  de grado fijo. Siguiendo nuestro ejemplo de antes, la base de polinomios que vamos a utilizar será la de los polinomios como los vistos en la Figura \ref{fig:BasePolinomios}. Definidos de la siguiente forma.
+A esta subdivision, se le asocia una base de polinomios a trozos. Así, se reemplaza el subespacio de funciones que habíamos llamado $V$ por un subespacio de dimensión finita $V_h$ formado por polinomios a trozos  de grado fijo. Siguiendo nuestro ejemplo de antes, la base de polinomios que vamos a utilizar será la de los polinomios como los vistos en la Figura \ref{fig:BasePolinomios}. Definidos de la siguiente forma. \colorbox{yellow}{condiciones de contorno}
 \begin{equation*}
     \phi_i(x) = \begin{cases}
         \frac{x-x_{i-1}}{x_i-x_{i-1}}, & \text{si } x\in[x_{i-1},x_i],\\
@@ -304,7 +304,7 @@ A esta subdivision, se le asocia una base de polinomios a trozos. Así, se reemp
     \end{cases} 
 \end{equation*}
 
-En este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_N\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar los $u_h\in V_h$ tal que
+En este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_{N-1}\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar $u_h\in V_h$ tal que \colorbox{yellow}{falta condiciones de contorno}
 \begin{figure}
     \centering
     \label{fig:BasePolinomios}
@@ -324,19 +324,25 @@ En este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\
     a(u_h,v_h) = l(v_h) \quad \forall v_h\in V_h,
 \end{equation*}
 
-De forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones infinito, como es $V$, se busca una solución en un espacio de funciones finito, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños a partir de los cuales hemos construido nuestro nuevo espacio de funciones. 
+De forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones de dimensión infinita, como es $V$, se busca una solución en un espacio de funciones de dimensión finita, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños a partir de los cuales hemos construido nuestro nuevo espacio de funciones. \colorbox{yellow}{falta LEX-MILGRAM}
 
 Ahora, encontrar una solución se convierte en encontrar los coeficientes en la base de polinomios a trozos, es decir, los $U_i$ en la siguiente ecuación
 \begin{equation}
-    u_h = \sum_{i=1}^{N} U_i\phi_i.
+    u_h = \sum_{i=1}^{N-1} U_i\phi_i.
 \end{equation}
-Es decir, resolver la ecuación diferencial se convierte en encontrar $U=(U_1,\dots, U_N) \in \mathbb{R}^N$ que cumplen:
+Es decir, resolver la ecuación diferencial se convierte en encontrar $U=(U_1,\dots, U_N) \in \mathbb{R}^{N-1}$ que cumplen:
 \begin{equation}
-    \sum_{i=1}^{N} a\left( \phi_i,\phi_j\right)U_i = l(\phi_j) \quad \forall j = 1,\dots,N.
+    \sum_{i=1}^{N-1} a\left( \phi_i,\phi_j\right)U_i = l(\phi_j) \quad \forall j = 1,\dots,N-1.
 \end{equation}
 
 Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matriz de rigidez (con entradas $A_{ij}=a\left( \phi_i,\phi_j\right)$), y $b$ es el vector de términos fuente (con entradas $b_j = l(\phi_j)$). A este nuevo sistema lineal se le pueden aplicar métodos numéricos tradicionales para resolverlo, como la factorización LU, encontrando así los coeficientes $U$ que nos dan $u_h$, la aproximación de $u$.
-\begin{mdframed}
+\colorbox{yellow}{generalizar el problema en 2D}
+\begin{mdframed} 
+    \colorbox{yellow}{Poner esto como un ejemplo de la generalización. }
+    
+    \colorbox{yellow}{Hay más información en el libro de como se plantea este  problema}
+
+    \colorbox{yellow}{Ponerlo como ejemplo de lex milgram para más dimensiones.}
 \begin{exmp}
     Veamos ahora un ejemplo concreto de la aplicación del FEM a través de la ecuación de Poisson. El objetivo es encontrar un campo escalar $ u $ sobre un dominio $\Omega \subset \mathbb{R}^n$ que satisfaga:
     \begin{equation}
@@ -348,7 +354,7 @@ Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matri
     \end{equation}
     donde $ f $ es un término fuente, $ g $ es un flujo en la frontera, $ n $ es el vector normal unitario, $\Gamma_D$ y $\Gamma_N$ son partes de la frontera donde se aplican las condiciones de contorno de Dirichlet y Neumann, respectivamente.
 
-    El método de elementos finitos (FEM) aproxima $ u $ transformando el problema en su forma debil y resolviéndolo en un espacio de funciones de dimensión finita. La forma fuerte del problema se convierte en:
+    El método de elementos finitos (FEM) aproxima $ u $ transformando el problema en su forma débil y resolviéndolo en un espacio de funciones de dimensión finita. La forma fuerte del problema se convierte en: \colorbox{yellow}{decir en que espacio esta u}
     \begin{equation}
     a(u, v) = l(v) \quad \forall \ v \in V,
     \end{equation}
@@ -382,7 +388,7 @@ Vamos a considerar ahora un caso particular que es el llamado problema elíptico
 
 \begin{mdframed}
 \begin{defin}
-    Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales es elíptica autoadjunta si es elíptica, es decir, se cumplen las condiciones de la Definición \eqref{def:EDP_eliptica}, y además se cumplen las siguientes condiciones de simetría en los coeficientes.
+    Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales elíptica autoadjunta, y además se cumplen las siguientes condiciones de simetría en los coeficientes.
     \begin{equation}\label{eq:simetria_a}
         \begin{split}
             a_{ij} = a_{ji},\qquad &i,j = 1,\dots,n,\\
@@ -401,6 +407,10 @@ Bajo estas condiciones, nuestro problema se puede formular de la siguiente forma
 
 En un problema autoadjunto se pueden caracterizar las soluciones débiles como el mínimo de un funcional. Esto es así por el siguiente resultado.
 \begin{lema} \label{lema:MinimoFuncion}
+    \colorbox{yellow}{hacerla más rigurosa. Tengo que hablar de que es la solución única}
+
+    \colorbox{yellow}{Definir el J antes}
+
     Las siguientes afirmaciones son equivalentes:
     \begin{enumerate}
         \item Encontrar $u\in H_0^1(\Omega)$ tal que $a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H_0^1(\Omega)$
@@ -417,21 +427,16 @@ En un problema autoadjunto se pueden caracterizar las soluciones débiles como e
 \subsection{Introducción}
 Las PINN, o Physics-Informed Neural Networks, son una técnica que combina la resolución de ecuaciones en derivadas parciales con redes neuronales. La idea es que, en vez de resolver la ecuación diferencial directamente o con métodos numéricos tradicionales, se entrena una red neuronal para que aproxime la solución de la ecuación. 
 
-Como habíamos comentado en la Sección \ref{sec:RedesNeuronales}, las redes neuronales son capaces de aproximar cualquier función, por lo que, en teoría, pueden aproximar cualquier solución de una ecuación diferencial. De este modo, las PINN van a aprovechar esto, definiendo la aproximación de nuestra solución $\hat{u}$, como la salida de nuestra función red neuronal $u(x,t;\mathbf{\theta})$. Así, la función en la Figura \ref{fig:PIN} sería la aproximación de la solución de la ecuación diferencial.
+Como habíamos comentado en la Sección \ref{sec:RedesNeuronales}, las redes neuronales son capaces de aproximar cualquier función, por lo que, en teoría, pueden aproximar cualquier solución de una ecuación diferencial. De este modo, las PINN van a aprovechar esto, definiendo la aproximación de nuestra solución ${u}$, como la salida de la función red neuronal $\hat{u}(x;\mathbf{\theta})$,  donde $\theta$ hace referencia a los pesos y sesgos vistos en la Sección \ref{sec:RedesNeuronales}. Así, la función en la Figura \ref{fig:PIN} sería la aproximación de la solución de la ecuación diferencial.
 \begin{figure}[htbp]
     \centering
     \label{fig:PIN}
-    \includegraphics[scale=0.7]{Figuras/neural_network_improved.pdf}
+    \includegraphics[scale=0.6]{Figuras/neural_network_improved.pdf}
     \caption{Esquema de una PINN}
 \end{figure}
 
 \subsection{Formulación de las PINN}
-Consideramos una EDP parametrizada por $\lambda$, definida en función $u(\mathbf{x})$ con $\mathbf{x} = (x_1, \ldots, x_d)$, en un dominio $\Omega \subset \mathbb{R}^d$:
-\marginnote{Creo que habría \\que ser más \\coherente\\ con la notación introducida.\\ Lo dejo así\\por coherencia\\con el paper\\igual habría que\\cambiarlo}
-\begin{equation} 
-    f\left(\mathbf{x}; \frac{\partial u}{\partial x_1}, \ldots, \frac{\partial u}{\partial x_d}, \frac{\partial^2 u}{\partial x_1^2}, \ldots, \frac{\partial^2 u}{\partial x_1 \partial x_d}, \ldots; \lambda\right) = 0, \quad \mathbf{x} \in \Omega,
-\end{equation}
-Con condición de frontera $u(\mathbf{x}) = g(\mathbf{x})$ en $\partial \Omega$. Para poder construir y ajustar los pesos de la red neuronal es esencial tener una función de coste, es decir, una función que nos diga como de buena es nuestra aproximación. En el caso de las PINN, la función de coste se define como la suma de dos términos ajustados por unos pesos. El primero de ellos, se encarga de verificar la ecuación diferencial, es decir, que la función red neuronal aproxima la ecuación diferencial en todo el dominio. El segundo término, se encarga de verificar las condiciones de frontera e iniciales.
+Consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, una EDP elíptica con condiciones de frontera de Dirichlet. Para poder construir y ajustar los pesos de la red neuronal es esencial tener una función de coste, es decir, una función que nos diga como de buena es nuestra aproximación. En el caso de las PINN, la función de coste se define como la suma de dos términos ajustados por unos pesos. El primero de ellos, se encarga de verificar la ecuación diferencial, es decir, que la función red neuronal aproxima la ecuación diferencial en todo el dominio. El segundo término, se encarga de verificar las condiciones de frontera.
 \begin{equation} \label{eq:L_PINN}
     \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
 \end{equation}
