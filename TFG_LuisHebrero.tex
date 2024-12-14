@@ -13,6 +13,38 @@
 \usepackage{mdframed}
 \usepackage{marginnote}
 \usepackage[backend=bibtex, style=numeric]{biblatex} 
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Define custom colors for syntax highlighting
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Customize the look of the code
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+% Apply the style to listings
+\lstset{style=mystyle}
+
 \addbibresource{references.bib} % Link to your .bib file
 
 
@@ -436,101 +468,98 @@ Como habíamos comentado en la Sección \ref{sec:RedesNeuronales}, las redes neu
 \end{figure}
 
 \subsection{Formulación de las PINN}
-Consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, una EDP elíptica con condiciones de frontera de Dirichlet. Para poder construir y ajustar los pesos de la red neuronal es esencial tener una función de coste, es decir, una función que nos diga como de buena es nuestra aproximación. En el caso de las PINN, la función de coste se define como la suma de dos términos ajustados por unos pesos. El primero de ellos, se encarga de verificar la ecuación diferencial, es decir, que la función red neuronal aproxima la ecuación diferencial en todo el dominio. El segundo término, se encarga de verificar las condiciones de frontera.
+Consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, una EDP elíptica sujeta a condiciones de contorno de Dirichlet. La ecuación a resolver es la siguiente: 
+\begin{equation} 
+    \begin{cases} -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial u}{\partial x_i} + c(\mathbf{x})u = f(\mathbf{x}), &\qquad \mathbf{x}\in\Omega,\\ u(\mathbf{x}) = g(\mathbf{x}), &\qquad \mathbf{x}\in\partial\Omega. 
+    \end{cases} 
+\end{equation} 
+donde $\Omega \subset \mathbb{R}^n$ es un dominio y las funciones $a_{ij}(\mathbf{x})$, $b_i(\mathbf{x})$, $c(\mathbf{x})$, $f(\mathbf{x})$ y $g(\mathbf{x})$ son conocidas. La incógnita es la función $u: \Omega \to \mathbb{R}$ que satisface la ecuación diferencial y las condiciones de contorno. Para poder construir y ajustar los pesos de una red neuronal que aproxime $u$ es esencial tener una función de coste, es decir, una función que nos indique la calidad de nuestra aproximación. En el caso de las PINN, la función de coste se define como la suma ponderada de dos términos. El primero de ellos garantiza que la función aproximada por la red neuronal satisface la ecuación diferencial en todo el dominio. El segundo término asegura que la aproximación satisface las condiciones de contorno de Dirichlet
 \begin{equation} \label{eq:L_PINN}
     \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
 \end{equation}
-donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un término u otro y
-\begin{align}
-    \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| f\left( \mathbf{x}; \frac{\partial \hat{u}}{\partial x_1}, \ldots, \frac{\partial \hat{u}}{\partial x_d}, \frac{\partial^2 \hat{u}}{\partial x_1^2}, \ldots, \frac{\partial^2 \hat{u}}{\partial x_1 \partial x_d}, \ldots; \lambda \right) \right\|_2^2, \\ 
-    \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| B(\hat{u}, \mathbf{x}) \right\|_2^2,
-\end{align}
+donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un término u otro y \colorbox{yellow}{((No encuentro casi nada de como se obtienen estos pesos))}
+\begin{align*}
+    \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) \right\|_2^2, \\ 
+    \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right\|_2^2,
+\end{align*}
 
 En estas ecuaciones, $\mathcal{T}_f$ y $\mathcal{T}_b$ son conjuntos de puntos en los que se evaluarán las funciones de coste, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$, conocidos como puntos de colocación o ``collocation points''. En el caso de $\mathcal{L}_f$, se evaluará en puntos del dominio pues $\mathcal{T}_f\subset\Omega$, mientras que en $\mathcal{L}_b$ se evaluará en puntos de la frontera, pues $\mathcal{T}_f\subset\partial\Omega$. Obviamente, estos conjuntos son necesarios pues a nivel computacional es imposible calcular derivadas e integrales en un espacio continuo. Existe mucha literatura sobre como tomar estos puntos pues, al igual que en FEM la malla impacta el resultado, en las PINN, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
 
 Dada la función de coste definida y la distribución de los puntos de colocación, el entrenamiento de la red neuronal se reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. 
 
 Una ventaja fundamental del uso de redes neuronales en este contexto es la diferenciación automática, una técnica numérica muy potente que facilita la obtención de las derivadas de $\hat{u}$ con respecto a sus entradas de forma exacta y eficiente.
-
+\colorbox{yellow}{Este párrafo lo dejaría si explico antes que es el AD, sino queda muy al aire}
 A continuación, vamos a ver dos ejemplos para ver como se aplican las PINN a problemas concretos.
 
 \begin{mdframed}
     \begin{exmp}
+        Consideramos una ecuación de Poisson:
+        \begin{equation*}
+        -\Delta u = \pi^2 \sin(\pi x), \quad x \in [-1, 1],
+        \end{equation*}
+        con las condiciones de contorno de Dirichlet
+        \begin{equation*}
+        u(-1) = 0, \quad u(1) = 0.
+        \end{equation*}
+        Para esta ecuación la solución exacta es  conocida $ u(x) = \sin(\pi x)$. Para resolver este problema con una PINN, nos asistimos de la librería de python DeepXDE \cite{lu2021deepxde}, la cual tiene implementada la funcionalidad necesaria para entrenar una red neuronal que aproxime EDPs. Así, para resolver esta ecuación comenzamos definiendo el intervalo en el que se encuentra el dominio y los puntos de colocación
         
-        Resolveremos una ecuación de calor:
-        \begin{equation*}
-        \frac{\partial u}{\partial t} = \alpha \frac{\partial^2 u}{\partial x^2}, \quad x \in [0, 1], \quad t \in [0, 1]
-        \end{equation*}
-        donde \(\alpha = 0.4\) es la constante de difusividad térmica. Con condiciones de frontera de Dirichlet:
-        \begin{equation*}
-        u(0, t) = u(1, t) = 0,
-        \end{equation*}
-        y condición inicial periódica (sinusoidal):
-        \begin{equation*}
-        u(x, 0) = \sin\left(\frac{n \pi x}{L}\right), \quad 0 < x < L, \quad n = 1, 2, \ldots
-        \end{equation*}
-        donde \(L = 1\) es la longitud de la barra y \(n = 1\) es la frecuencia de la condición inicial sinusoidal.
-        Para este problema, sabemos que la solución exacta es:
-        \begin{equation*}
-        u(x, t) = e^{-\frac{n^2 \pi^2 \alpha t}{L^2}} \sin\left(\frac{n \pi x}{L}\right).
-        \end{equation*}
-        Que si la vemos de forma gráfica, obtenemos la Figura \ref{fig:calor_exacta}.
-        \begin{figure}[H] 
-            \centering
-            \includegraphics[width=0.5\textwidth]{Figuras/calor_exacta.png}
-            \caption{Solución de la ecuación de calor}
-            \label{fig:calor_exacta}
-        \end{figure}
-        Si nos ayudamos de la librería DeepXDE, podemos programar la red neuronal y entrenarla para que aproxime la solución de la ecuación de calor. El resultado obtenido es el obtenido en la Figura \ref{fig:calor_estimacion}.
-        \begin{figure}[H] 
-            \centering
-            \includegraphics[width=0.5\textwidth]{Figuras/calor_estimacion.png}
-            \caption{Aproximación de la solución de la ecuación de calor}
-            \label{fig:calor_estimacion}
-        \end{figure}
+\begin{lstlisting}[language=Python]
+    geom = dde.geometry.Interval(-1, 1)
+\end{lstlisting}
+        definimos la EDP de la siguiente forma
+\begin{lstlisting}[language=Python]
+    def pde(x, y):
+        dy_xx = dde.grad.hessian(y, x)
+        return -dy_xx - np.pi ** 2 * tf.sin(np.pi * x)
+\end{lstlisting}
+    indicamos las condiciones de contorno de Dirichlet
+\begin{lstlisting}[language=Python]
+    bc = dde.icbc.DirichletBC(geom, func, boundary)
+\end{lstlisting}
+y, con todo, se define el problema de EDPs
+\begin{lstlisting}[language=Python]
+   data = dde.data.PDE(geom, pde, bc, 16, 2, solution=func, num_test=100)
+\end{lstlisting}
+    Así, gracias a la librería DeepXDE, podemos entrenar la red neuronal con el siguiente código
+\begin{lstlisting}[language=Python]
+Losshistory, train_state = model.train(
+    iterations=10000, callbacks=[checkpointer, movie]
+)
+\end{lstlisting}
+    Por detrás, esta librería se encargará de definir la función de coste asociada, que en este caso será
+    \begin{equation*} 
+        \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
+    \end{equation*}
+    donde
+    \begin{align*}
+        \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| -\Delta \hat{u} - \pi^2 \sin(\pi x)\right\|_2^2, \\ 
+        \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| \hat{u} (\mathbf{x}))\right\|_2^2,
+    \end{align*}
+    por los argumentos que se han dado anteriormente, $\mathcal{T}_f$ serán 16 puntos aleatorios en el intervalo $[-1,1]$ y $\mathcal{T}_b = \{0,1\}$ . Con todo, el resultado de ejecutar este código será el de la Figura \ref{fig:poisson_PINN}.
 
-    \end{exmp}
+    \begin{figure}[H] 
+        \centering
+        \includegraphics[width=0.6\textwidth]{Figuras/Poisson.png}
+        \caption{Solución de la ecuación de Poisson}
+        \label{fig:poisson_PINN}
+    \end{figure}
+
+    \colorbox{yellow}{DUDAS PARA JULIA}
+    No sé si poner el código en python o no, si explicar en más detalle cada instrucción o si entrar en como se entrena la red neuronal. Tengo miedo de que todo esto poco matemático. Como el objetivo del trabajo son las ecuaciones autoadjuntas igual esto solo es dar unas pinceladas del estado del arte. También en todo esto parece interesante hablar de como se eligen los hiperparámetros.
+
+\end{exmp}
+
+    
 \end{mdframed}
 
-No obstante, las PINN pueden presentar errores elevados incluso en sistemas físicos relativamente simples. El problema, según se diagnostican Xu et al. en \cite{krishnapriyan2021characterizingpossiblefailuremodes} radica en el uso de restricciones demasiado suaves en $\mathcal{L}$, lo cual provoca que la función de perdida sea difícil de optimizar. A continuación, vemos uno de los ejemplos que presentan en Xu et al. en los que las PINN fallan.
+No obstante, las PINN pueden presentar errores elevados incluso en sistemas relativamente simples. A continuación, vemos uno de los ejemplos que presentan en Xu et al. en \cite{krishnapriyan2021characterizingpossiblefailuremodes} en los que las PINN fallan.
 
 \begin{mdframed}
     \begin{exmp}
-        Consideramos un problema de convección unidimensional, una EDP hiperbólica:
-        \begin{equation*}
-            \frac{\partial u}{\partial t} + \beta \frac{\partial u}{\partial x} = 0, \quad x \in \Omega, \; t \in [0, T],
-        \end{equation*}
-        \begin{equation*}
-            u(x, 0) = h(x), \quad x \in \Omega.
-        \end{equation*}
-        Aquí, $\beta$ es el coeficiente de convección y $h(x)$ es la condición inicial. Para un $\beta$ constante y condiciones de contorno periódicas, este problema tiene una solución analítica simple:
-        \begin{equation*}
-            u_{\text{analytical}}(x, t) = \mathcal{F}^{-1} \big( \mathcal{F}(h(x)) e^{-i k \beta t} \big),
-        \end{equation*}
-        donde $\mathcal{F}$ es la transformada de Fourier, $i = \sqrt{-1}$ y $k$ denota la frecuencia en el dominio de Fourier. La función de pérdida general para este problema (correspondiente a la Ecuación \eqref{eq:L_PINN}) es
-        \begin{equation*}
-            \mathcal{L}(\theta) = \frac{1}{N_u} \sum_{i=1}^{N_u} \left( \hat{u} - u^0_i \right)^2 
-            + \frac{1}{N_f} \sum_{i=1}^{N_f} \lambda_i \left( \frac{\partial \hat{u}}{\partial t} + \beta \frac{\partial \hat{u}}{\partial x} \right)^2 + \mathcal{L}_B,
-        \end{equation*}
-        donde $\hat{u}$ es la salida de la red neuronal, y $\mathcal{L}_B$ es la pérdida de contorno. Para condiciones de contorno periódicas con $\Omega = [0, 2\pi]$, esta pérdida es:
-        \begin{equation*}
-            \mathcal{L}_B = \frac{1}{N_B} \sum_{i=1}^{N_B} \left( \hat{u}(\theta, 0, t) - \hat{u}(\theta, 2\pi, t) \right)^2.
-        \end{equation*}
-        Usamos las siguientes condiciones iniciales y de contorno periódico simples:
-        \begin{align*}
-            u(x, 0) = \sin(x),\\
-            u(0, t) = u(2\pi, t).
-        \end{align*}
-        Si usamos la librería propuesta por Xu et al. en el Repositorio \cite{c2021failure} para resolver este problema, obtenemos la aproximación se puede ver en la Figura \ref{fig:error_PINN_temporal}. En esta, se puede observar que la aproximación y la solución exacta no coinciden y además, el error es muy elevado para $\beta > 1$.
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=0.9\textwidth]{Figuras/error_PINN_temporal.png}
-            \caption{Solución de la ecuación de convección}
-            \label{fig:error_PINN_temporal}
-        \end{figure}
-
+        
     \end{exmp}
 \end{mdframed}
+A diferencia de los métodos numéricos tradicionales, las PINNs no garantizan soluciones únicas, ya que trabajan resolviendo problemas de optimización no convexos, los cuales generalmente no tienen una única solución. Para obtener buenos resultados, es necesario ajustar varios hiperparámetros como el tamaño de la red, la tasa de aprendizaje y el número de puntos residuales. Es más, una práctica habitual es entrenar la red con varios hiperparámetros y elegir aquellos que den mejores resultados.
 
 Con esto, vemos que pese a que las PINN muestran buenos resultados en muchos problemas, en otros, presentan errores elevados. El problema principal radica en la formulación fuerte de las ecuaciones diferenciales, la cual exige que la red neuronal se ajuste a la solución exacta en todos los puntos del dominio. Este enfoque puede ser demasiado restrictivo y dificultar la optimización de la función de coste. 
 
@@ -675,6 +704,82 @@ Para pasar de forma fuerte a débil, lo que hacemos es seguir el siguiente proce
     \item Para simplificar aun más el problema, nótese que $a_{ij}$ ya no aparecen tras derivadas de ningun tipo, luego no es necesario asumir que $a_{ij}\in C^1(\overline{\Omega})$, basta con que $a_{ij}\in L^\infty(\Omega)$. Por lo mismo, $b_i,\,c\in L^\infty(\Omega), i=1,\dots,n$ es suficiente.
     \item Por último, nótese que $C^\infty_0(\Omega) \subset H^1_0(\Omega)$, luego se puede ver que teniendo $u,v\in H^1_0(\Omega)$, nuestra ecuación sigue teniendo sentido. Con todo esto, surge la siguiente definición de forma débil.
 \end{enumerate}
+
+\begin{mdframed}
+    \begin{exmp}
+        
+        Resolveremos una ecuación de calor:
+        \begin{equation*}
+        \frac{\partial u}{\partial t} = \alpha \frac{\partial^2 u}{\partial x^2}, \quad x \in [0, 1], \quad t \in [0, 1]
+        \end{equation*}
+        donde \(\alpha = 0.4\) es la constante de difusividad térmica. Con condiciones de frontera de Dirichlet:
+        \begin{equation*}
+        u(0, t) = u(1, t) = 0,
+        \end{equation*}
+        y condición inicial periódica (sinusoidal):
+        \begin{equation*}
+        u(x, 0) = \sin\left(\frac{n \pi x}{L}\right), \quad 0 < x < L, \quad n = 1, 2, \ldots
+        \end{equation*}
+        donde \(L = 1\) es la longitud de la barra y \(n = 1\) es la frecuencia de la condición inicial sinusoidal.
+        Para este problema, sabemos que la solución exacta es:
+        \begin{equation*}
+        u(x, t) = e^{-\frac{n^2 \pi^2 \alpha t}{L^2}} \sin\left(\frac{n \pi x}{L}\right).
+        \end{equation*}
+        Que si la vemos de forma gráfica, obtenemos la Figura \ref{fig:calor_exacta}.
+        \begin{figure}[H] 
+            \centering
+            \includegraphics[width=0.5\textwidth]{Figuras/calor_exacta.png}
+            \caption{Solución de la ecuación de calor}
+            \label{fig:calor_exacta}
+        \end{figure}
+        Si nos ayudamos de la librería DeepXDE, podemos programar la red neuronal y entrenarla para que aproxime la solución de la ecuación de calor. El resultado obtenido es el obtenido en la Figura \ref{fig:calor_estimacion}.
+        \begin{figure}[H] 
+            \centering
+            \includegraphics[width=0.5\textwidth]{Figuras/calor_estimacion.png}
+            \caption{Aproximación de la solución de la ecuación de calor}
+            \label{fig:calor_estimacion}
+        \end{figure}
+
+    \end{exmp}
+\end{mdframed}
+
+\begin{mdframed}
+    \begin{exmp}
+        Consideramos un problema de convección unidimensional, una EDP hiperbólica:
+        \begin{equation*}
+            \frac{\partial u}{\partial t} + \beta \frac{\partial u}{\partial x} = 0, \quad x \in \Omega, \; t \in [0, T],
+        \end{equation*}
+        \begin{equation*}
+            u(x, 0) = h(x), \quad x \in \Omega.
+        \end{equation*}
+        Aquí, $\beta$ es el coeficiente de convección y $h(x)$ es la condición inicial. Para un $\beta$ constante y condiciones de contorno periódicas, este problema tiene una solución analítica simple:
+        \begin{equation*}
+            u_{\text{analytical}}(x, t) = \mathcal{F}^{-1} \big( \mathcal{F}(h(x)) e^{-i k \beta t} \big),
+        \end{equation*}
+        donde $\mathcal{F}$ es la transformada de Fourier, $i = \sqrt{-1}$ y $k$ denota la frecuencia en el dominio de Fourier. La función de pérdida general para este problema (correspondiente a la Ecuación \eqref{eq:L_PINN}) es
+        \begin{equation*}
+            \mathcal{L}(\theta) = \frac{1}{N_u} \sum_{i=1}^{N_u} \left( \hat{u} - u^0_i \right)^2 
+            + \frac{1}{N_f} \sum_{i=1}^{N_f} \lambda_i \left( \frac{\partial \hat{u}}{\partial t} + \beta \frac{\partial \hat{u}}{\partial x} \right)^2 + \mathcal{L}_B,
+        \end{equation*}
+        donde $\hat{u}$ es la salida de la red neuronal, y $\mathcal{L}_B$ es la pérdida de contorno. Para condiciones de contorno periódicas con $\Omega = [0, 2\pi]$, esta pérdida es:
+        \begin{equation*}
+            \mathcal{L}_B = \frac{1}{N_B} \sum_{i=1}^{N_B} \left( \hat{u}(\theta, 0, t) - \hat{u}(\theta, 2\pi, t) \right)^2.
+        \end{equation*}
+        Usamos las siguientes condiciones iniciales y de contorno periódico simples:
+        \begin{align*}
+            u(x, 0) = \sin(x),\\
+            u(0, t) = u(2\pi, t).
+        \end{align*}
+        Si usamos la librería propuesta por Xu et al. en el Repositorio \cite{c2021failure} para resolver este problema, obtenemos la aproximación se puede ver en la Figura \ref{fig:error_PINN_temporal}. En esta, se puede observar que la aproximación y la solución exacta no coinciden y además, el error es muy elevado para $\beta > 1$.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.9\textwidth]{Figuras/error_PINN_temporal.png}
+            \caption{Solución de la ecuación de convección}
+            \label{fig:error_PINN_temporal}
+        \end{figure}
+
+    \end{exmp}
+\end{mdframed}
 
 \printbibliography
 \cleardoublepage

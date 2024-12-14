@@ -1,5 +1,4 @@
 """Backend supported: tensorflow.compat.v1, tensorflow, pytorch, jax, paddle"""
-# mypy: ignore-errors
 import deepxde as dde
 import matplotlib.pyplot as plt
 import numpy as np
@@ -70,5 +69,5 @@ y = model.predict(x, operator=pde)
 plt.figure()
 plt.plot(x, y)
 plt.xlabel("x")
-plt.ylabel("PDE residual")
+plt.ylabel("Residuo de la EDP")
 plt.show()

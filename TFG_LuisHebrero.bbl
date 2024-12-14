@@ -160,6 +160,50 @@
     \field{year}{2021}
   \endentry
 
+  \entry{lu2021deepxde}{article}{}
+    \name{author}{4}{}{%
+      {{hash=LL}{%
+         family={Lu},
+         familyi={L\bibinitperiod},
+         given={Lu},
+         giveni={L\bibinitperiod},
+      }}%
+      {{hash=MX}{%
+         family={Meng},
+         familyi={M\bibinitperiod},
+         given={Xuhui},
+         giveni={X\bibinitperiod},
+      }}%
+      {{hash=MZ}{%
+         family={Mao},
+         familyi={M\bibinitperiod},
+         given={Zhiping},
+         giveni={Z\bibinitperiod},
+      }}%
+      {{hash=KGE}{%
+         family={Karniadakis},
+         familyi={K\bibinitperiod},
+         given={George\bibnamedelima Em},
+         giveni={G\bibinitperiod\bibinitdelim E\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{LL+1}
+    \strng{fullhash}{LLMXMZKGE1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{L}
+    \field{sortinithash}{L}
+    \verb{doi}
+    \verb 10.1137/19M1274067
+    \endverb
+    \field{number}{1}
+    \field{pages}{208\bibrangedash 228}
+    \field{title}{{DeepXDE}: A deep learning library for solving differential equations}
+    \field{volume}{63}
+    \field{journaltitle}{SIAM Review}
+    \field{year}{2021}
+  \endentry
+
   \entry{matsubara2023goodlatticetrainingphysicsinformed}{misc}{}
     \name{author}{2}{}{%
       {{hash=MT}{%
