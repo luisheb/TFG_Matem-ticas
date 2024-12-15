@@ -109,57 +109,6 @@
     \field{year}{2023}
   \endentry
 
-  \entry{krishnapriyan2021characterizingpossiblefailuremodes}{misc}{}
-    \name{author}{5}{}{%
-      {{hash=KAS}{%
-         family={Krishnapriyan},
-         familyi={K\bibinitperiod},
-         given={Aditi\bibnamedelima S.},
-         giveni={A\bibinitperiod\bibinitdelim S\bibinitperiod},
-      }}%
-      {{hash=GA}{%
-         family={Gholami},
-         familyi={G\bibinitperiod},
-         given={Amir},
-         giveni={A\bibinitperiod},
-      }}%
-      {{hash=ZS}{%
-         family={Zhe},
-         familyi={Z\bibinitperiod},
-         given={Shandian},
-         giveni={S\bibinitperiod},
-      }}%
-      {{hash=KRM}{%
-         family={Kirby},
-         familyi={K\bibinitperiod},
-         given={Robert\bibnamedelima M.},
-         giveni={R\bibinitperiod\bibinitdelim M\bibinitperiod},
-      }}%
-      {{hash=MMW}{%
-         family={Mahoney},
-         familyi={M\bibinitperiod},
-         given={Michael\bibnamedelima W.},
-         giveni={M\bibinitperiod\bibinitdelim W\bibinitperiod},
-      }}%
-    }
-    \strng{namehash}{KAS+1}
-    \strng{fullhash}{KASGAZSKRMMMW1}
-    \field{labelnamesource}{author}
-    \field{labeltitlesource}{title}
-    \field{sortinit}{K}
-    \field{sortinithash}{K}
-    \verb{eprint}
-    \verb 2109.01050
-    \endverb
-    \field{title}{Characterizing possible failure modes in physics-informed neural networks}
-    \verb{url}
-    \verb https://arxiv.org/abs/2109.01050
-    \endverb
-    \field{eprinttype}{arXiv}
-    \field{eprintclass}{cs.LG}
-    \field{year}{2021}
-  \endentry
-
   \entry{lu2021deepxde}{article}{}
     \name{author}{4}{}{%
       {{hash=LL}{%
@@ -202,6 +151,39 @@
     \field{volume}{63}
     \field{journaltitle}{SIAM Review}
     \field{year}{2021}
+  \endentry
+
+  \entry{luo2023residualminimizationpdesfailure}{misc}{}
+    \name{author}{2}{}{%
+      {{hash=LT}{%
+         family={Luo},
+         familyi={L\bibinitperiod},
+         given={Tao},
+         giveni={T\bibinitperiod},
+      }}%
+      {{hash=ZQ}{%
+         family={Zhou},
+         familyi={Z\bibinitperiod},
+         given={Qixuan},
+         giveni={Q\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{LTZQ1}
+    \strng{fullhash}{LTZQ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{L}
+    \field{sortinithash}{L}
+    \verb{eprint}
+    \verb 2310.18201
+    \endverb
+    \field{title}{On Residual Minimization for PDEs: Failure of PINN, Modified Equation, and Implicit Bias}
+    \verb{url}
+    \verb https://arxiv.org/abs/2310.18201
+    \endverb
+    \field{eprinttype}{arXiv}
+    \field{eprintclass}{math.AP}
+    \field{year}{2023}
   \endentry
 
   \entry{matsubara2023goodlatticetrainingphysicsinformed}{misc}{}

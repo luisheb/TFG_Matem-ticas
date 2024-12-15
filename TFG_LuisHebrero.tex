@@ -548,20 +548,82 @@ Losshistory, train_state = model.train(
     No sé si poner el código en python o no, si explicar en más detalle cada instrucción o si entrar en como se entrena la red neuronal. Tengo miedo de que todo esto poco matemático. Como el objetivo del trabajo son las ecuaciones autoadjuntas igual esto solo es dar unas pinceladas del estado del arte. También en todo esto parece interesante hablar de como se eligen los hiperparámetros.
 
 \end{exmp}
-
-    
 \end{mdframed}
 
-No obstante, las PINN pueden presentar errores elevados incluso en sistemas relativamente simples. A continuación, vemos uno de los ejemplos que presentan en Xu et al. en \cite{krishnapriyan2021characterizingpossiblefailuremodes} en los que las PINN fallan.
+No obstante, las PINN pueden presentar errores elevados incluso en sistemas relativamente simples. A continuación, vemos uno de los ejemplos que presentan en Luo et al. en \cite{luo2023residualminimizationpdesfailure} en los que las PINN fallan.
 
 \begin{mdframed}
     \begin{exmp}
-        
+        La ecuación considerada es unidimensional y se expresa como
+        \begin{equation}
+            \left\{
+            \begin{aligned}
+                L u =-D_{x}(AD_{x} u) &=f\quad \text{en}\  \Omega=(-1,1), \\
+                u &=0\quad \text{en}\  \partial\Omega=\{-1,1\},
+            \end{aligned}
+            \right.
+        \end{equation}
+        donde la función coeficiente $A$ y $f$ son ambas funciones por tramos discontinuas y se expresan como
+        \begin{equation}\label{eq:1dCoeff}
+            A(x)=\left\{
+            \begin{aligned}
+                & \tfrac{1}{2}, & & x\in (-1,0), \\
+                &1, & & x\in [0,1),
+            \end{aligned}
+            \right.\quad 
+            f(x)=\left\{
+            \begin{aligned}
+                & 0, & & x\in (-1,0), \\
+                & -2, & & x\in [0,1).
+            \end{aligned}
+            \right.
+        \end{equation}
+        Claramente, no existe una solución fuerte, porque $u$ tiene que ser derivable, y en tal caso, la parte izquierda de la ecuación no podría ser igual a una función discontinua. Sin embargo la solución débil $u\in H^1((-1,1))$ para esta ecuación es
+        \begin{equation}\label{eq:SolTo1dEq}
+            u(x)=
+            \left\{
+            \begin{aligned}
+                & -\tfrac{2}{3}x-\tfrac{2}{3}, & & x\in (-1,0), \\
+                & x^2-\tfrac{1}{3}x-\tfrac{2}{3}, & & x\in [0,1).
+            \end{aligned}
+            \right.
+        \end{equation}
+        En la serie de experimentos numéricos, utilizamos una red residual con la siguiente configuración $1$-$256$-$256$-$256$-$1$.  Así, la función de coste de esta red neuronal vendrá dada por la siguiente función.
+        \begin{equation*} 
+            \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
+        \end{equation*}
+        donde
+        \begin{align*}
+            \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| D_{x}(A(x)D_{x} w(x))+f(x)\right\|_2^2, \\ 
+            \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| \hat{u} (\mathbf{x})\right\|_2^2,
+        \end{align*}
+        En este caso, $\mathcal{T}_b=\{-1,1\}$ y $\mathcal{T}_f$ es un conjunto de 1000 puntos muestreados uniformemente en el intervalo $(-1,1)$. Es decir, $|\mathcal{T}_f|=1000$ y $|\mathcal{T}_b|=2$.
+
+        Bajo esta configuración, obtenemos la función de red $\hat{u}(\mathbf{x};\theta)$ numéricamente a través del método PINN después del proceso de entrenamiento. 
+        Trazamos la solución $\hat{u}(\mathbf{x};\theta)$ y la comparamos con la solución débil en la Figura \ref{fig:deviation}. 
+
+        \begin{figure}[H] 
+            \centering
+            \includegraphics[width=0.6\textwidth]{Figuras/fallo_edp_pinn.png}
+            \caption{Solución de la ecuación}
+            \label{fig:deviation}
+        \end{figure}
+
+
+        Obviamente, el método no logra encontrar la solución exacta $u$. La diferencia entre $u$ y $\hat{u}(\mathbf{x};\theta)$ es tan grande como la magnitud de $u$. Además, si nos fijamos en la gráfica de entrenamiento y test, vemos que el error no disminuye con el número de iteraciones.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.6\textwidth]{Figuras/test_train_pinn_error.png}
+            \caption{Error de la red neuronal}
+        \end{figure}
+
     \end{exmp}
 \end{mdframed}
-A diferencia de los métodos numéricos tradicionales, las PINNs no garantizan soluciones únicas, ya que trabajan resolviendo problemas de optimización no convexos, los cuales generalmente no tienen una única solución. Para obtener buenos resultados, es necesario ajustar varios hiperparámetros como el tamaño de la red, la tasa de aprendizaje y el número de puntos residuales. Es más, una práctica habitual es entrenar la red con varios hiperparámetros y elegir aquellos que den mejores resultados.
 
-Con esto, vemos que pese a que las PINN muestran buenos resultados en muchos problemas, en otros, presentan errores elevados. El problema principal radica en la formulación fuerte de las ecuaciones diferenciales, la cual exige que la red neuronal se ajuste a la solución exacta en todos los puntos del dominio. Este enfoque puede ser demasiado restrictivo y dificultar la optimización de la función de coste. 
+Como hemos visto, las PINN presentan errores elevados en algunos problemas. Estos errores pueden ser debidos a varios factores. Uno de los problemas fundamentales de las PINN es que no garantizan la unicidad de la solución. A diferencia de los métodos numéricos tradicionales, las PINNs no garantizan soluciones únicas, ya que trabajan resolviendo problemas de optimización no convexos, los cuales generalmente no tienen una única solución. No hay ninguna garantía de que la red neuronal converja a la solución correcta, y de hecho, en muchos casos, no lo hace, es más, como ocurre con muchos algoritmos de IA, converge a una solución errónea con la misma convicción (o error) que para la solución real.
+
+
+El problema principal radica en la formulación fuerte de las ecuaciones diferenciales, la cual exige que la red neuronal se ajuste a la solución exacta en todos los puntos del dominio. Este enfoque puede ser demasiado restrictivo y dificultar la optimización de la función de coste. 
 
 
 
