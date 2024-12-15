@@ -468,7 +468,7 @@ Como habíamos comentado en la Sección \ref{sec:RedesNeuronales}, las redes neu
 \end{figure}
 
 \subsection{Formulación de las PINN}
-Consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, una EDP elíptica sujeta a condiciones de contorno de Dirichlet. La ecuación a resolver es la siguiente: 
+Consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, una EDP elíptica sujeta a condiciones de contorno de Dirichlet. De modo que la ecuación a resolver es la siguiente: 
 \begin{equation} 
     \begin{cases} -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial u}{\partial x_i} + c(\mathbf{x})u = f(\mathbf{x}), &\qquad \mathbf{x}\in\Omega,\\ u(\mathbf{x}) = g(\mathbf{x}), &\qquad \mathbf{x}\in\partial\Omega. 
     \end{cases} 
@@ -487,8 +487,8 @@ En estas ecuaciones, $\mathcal{T}_f$ y $\mathcal{T}_b$ son conjuntos de puntos e
 
 Dada la función de coste definida y la distribución de los puntos de colocación, el entrenamiento de la red neuronal se reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. 
 
-Una ventaja fundamental del uso de redes neuronales en este contexto es la diferenciación automática, una técnica numérica muy potente que facilita la obtención de las derivadas de $\hat{u}$ con respecto a sus entradas de forma exacta y eficiente.
 \colorbox{yellow}{Este párrafo lo dejaría si explico antes que es el AD, sino queda muy al aire}
+Una ventaja fundamental del uso de redes neuronales en este contexto es la diferenciación automática, una técnica numérica muy potente que facilita la obtención de las derivadas de $\hat{u}$ con respecto a sus entradas de forma exacta y eficiente.
 A continuación, vamos a ver dos ejemplos para ver como se aplican las PINN a problemas concretos.
 
 \begin{mdframed}
@@ -501,12 +501,12 @@ A continuación, vamos a ver dos ejemplos para ver como se aplican las PINN a pr
         \begin{equation*}
         u(-1) = 0, \quad u(1) = 0.
         \end{equation*}
-        Para esta ecuación la solución exacta es  conocida $ u(x) = \sin(\pi x)$. Para resolver este problema con una PINN, nos asistimos de la librería de python DeepXDE \cite{lu2021deepxde}, la cual tiene implementada la funcionalidad necesaria para entrenar una red neuronal que aproxime EDPs. Así, para resolver esta ecuación comenzamos definiendo el intervalo en el que se encuentra el dominio y los puntos de colocación
+        En esta ecuación la solución exacta es  conocida $ u(x) = \sin(\pi x)$. Para resolver este problema con una PINN, nos asistimos de la librería de python DeepXDE \cite{lu2021deepxde}, la cual tiene implementada la funcionalidad necesaria para entrenar una red neuronal que aproxime EDPs. Así, comenzamos definiendo el intervalo en el que se encuentra el dominio y los puntos de colocación
         
 \begin{lstlisting}[language=Python]
     geom = dde.geometry.Interval(-1, 1)
 \end{lstlisting}
-        definimos la EDP de la siguiente forma
+        definimos la EDP
 \begin{lstlisting}[language=Python]
     def pde(x, y):
         dy_xx = dde.grad.hessian(y, x)
@@ -520,7 +520,7 @@ y, con todo, se define el problema de EDPs
 \begin{lstlisting}[language=Python]
    data = dde.data.PDE(geom, pde, bc, 16, 2, solution=func, num_test=100)
 \end{lstlisting}
-    Así, gracias a la librería DeepXDE, podemos entrenar la red neuronal con el siguiente código
+    Gracias a la librería DeepXDE, podemos entrenar la red neuronal con el siguiente código
 \begin{lstlisting}[language=Python]
 Losshistory, train_state = model.train(
     iterations=10000, callbacks=[checkpointer, movie]
@@ -532,10 +532,10 @@ Losshistory, train_state = model.train(
     \end{equation*}
     donde
     \begin{align*}
-        \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| -\Delta \hat{u} - \pi^2 \sin(\pi x)\right\|_2^2, \\ 
+        \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| \Delta \hat{u} +\pi^2 \sin(\pi x)\right\|_2^2, \\ 
         \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| \hat{u} (\mathbf{x}))\right\|_2^2,
     \end{align*}
-    por los argumentos que se han dado anteriormente, $\mathcal{T}_f$ serán 16 puntos aleatorios en el intervalo $[-1,1]$ y $\mathcal{T}_b = \{0,1\}$ . Con todo, el resultado de ejecutar este código será el de la Figura \ref{fig:poisson_PINN}.
+    por los argumentos con los que se han inicializado las funciones, $\mathcal{T}_f$ serán 16 puntos aleatorios en el intervalo $[-1,1]$ y $\mathcal{T}_b = \{0,1\}$ . Con todo, el resultado de ejecutar este código será el de la Figura \ref{fig:poisson_PINN}.
 
     \begin{figure}[H] 
         \centering
@@ -588,7 +588,7 @@ No obstante, las PINN pueden presentar errores elevados incluso en sistemas rela
             \end{aligned}
             \right.
         \end{equation}
-        En la serie de experimentos numéricos, utilizamos una red residual con la siguiente configuración $1$-$256$-$256$-$256$-$1$.  Así, la función de coste de esta red neuronal vendrá dada por la siguiente función.
+        En la serie de experimentos numéricos, utilizamos una red neuronal con la siguiente configuración $1$-$256$-$256$-$256$-$1$.  Así, la función de coste vendrá dada por la siguiente función.
         \begin{equation*} 
             \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
         \end{equation*}
@@ -599,8 +599,7 @@ No obstante, las PINN pueden presentar errores elevados incluso en sistemas rela
         \end{align*}
         En este caso, $\mathcal{T}_b=\{-1,1\}$ y $\mathcal{T}_f$ es un conjunto de 1000 puntos muestreados uniformemente en el intervalo $(-1,1)$. Es decir, $|\mathcal{T}_f|=1000$ y $|\mathcal{T}_b|=2$.
 
-        Bajo esta configuración, obtenemos la función de red $\hat{u}(\mathbf{x};\theta)$ numéricamente a través del método PINN después del proceso de entrenamiento. 
-        Trazamos la solución $\hat{u}(\mathbf{x};\theta)$ y la comparamos con la solución débil en la Figura \ref{fig:deviation}. 
+        Bajo esta configuración, obtenemos la función de red $\hat{u}(\mathbf{x};\theta)$ numéricamente a través del método PINN y la comparamos con la solución débil en la Figura \ref{fig:deviation}. 
 
         \begin{figure}[H] 
             \centering
@@ -620,11 +619,11 @@ No obstante, las PINN pueden presentar errores elevados incluso en sistemas rela
     \end{exmp}
 \end{mdframed}
 
-Como hemos visto, las PINN presentan errores elevados en algunos problemas. Estos errores pueden ser debidos a varios factores. Uno de los problemas fundamentales de las PINN es que no garantizan la unicidad de la solución. A diferencia de los métodos numéricos tradicionales, las PINNs no garantizan soluciones únicas, ya que trabajan resolviendo problemas de optimización no convexos, los cuales generalmente no tienen una única solución. No hay ninguna garantía de que la red neuronal converja a la solución correcta, y de hecho, en muchos casos, no lo hace, es más, como ocurre con muchos algoritmos de IA, converge a una solución errónea con la misma convicción (o error) que para la solución real.
+Como hemos visto, las PINN presentan errores significativos en ciertos problemas, lo que puede atribuirse a diversos factores. Uno de los principales desafíos de las PINN es la falta de garantía de unicidad en la solución. A diferencia de los métodos numéricos tradicionales, las PINN resuelven problemas de optimización no convexos, los cuales, por naturaleza, no aseguran una solución única. Esto implica que la red neuronal no tiene garantía de converger a la solución correcta y, de hecho, en muchos casos no lo hace. Es más, al igual que ocurre con otros algoritmos de inteligencia artificial, la red puede converger con la misma certeza (o error) hacia una solución incorrecta que hacia la solución real.
 
+Otro obstáculo importante es la ausencia de una justificación teórica que determine cuáles son los hiperparámetros óptimos. Este problema añade incertidumbre al proceso de ajuste de la red, lo que complica la obtención de resultados precisos. Finalmente, otro aspecto problemático de las PINN es que aproximan el residuo de forma fuerte. Esto significa que, si no existe una solución en el sentido fuerte (como ocurre en algunos casos), la red neuronal no puede aproximar de forma adecuada la solución débil.
 
-El problema principal radica en la formulación fuerte de las ecuaciones diferenciales, la cual exige que la red neuronal se ajuste a la solución exacta en todos los puntos del dominio. Este enfoque puede ser demasiado restrictivo y dificultar la optimización de la función de coste. 
-
+De estos problemas, los dos primeros son característicos del uso de redes neuronales, mientras que el tercero es específico del método. Con esto en mente, exploraremos un enfoque alternativo que considere la forma débil en la composición del residuo, lo que podría permitir superar esta limitación.
 
 
 \section{El ``Deep Ritz Method''}
