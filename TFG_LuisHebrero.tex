@@ -526,7 +526,7 @@ Losshistory, train_state = model.train(
     iterations=10000, callbacks=[checkpointer, movie]
 )
 \end{lstlisting}
-    Por detrás, esta librería se encargará de definir la función de coste asociada, que en este caso será
+    Por detrás, esta se encargará de definir la función de coste asociada, que en este caso será
     \begin{equation*} 
         \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
     \end{equation*}
@@ -578,7 +578,7 @@ No obstante, las PINN pueden presentar errores elevados incluso en sistemas rela
             \end{aligned}
             \right.
         \end{equation}
-        Claramente, no existe una solución fuerte, porque $u$ tiene que ser derivable, y en tal caso, la parte izquierda de la ecuación no podría ser igual a una función discontinua. Sin embargo la solución débil $u\in H^1((-1,1))$ para esta ecuación es
+        Claramente, no existe una solución fuerte, porque $u$ tiene que ser derivable, y en tal caso, la parte izquierda de la ecuación no podría ser igual a una función discontinua. \colorbox{yellow}{NO SE SI ESTE ES EL MOTIVO}Sin embargo la solución débil $u\in H^1((-1,1))$ para esta ecuación es
         \begin{equation}\label{eq:SolTo1dEq}
             u(x)=
             \left\{
