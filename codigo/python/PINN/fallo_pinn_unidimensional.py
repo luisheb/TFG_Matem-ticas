@@ -11,7 +11,7 @@ def pde(x, u):
     return -dA_du_x - f
 
 def weak_solution(x):
-    return (-2/3) * x - (2/3) * (x < 0) + (x**2 - (1/3) * x - (2/3)) * (x >= 0)
+    return (-2/3 * x - 2/3) * (x < 0) + (x**2 - (1/3) * x - (2/3)) * (x >= 0)
 
 def boundary(x, on_boundary):
     return on_boundary
@@ -30,7 +30,6 @@ model.compile("adam", lr=0.001,metrics=["l2 relative error"])
 losshistory, train_state = model.train(iterations=10000)
 
 
-
 dde.saveplot(losshistory, train_state, issave=True, isplot=True)
 
 x = geom.uniform_points(1000, True)
@@ -40,3 +39,5 @@ plt.plot(x, y)
 plt.xlabel("x")
 plt.ylabel("Residuo de la EDP")
 plt.show()
+
+

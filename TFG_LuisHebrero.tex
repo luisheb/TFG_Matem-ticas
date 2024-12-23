@@ -468,7 +468,7 @@ Como habíamos comentado en la Sección \ref{sec:RedesNeuronales}, las redes neu
 \end{figure}
 
 \subsection{Formulación de las PINN}
-Consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, una EDP elíptica sujeta a condiciones de contorno de Dirichlet. De modo que la ecuación a resolver es la siguiente: 
+Consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, una EDP elíptica sujeta a condiciones de contorno Dirichlet. De modo que la ecuación a resolver es la siguiente: 
 \begin{equation} 
     \begin{cases} -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial u}{\partial x_i} + c(\mathbf{x})u = f(\mathbf{x}), &\qquad \mathbf{x}\in\Omega,\\ u(\mathbf{x}) = g(\mathbf{x}), &\qquad \mathbf{x}\in\partial\Omega. 
     \end{cases} 
@@ -483,19 +483,18 @@ donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un tér
     \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right\|_2^2,
 \end{align*}
 
-En estas ecuaciones, $\mathcal{T}_f$ y $\mathcal{T}_b$ son conjuntos de puntos en los que se evaluarán las funciones de coste, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$, conocidos como puntos de colocación o ``collocation points''. En el caso de $\mathcal{L}_f$, se evaluará en puntos del dominio pues $\mathcal{T}_f\subset\Omega$, mientras que en $\mathcal{L}_b$ se evaluará en puntos de la frontera, pues $\mathcal{T}_f\subset\partial\Omega$. Obviamente, estos conjuntos son necesarios pues a nivel computacional es imposible calcular derivadas e integrales en un espacio continuo. Existe mucha literatura sobre como tomar estos puntos pues, al igual que en FEM la malla impacta el resultado, en las PINN, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
+En estas ecuaciones, $\mathcal{T}_f$ y $\mathcal{T}_b$ son conjuntos de puntos en los que se evaluarán las funciones de coste, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$, conocidos como puntos de colocación o ``collocation points''. En el caso de $\mathcal{L}_f$, se evaluará en puntos del dominio pues $\mathcal{T}_f\subset\Omega$, mientras que en $\mathcal{L}_b$ se evaluará en puntos de la frontera, pues $\mathcal{T}_f\subset\partial\Omega$. Es decir, se impone que el residuo en forma fuerte de la ecuación diferencial se anule en un conjunto de puntos. Obviamente, estos conjuntos son necesarios pues a nivel computacional es imposible calcular derivadas e integrales en un espacio continuo. Existe mucha literatura sobre como tomar estos puntos pues, al igual que en FEM la malla impacta el resultado, en las PINN, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
 
 Dada la función de coste definida y la distribución de los puntos de colocación, el entrenamiento de la red neuronal se reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. 
 
-\colorbox{yellow}{Este párrafo lo dejaría si explico antes que es el AD, sino queda muy al aire}
 Una ventaja fundamental del uso de redes neuronales en este contexto es la diferenciación automática, una técnica numérica muy potente que facilita la obtención de las derivadas de $\hat{u}$ con respecto a sus entradas de forma exacta y eficiente.
 A continuación, vamos a ver dos ejemplos para ver como se aplican las PINN a problemas concretos.
 
 \begin{mdframed}
     \begin{exmp}
-        Consideramos una ecuación de Poisson:
+        Consideramos la ecuación elíptica unidimensional:
         \begin{equation*}
-        -\Delta u = \pi^2 \sin(\pi x), \quad x \in [-1, 1],
+        -u_{xx} = \pi^2 \sin(\pi x), \quad x \in [-1, 1],
         \end{equation*}
         con las condiciones de contorno de Dirichlet
         \begin{equation*}
@@ -532,8 +531,8 @@ Losshistory, train_state = model.train(
     \end{equation*}
     donde
     \begin{align*}
-        \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| \Delta \hat{u} +\pi^2 \sin(\pi x)\right\|_2^2, \\ 
-        \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| \hat{u} (\mathbf{x}))\right\|_2^2,
+        \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} | \hat{u}_{xx} +\pi^2 \sin(\pi x)|^2, \\ 
+        \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} | \hat{u} (\mathbf{x})|^2,
     \end{align*}
     por los argumentos con los que se han inicializado las funciones, $\mathcal{T}_f$ serán 16 puntos aleatorios en el intervalo $[-1,1]$ y $\mathcal{T}_b = \{0,1\}$ . Con todo, el resultado de ejecutar este código será el de la Figura \ref{fig:poisson_PINN}.
 
@@ -543,10 +542,6 @@ Losshistory, train_state = model.train(
         \caption{Solución de la ecuación de Poisson}
         \label{fig:poisson_PINN}
     \end{figure}
-
-    \colorbox{yellow}{DUDAS PARA JULIA}
-    No sé si poner el código en python o no, si explicar en más detalle cada instrucción o si entrar en como se entrena la red neuronal. Tengo miedo de que todo esto poco matemático. Como el objetivo del trabajo son las ecuaciones autoadjuntas igual esto solo es dar unas pinceladas del estado del arte. También en todo esto parece interesante hablar de como se eligen los hiperparámetros.
-
 \end{exmp}
 \end{mdframed}
 
@@ -563,7 +558,7 @@ No obstante, las PINN pueden presentar errores elevados incluso en sistemas rela
             \end{aligned}
             \right.
         \end{equation}
-        donde la función coeficiente $A$ y $f$ son ambas funciones por tramos discontinuas y se expresan como
+        donde la función coeficiente $A$ y $f$ son ambas funciones continuas a trozos y se expresan como
         \begin{equation}\label{eq:1dCoeff}
             A(x)=\left\{
             \begin{aligned}
@@ -578,7 +573,7 @@ No obstante, las PINN pueden presentar errores elevados incluso en sistemas rela
             \end{aligned}
             \right.
         \end{equation}
-        Claramente, no existe una solución fuerte, porque $u$ tiene que ser derivable, y en tal caso, la parte izquierda de la ecuación no podría ser igual a una función discontinua. \colorbox{yellow}{NO SE SI ESTE ES EL MOTIVO}Sin embargo la solución débil $u\in H^1((-1,1))$ para esta ecuación es
+        Claramente, no existe una solución fuerte. Sin embargo la solución débil $u\in H^1(-1,1)$ para esta ecuación es
         \begin{equation}\label{eq:SolTo1dEq}
             u(x)=
             \left\{
@@ -594,8 +589,8 @@ No obstante, las PINN pueden presentar errores elevados incluso en sistemas rela
         \end{equation*}
         donde
         \begin{align*}
-            \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| D_{x}(A(x)D_{x} w(x))+f(x)\right\|_2^2, \\ 
-            \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| \hat{u} (\mathbf{x})\right\|_2^2,
+            \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} |D_{x}(A(x)D_{x} w(x))+f(x)|^2, \\ 
+            \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} |\hat{u} (\mathbf{x})|^2,
         \end{align*}
         En este caso, $\mathcal{T}_b=\{-1,1\}$ y $\mathcal{T}_f$ es un conjunto de 1000 puntos muestreados uniformemente en el intervalo $(-1,1)$. Es decir, $|\mathcal{T}_f|=1000$ y $|\mathcal{T}_b|=2$.
 
@@ -608,13 +603,14 @@ No obstante, las PINN pueden presentar errores elevados incluso en sistemas rela
             \label{fig:deviation}
         \end{figure}
 
-
-        Obviamente, el método no logra encontrar la solución exacta $u$. La diferencia entre $u$ y $\hat{u}(\mathbf{x};\theta)$ es tan grande como la magnitud de $u$. Además, si nos fijamos en la gráfica de entrenamiento y test, vemos que el error no disminuye con el número de iteraciones.
+        Obviamente, el método no logra encontrar la solución exacta $u$. La diferencia entre $u$ y $\hat{u}(\mathbf{x};\theta)$ es tan grande como la magnitud de $u$, es decir, cuanto más grande es la solución en valor absoluto, nuestra aproximación se aleja más de ella. Además, si nos fijamos en la gráfica de entrenamiento y test, vemos que el error no disminuye con el número de iteraciones.
         \begin{figure}[H]
             \centering
             \includegraphics[width=0.6\textwidth]{Figuras/test_train_pinn_error.png}
             \caption{Error de la red neuronal}
         \end{figure}
+
+        En esta gráfica
 
     \end{exmp}
 \end{mdframed}
