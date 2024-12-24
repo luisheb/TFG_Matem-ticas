@@ -477,13 +477,27 @@ donde $\Omega \subset \mathbb{R}^n$ es un dominio y las funciones $a_{ij}(\mathb
 \begin{equation} \label{eq:L_PINN}
     \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
 \end{equation}
-donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un término u otro y \colorbox{yellow}{((No encuentro casi nada de como se obtienen estos pesos))}
+donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un término u otro y
+\begin{equation}
+    \label{eq:Lf_Lb}
+    \begin{split}
+        \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} || -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) \\ &+ \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) ||_2^2, \\ 
+        \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right\|_2^2,
+    \end{split}
+\end{equation}
+    
+Estas funciones $\mathcal{L}_f$ y $\mathcal{L}_b$ se obtienen a través de una regla de cuadratura. Con las PINN nosotros queremos encontrar una función $\hat{u}$ que minimice el residuo en $\Omega$ y que cumpla las condiciones de contorno en $\partial\Omega$. Para ello, lo que queremos es el $\hat{u}$ que haga que las siguientes expresiones sean mínimas:
 \begin{align*}
-    \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left\| -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) \right\|_2^2, \\ 
-    \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left\| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right\|_2^2,
+    &\int_{\mathbf{x} \in \Omega} \left\| -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) \right\|_2^2, \\ 
+    &\int_{\mathbf{x} \in \partial\Omega} \left\| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right\|_2^2,
 \end{align*}
+Para poder computar estas integrales, se utiliza una regla de cuadratura que las aproxime mediante sumas ponderadas de los valores de las funciones en un conjunto discreto de puntos. En este contexto, los puntos de evaluación se denominan puntos de colocación o collocation points. En estas ecuaciones, estos puntos de colocación serán, $\mathcal{T}_f$ y $\mathcal{T}_b$, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$. En el caso de $\mathcal{L}_f$, se evaluará en puntos del dominio pues $\mathcal{T}_f\subset\Omega$, mientras que en $\mathcal{L}_b$ se evaluará en puntos de la frontera, pues $\mathcal{T}_f\subset\partial\Omega$. 
 
-En estas ecuaciones, $\mathcal{T}_f$ y $\mathcal{T}_b$ son conjuntos de puntos en los que se evaluarán las funciones de coste, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$, conocidos como puntos de colocación o ``collocation points''. En el caso de $\mathcal{L}_f$, se evaluará en puntos del dominio pues $\mathcal{T}_f\subset\Omega$, mientras que en $\mathcal{L}_b$ se evaluará en puntos de la frontera, pues $\mathcal{T}_f\subset\partial\Omega$. Es decir, se impone que el residuo en forma fuerte de la ecuación diferencial se anule en un conjunto de puntos. Obviamente, estos conjuntos son necesarios pues a nivel computacional es imposible calcular derivadas e integrales en un espacio continuo. Existe mucha literatura sobre como tomar estos puntos pues, al igual que en FEM la malla impacta el resultado, en las PINN, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
+De este modo, para obtener la ecuación \eqref{eq:Lf_Lb} se usará una cuadratura de Gauss con pesos constantes $\frac{w_f}{|\mathcal{T}_f|}$ y $\frac{w_b}{|\mathcal{T}_b|}$ respectivamente. 
+
+Existe mucha literatura sobre como tomar estos puntos pues, al igual que en FEM la malla impacta el resultado, en las PINN, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
+
+Es importante destacar que con esta formulación, se impone que el residuo en forma fuerte de la ecuación diferencial sea cero en los puntos de colocación. 
 
 Dada la función de coste definida y la distribución de los puntos de colocación, el entrenamiento de la red neuronal se reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. 
 
