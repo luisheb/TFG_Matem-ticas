@@ -64,6 +64,7 @@ backgroundcolor=gray!10,
 \theoremstyle{definition}
 \newtheorem{defin}[teor]{Definici\'on}
 \newtheorem{exmp}[teor]{Ejemplo}
+\newtheorem{dem}[teor]{Demostración}
 
 \title{Redes Neuronales: aproximación de EDPs}
 \author{Luis Hebrero Garicano}
@@ -110,8 +111,9 @@ Para poder entender las aproximaciones a las EDPs mediante redes neuronales, es 
 Una red neuronal, de forma abstracta, es simplemente una función que toma una entrada y produce una salida. Es decir, una red neuronal, es una función $F$ que toma un vector de entrada $x$ y produce un vector de salida $y$, siendo $F: \mathbb{R}^n \rightarrow \mathbb{R}^m$. La red neuronal se compone de una serie de capas, cada una de las cuales está formada por un conjunto de neuronas. Cada neurona de una capa recibe una serie de entradas, las procesa y produce una salida. La salida de cada neurona se calcula mediante una función de activación, que puede ser de distintos tipos, como la función sigmoide, la función tangente hiperbólica o la función ReLU. Para entender este concepto nos vamos a centrar en el caso concreto de la red neuronal de la Figura \ref{fig:RedNeuronal}.
 
 
-\begin{figure}[!ht]
+\begin{figure}
     \centering
+    \label{fig:RedNeuronal}
     \begin{tikzpicture}[x=2.2cm,y=1.4cm]
         \readlist\Nnod{2,2,3,3} % number of nodes per layer
         \readlist\colors{mylightred, mylightblue, mylightblue, mylightgreen} % color of each layer
@@ -131,7 +133,6 @@ Una red neuronal, de forma abstracta, es simplemente una función que toma una e
         }
     \end{tikzpicture}
     \caption{Esquema de una red neuronal con 4 capas.}
-    \label{fig:RedNeuronal}
 \end{figure}
 
 Como se ve en la Figura \ref{fig:RedNeuronal}, la entrada en nuestra función está representada por los dos círculos de la izquierda, que representan los valores de entrada $x_1$ y $x_2$, siendo así la entrada $x\in\mathbb{R}^2$. Estos valores se multiplican por unos pesos ($W^{[2]}$)y se suman a un sesgo $b$. La salida de esta neurona se calcula mediante una función de activación. Así, los valores que ``llegan'' a la segunda capa de nuestra red neuronal serán de la forma
@@ -158,11 +159,11 @@ Nuestra intención con este tipo de funciones es ir variando los valores de las 
 Para entender esto, vamos a utilizar la red neuronal de la Figura \ref{fig:RedNeuronal} para resolver un problema concreto muy sencillo de clasificación. Supongamos que tenemos una serie de puntos en el plano, de tres tipos distintos, como los de la Figura \ref{fig:Clasificacion}, y queremos clasificarlos en tres grupos, los puntos de tipo azul, rojo y amarillo.
 
 
-\begin{figure}[!ht]
+\begin{figure}
     \centering
+    \label{fig:Clasificacion}
     \includegraphics[width=0.5\textwidth]{Figuras/pic_xy.png}
     \caption{Puntos en el plano que marcan las tres categorías}
-    \label{fig:Clasificacion}
 \end{figure}
 
 De este modo, nuestra red neuronal recibirá como entrada un punto del plano, y nos dirá a qué categoría pertenece, devolviendo $(1,0,0)^T$ si es de la categoría azul, $(0,1,0)^T$ si es de la categoría roja y $(0,0,1)^T$ si es de la categoría amarilla.
@@ -171,22 +172,22 @@ Lo siguiente que queremos hacer será entrenar la red neuronal, es decir, ajusta
 
 Designamos a $y(x)$ como la salida deseada de nuestra red neuronal, y a $F(x)$ como la salida real. Así, el error vendrá dado en función de los pesos y sesgos de la siguiente forma
 \begin{equation*}
-    E(W^{[2]},W^{[3]},W^{[4]},b^{[2]},b^{[3]},b^{[4]})=\frac{1}{2}\sum_{x\in X}\|y(x)-F(x)\|^2,
+    \mathcal{L}(W^{[2]},W^{[3]},W^{[4]},b^{[2]},b^{[3]},b^{[4]})=\frac{1}{2}\sum_{x\in X}\|y(x)-F(x)\|^2,
 \end{equation*}
 donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal, en nuestro caso, serán 15. Esta función es conocida como función de coste.
 
-Así, lo que queremos hacer es minimizar esta función, es decir, encontrar los pesos que minimicen la función $E$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado.
+Así, lo que queremos hacer es minimizar esta función, es decir, encontrar los pesos que minimicen la función $\mathcal{L}$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado.
 
-\begin{figure}[!ht]
+\begin{figure}
     \centering
+    \label{fig:ClasificacionFinal}
     \includegraphics[width=0.5\textwidth]{Figuras/classifier_back.png}
     \caption{Puntos en el plano que marcan las tres categorías}
-    \label{fig:ClasificacionFinal}
 \end{figure}
 
 Más adelante entenderemos con más detalle como es este proceso de entrenamiento.
 
-\subsection{Comentarios sobre la función sigmoide}
+\subsection{Comentarios sobre la función sigmoide}\label{subsec:Sigmoide}
 Como hemos visto con el ejemplo anterior, las redes neuronales se pueden utilizar para generar funciones. A su vez, estas funciones se utilizan para resolver problemas de forma aproximada. En el ejemplo de la Figura \ref{fig:RedNeuronal}, la función red neuronal clasifica cualquier parte del plano en una de las tres categorías sombreadas a partir del entrenamiento. Dicho entrenamiento fija los valores de los pesos y sesgos, y por tanto define la función red neuronal (en el ejemplo define la función \eqref{eq:RedNeuronal}).
 
 Como las redes neuronales se utilizan para aproximar problemas de tipos muy distintos, una de las características deseables es que sean  capaces de aproximar el conjunto de funciones "mayor posible".
@@ -207,7 +208,7 @@ Esta función tiene la ventaja de que su derivada es fácil de calcular, y es pr
 Un resultado relevante para justificar el uso de funciones de activación no lineales es el siguiente propuesto por Pinkus \cite[Theorem 3.1]{pinkus1999approximation}. Este resultado es para redes neuronales de una sola capa.
 
 \begin{teor}[Pinkus]
-    Sea $\sigma\in C(\mathbb{R})$ y sea conjunto $\mathcal{M}(\sigma) = \text{span}\{\sigma(w\cdot x + b): b \in \mathbb{R}, w \in \mathbb{R}^n\}$, se cumple que
+    Sea $\sigma\in C(\mathbb{R})$ y sea $\mathcal{M}(\sigma) = \text{span}\{\sigma(w\cdot x + b): b \in \mathbb{R}, w \in \mathbb{R}^n\}$, se cumple que
     
     Para cualquier $f \in C(\mathbb{R}^n)$, cualquier conjunto compacto $K\in \mathbb{R}^n$ y cualquier $\epsilon > 0$, existe una función $g\in \mathcal{M}(\sigma)$ tal que $\max_{x\in K}|f(x)-g(x)|<\epsilon$ si y solo si $\sigma$ no es una función polinómica.
 \end{teor}
@@ -232,9 +233,9 @@ En este trabajo nos vamos a centrar en las ecuaciones en derivadas parciales el�
         c \in C(\overline{\Omega}),& \\
         f\in C(\overline{\Omega})&\label{eq:condiciones_EDP_eliptica_f}
     \end{align}
-    y además cumplen la condición de elipticidad uniforme, es decir
-    \begin{equation}
-        \sum_{i,j=1}^n a_{ij}(x) \xi_i \xi_j \geq c_0 \sum_{i=1}^n \xi_i^2, \quad \forall \xi = (\xi_1, \ldots, \xi_n) \in \mathbb{R}^n, \quad x \in \overline{\Omega};
+    y además cumple la condición de elipticidad uniforme, es decir
+    \begin{equation}\label{eq:condiciones_EDP_eliptica_elipticidad_uniforme}
+        \sum_{i,j=1}^n a_{ij}(x) \xi_i \xi_j \geq c_0 \sum_{i=1}^n \xi_i^2, \quad \forall \xi = (\xi_1, \ldots, \xi_n) \in \mathbb{R}^n, \quad x \in \overline{\Omega}.
     \end{equation}
 \end{defin}
 \end{mdframed}
@@ -244,8 +245,19 @@ Concretamente, a lo largo del trabajo, nos centraremos en problemas de condició
     u(x) = g(x), \qquad \forall x\in\partial\Omega.
 \end{equation}
 
-En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en todo el dominio y que además cumpla las condiciones de frontera. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. 
+En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en todo el dominio y que además cumpla las condiciones de frontera. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Para entender la formulación débil de una ecuación en derivadas parciales, es necesario introducir el concepto de derivada débil.
 
+\begin{mdframed}
+    \begin{defin}
+        Supongamos que $u$ es una función integrables localmente definida en $\Omega$. Supongamos que tamibén existe una función $w_\alpha$, integrable localmente en $\Omega$, tal que
+        \begin{equation*}
+            \int_\Omega w_\alpha(x)v(x) \, dx = \int_\Omega u(x)D^\alpha v(x) \, dx, \qquad \forall v \in C_0^\infty(\Omega),
+        \end{equation*}
+        entonces decimos que $w_\alpha$ es una derivada débil de $u$ de orden $|\alpha| = \alpha_1 + \cdots + \alpha_n$ y escribimos $w_\alpha = D^\alpha u$.
+    \end{defin}
+\end{mdframed}
+\colorbox{yellow}{HAY QUE DEFINIR EL OPERADOR D??}
+También es necesario definir el espacio de Sobolev $H^1(\Omega)$.
 \begin{mdframed}
 \begin{defin}
     Sea $\Omega$ un conjunto abierto de $\mathbb{R}^n$. Definimos el espacio de Sobolev $H^1(\Omega)$ como el conjunto de funciones en el siguiente conjunto
@@ -256,6 +268,7 @@ En la formulación que hemos dado de las ecuaciones en derivadas parciales elíp
     \begin{equation}
         \|u\|_{H^1(\Omega)}=\left(\|u\|^2_{L^2(\Omega)} + \sum_{i=1}^{n}\left\|\frac{\partial u}{\partial x_i}\right\|^2_{L^2(\Omega)}\right)^{1/2}.
     \end{equation}
+    En ambas definiciones las derivadas parciales se entienden en sentido débil, es decir
 \end{defin}
 \end{mdframed}
     
@@ -267,28 +280,137 @@ Definimos demás el espacio $H_0^1(\Omega)$. Este espacio es el cierre de las fu
 Con esto, podemos definir la solución débil de una ecuación en derivadas parciales elíptica de la siguiente forma.
 \begin{mdframed}
 \begin{defin}\label{def:SolucionDebil}
-    Dadas las funciones $a_{ij} \in L^\infty(\Omega), \, i,j = 1,\dots, n, \, b_i \in L^\infty(\Omega), i= 1, \dots, n, \, c\in L^\infty(\Omega)$, y la función $f\in L^2(\Omega)$. Decimos que la función $u\in H^1_0(\Omega)$ es una solución débil de la ecuación \eqref{eq:EDP_eliptica} si se cumple que, 
+    Dadas las funciones $a_{ij} \in L^\infty(\Omega), \, i,j = 1,\dots, n, \, b_i \in L^\infty(\Omega), \\i= 1, \dots, n, \, c\in L^\infty(\Omega)$, y la función $f\in L^2(\Omega)$. Decimos que la función $u\in H^1_0(\Omega)$ es una solución débil de la ecuación \eqref{eq:EDP_eliptica} con condición de contorno Dirichlet homogénea, es decir, $g(x)=0$ si se cumple que, 
     \begin{equation}\label{eq:SolucionDebil}
-        \begin{split}
-            \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  \\+ \int_\Omega c(x)u \varphi \,dx = \int_\Omega f(x)\varphi(x) dx, \qquad \forall \varphi \in H^1_0(\Omega).
-        \end{split}
+        \begin{aligned}
+            \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  \\+ \int_\Omega c(x)u \varphi \,dx = \int_\Omega f(x)\varphi(x) dx, \qquad \forall \varphi \in H^1_0(\Omega),
+        \end{aligned}
     \end{equation}
+    donde toas las derivadas parciales en la ecuación \eqref{eq:SolucionDebil} se entienden en sentido débil.
 \end{defin}
 \end{mdframed}
 
-Para simplificar esta engorrosa notación, nos interesa definir la siguiente forma bilineal y lineal. 
+Si $u $ es una solución clásica de \eqref{eq:EDP_eliptica}, entonces también es una solución débil de \eqref{eq:SolucionDebil}. Sin embargo, lo contrario no es cierto: una solución débil puede no ser lo suficientemente regular para ser una solución clásica. En particular, se demostrará que la ecuación \eqref{eq:EDP_eliptica} tiene una solución débil única $u \in H^1_0(\Omega) $, aunque no tenga solución clásica. Antes de analizar este caso específico, se aborda el problema general de la existencia y unicidad de una solución débil. Para simplificar, se introduce a modo de notación la forma bilineal:
 \begin{equation}
-    a(u,\varphi) = \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  + \int_\Omega c(x)u \varphi \,dx,
+    \begin{aligned}
+        a(u,\varphi) &= \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial u}{\partial x_i} \frac{\partial \varphi}{\partial x_j}\,dx + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i} \varphi \,dx  \\ &+ \int_\Omega c(x)u \varphi \,dx,
+    \end{aligned}
 \end{equation}
 y el funcional lineal,
 \begin{equation}
     l(\varphi) = \int_\Omega f(x)\varphi(x) dx.
 \end{equation}
-
-De este modo, nuestro problema elíptico en forma debil se puede expresar de la siguiente manera.
-\begin{equation}
+De este modo, nuestro problema elíptico en forma débil se puede expresar de la siguiente manera.
+\begin{equation}\label{eq:ProblemaDebilFormaBilineal}
     a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H^1_0(\Omega).
 \end{equation}
+
+Para demostrar la existencia y unicidad de una solución para esta ecuación, se puede recurrir al teorema de Lax-Milgram. 
+
+\begin{teor}[Lax-Milgram]
+    Sea $V$ un espacio de Hilbert con una norma asociada $\|\cdot\|_V$, y sea $a:V\times V\rightarrow\mathbb{R}$ una forma bilineal y $l:V\rightarrow\mathbb{R}$ un funcional lineal. Si se cumplen las siguientes condiciones
+    \begin{itemize}
+        \item[(a)] $\exists c_0 > 0 \quad \forall v \in V \quad a(v,v) \geq c_0\|v\|^2$,
+        \item[(b)] $\exists c_1 > 0 \quad \forall v, w \in V \quad |a(w,v)| \leq c_1\|w\|\|v\|$,
+    \end{itemize}
+    y sea $l(\cdot)$ un funcional lineal en $V$ tal que:
+    \begin{itemize}
+        \item[(c)] $\exists c_2 > 0 \quad \forall v \in V \quad |l(v)| \leq c_2\|v\|$.
+    \end{itemize}
+    entonces, existe una única solución débil $u\in V$ tal que
+    \begin{equation*}
+        a(u,v) = l(v) \quad \forall v\in V.
+    \end{equation*}
+\end{teor}
+Con este teorema se puede demostrar que una ecuación elíptica con condiciones de contorno Dirichlet homogéneas tiene solución única en $H^1_0(\Omega)$. Para ello se puede aplicar el teorema de Lax-Milgram en el espacio $V=H^1_0(\Omega)$ con la norma $\|\cdot\|_{H^1(\Omega)}$ y las formas bilineal y lineal $a$ y $l$ definidas anteriormente. Para que se cumplan las condiciones $(a,b,c)$ del teorema, además de la condición de elipticidad uniforme es necesario requerir que
+\begin{equation}\label{eq:condiciones_LaxMilgram_extra}
+    c(x) - \frac{1}{2} \sum_{i=1}^n \frac{\partial b_i}{\partial x_i} \geq 0, \quad x \in \overline{\Omega}.
+\end{equation}
+
+\colorbox{yellow}{DEJO LA DEMOSTRACIÓN ESCRITA POR SI LA QUEREMOS PONER}
+
+De esta manera, se demuestran las condiciones (a), (b) y (c) del teorema de Lax-Milgram como sigue.
+\begin{dem}
+    Empezamos por la condición (c).
+    \begin{itemize}
+        \item[(c)] La aplicación $v \mapsto l(v)$ es lineal: de hecho, para cualesquiera $\alpha, \beta \in \mathbb{R}$, 
+        \begin{align*}
+            l(\alpha v_1 + \beta v_2) &= \int_{\Omega} f(x)(\alpha v_1(x) + \beta v_2(x)) \, dx \\
+            &= \alpha \int_{\Omega} f(x)v_1(x) \, dx + \beta \int_{\Omega} f(x)v_2(x) \, dx \\
+            &= \alpha l(v_1) + \beta l(v_2), \quad v_1, v_2 \in H_0^1(\Omega).
+        \end{align*}
+        Por lo tanto, $l(\cdot)$ es una funcional lineal en $H_0^1(\Omega)$. Además, por la desigualdad de Cauchy-Schwarz,
+        \begin{align*}
+            |l(v)| &= \left| \int_{\Omega} f(x)v(x) \, dx \right| \leq \left(\int_{\Omega} |f(x)|^2 \, dx \right)^{1/2} \left(\int_{\Omega} |v(x)|^2 \, dx \right)^{1/2} \\
+            &= \|f\|_{L^2(\Omega)} \|v\|_{L^2(\Omega)} \leq \|f\|_{L^2(\Omega)} \|v\|_{H^1(\Omega)},
+        \end{align*}
+        para todo $v \in H_0^1(\Omega)$, donde hemos usado la desigualdad obvia $\|v\|_{L^2(\Omega)} \leq \|v\|_{H^1(\Omega)}$. Tomando $c_2 = \|f\|_{L^2(\Omega)}$, obtenemos la cota requerida.
+        \item [(b)] A continuación, verificamos (b). Para cualquier $w \in H_0^1(\Omega)$, la aplicación $v \mapsto a(v, w)$ es lineal. De manera similar, para cualquier $v \in H_0^1(\Omega)$, la aplicación $w \mapsto a(v, w)$ es lineal. Por lo tanto, $a(\cdot, \cdot)$ es una funcional bilineal en $H_0^1(\Omega) \times H_0^1(\Omega)$. Aplicando la desigualdad de Cauchy-Schwarz, deducimos que
+        \begin{align*}
+            |a(w, v)| \leq & \sum_{i, j = 1}^n \max_{x \in \overline{\Omega}} |a_{ij}(x)|\left| \int_{\Omega}  \frac{\partial w}{\partial x_i} \frac{\partial v}{\partial x_j} dx \right|  \\
+            &+ \sum_{i = 1}^n \max_{x \in \overline{\Omega}} |b_i(x)| \left|  \int_{\Omega} \frac{\partial w}{\partial x_i} v dx \right| \\
+            &+ \max_{x \in \overline{\Omega}} |c(x)| \left| \int_{\Omega}  w(x)v(x) dx \right|  \\
+            &\leq \hat{c} \Bigg\{
+            \left( \sum_{i,j=1}^n \int_\Omega \left| \frac{\partial w}{\partial x_i} \right|^2 dx \right)^{1/2}
+            \left( \int_\Omega \left| \frac{\partial v}{\partial x_j} \right|^2 dx \right)^{1/2}\\
+            &+ \sum_{i=1}^n \left( \int_\Omega \left| \frac{\partial w}{\partial x_i} \right|^2 dx \right)^{1/2}
+            \left( \int_\Omega |v|^2 dx \right)^{1/2} \\
+            &+ \left( \int_\Omega |w|^2 dx \right)^{1/2}
+            \left( \int_\Omega |v|^2 dx \right)^{1/2}
+            \Bigg\}\\
+            &\leq \hat{c} \Bigg\{
+            \left( \int_\Omega |w|^2 dx \right)^{1/2}
+            + \sum_{i=1}^n \left( \int_\Omega \left| \frac{\partial w}{\partial x_i} \right|^2 dx \right)^{1/2}
+            \Bigg\} \\
+            &\times
+            \Bigg\{
+            \left( \int_\Omega |v|^2 dx \right)^{1/2}
+            + \sum_{j=1}^n \left( \int_\Omega \left| \frac{\partial v}{\partial x_j} \right|^2 dx \right)^{1/2}
+            \Bigg\}.
+        \end{align*}
+        donde
+        \begin{align*}
+            \hat{c} = \max \Bigg\{ \max_{1 \leq i,j \leq n} \max_{x \in \overline{\Omega}} |a_{ij}(x)|, \max_{1 \leq i \leq n} \max_{x \in \overline{\Omega}} |b_i(x)|, \max_{x \in \overline{\Omega}} |c(x)| \Bigg\}.
+        \end{align*}
+
+        Si acotamos aún más el lado derecho de la última desigualdad, deducimos que
+        \begin{align*}
+            |a(w, v)| \leq 2\hat{c} \Bigg\{ \left(\int_{\Omega} |w|^2 dx + \sum_{i=1}^n \int_{\Omega} \left| \frac{\partial w}{\partial x_i} \right|^2 dx \right)^{1/2} \\
+            \times \left(\int_{\Omega} |v|^2 dx + \sum_{j=1}^n \int_{\Omega} \left| \frac{\partial v}{\partial x_j} \right|^2 dx \right)^{1/2} \Bigg\},
+        \end{align*}
+        por lo que, tomando $c_1 = 2\hat{c}$, obtenemos la desigualdad de (b).
+        \item[(a)] Por último, demostramos la condición (a). Aquí utilizaremos la condición extra requerida en \eqref{eq:condiciones_LaxMilgram_extra} y la condición de elipticidad uniforme \eqref{eq:condiciones_EDP_eliptica_elipticidad_uniforme}. Usando  \eqref{eq:condiciones_EDP_eliptica_elipticidad_uniforme} y la desigualdad de Cauchy-Schwarz,
+        \begin{align*}
+        a(v, v) &\geq \tilde{c} |v|^2_{H^1(\Omega)} - 
+        \left( \sum_{i=1}^{n} \|b_i\|^2_{L_{\infty}(\Omega)} \right)^{1/2} 
+        |v|_{H^1(\Omega)} \|v\|_{L_2(\Omega)} 
+        + \int_{\Omega} c(x) |v(x)|^2 dx \\
+        &\geq \frac{1}{2} \tilde{c} |v|^2_{H^1(\Omega)} 
+        + \int_{\Omega} \left( c(x) - \frac{2}{\tilde{c}} \sum_{i=1}^{n} \|b_i\|^2_{L_{\infty}(\Omega)} \right) |v(x)|^2 dx.
+        \end{align*}
+        Asumiendo que 
+        \begin{align*}
+        c(x) - \frac{2}{\tilde{c}} \sum_{i=1}^{n} \|b_i\|^2_{L_{\infty}(\Omega)} \geq 0,
+        \end{align*}
+        llegamos a la desigualdad 
+        \begin{align}\label{eq:resultado_aplicar_condicion_a}
+        a(v, v) \geq \frac{1}{2} \tilde{c} \sum_{i=1}^{n} \int_{\Omega} \left| \frac{\partial v}{\partial x_i} \right|^2 dx.
+        \end{align}
+        Mediante la desigualdad de Poincaré-Friedrichs, el lado derecho puede acotarse aún más para obtener
+        \begin{align}\label{eq:desigualdad_Poincaré_Friedrichs_demo_a}
+        a(v, v) \geq \frac{\tilde{c}}{c_{\star}} \int_{\Omega} |v|^2 dx.
+        \end{align}
+        Juntando \eqref{eq:resultado_aplicar_condicion_a} y \eqref{eq:desigualdad_Poincaré_Friedrichs_demo_a}, obtenemos
+        \begin{align}
+        a(v, v) \geq c_0 \left( \int_{\Omega} |v|^2 dx + \sum_{i=1}^{n} \int_{\Omega} \left| \frac{\partial v}{\partial x_i} \right|^2 dx \right),
+        \end{align}
+        donde $c_0 = \tilde{c}/(1 + c_{\star})$, y por lo tanto demostrando (a).
+    \end{itemize}
+    Se comprueban así las condiciones (a), (b) y (c) del teorema de Lax-Milgram y concluimos que existe una única solución débil en $H^1_0(\Omega)$ para la ecuación \eqref{eq:ProblemaDebilFormaBilineal}.
+\end{dem}
+
+
+
 %Introducir la idea y usar el ejemplo del apartado anterior par ademostrar que no todas las ecuciones en forma fuerte tienen solución
 
 
@@ -297,22 +419,21 @@ De este modo, nuestro problema elíptico en forma debil se puede expresar de la 
 
 %también puede tener sentido hablar de las ecuaciones en las que la solucion es el mínimo de una funcion, y que por eso se puede resolver con redes neuronales
 
-\section{Métodos numéricos tradicionales: el método de los elementos finitos}
+\section{Métodos numéricos tradicionales: el método de los elementos finitos}\label{sc:FEM}
 % hablar de como funciona en detalle, 
 
-El método de los elementos finitos (MEF) es una técnica numérica para resolver ecuaciones en derivadas parciales. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
+El método de los elementos finitos (FEM por su siglas en inglés) es una técnica numérica para resolver ecuaciones en derivadas parciales. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
 
-Para un problema elíptico con condiciones de frontera, se parte de la ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma muy simplificada como:
+Para un problema elíptico con condiciones de contorno Dirichlet homogéneas, se parte de la ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma simplificada como encontrar $u\in H_0^1(\Omega)$ tal que
 \begin{equation*}
-    a(u,\varphi) = l(\varphi) \quad \forall \varphi\in V,
+    a(u,\varphi) = l(\varphi) \quad \forall \varphi\in  H_0^1(\Omega).
 \end{equation*}
-donde $V$ es el espacio de funciones en el que están nuestras soluciones. En el caso del problema con condiciones homogéneas, este espacio será $V = H_0^1(\Omega)$.
+Como hemos visto en la sección \ref{sec:EDPs}, esta ecuación tiene solución única en $H_0^1(\Omega)$ si se cumple la condición de \eqref{eq:condiciones_LaxMilgram_extra}. De este modo, para que la formulación del problema sea válida, asumiremos que se cumple esta condición.
 
-Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Por ejemplo, si estamos trabajando con un problema de una dimensión, con $\Omega =(0,1)$, dividimos $\overline{\Omega} = [0,1]$ en $N$ subintervalos $[x_i,x_{i+1}], \, i = 1, \dots, N-1$, como se hace en la Figura \ref{fig:DivisionOmega}.
+Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Por ejemplo, si estamos trabajando con un problema de una dimensión, con $\Omega =(0,1)$, dividimos $\overline{\Omega} = [0,1]$ en $N$ subintervalos $[x_i,x_{i+1}], \, i = 1, \dots, N-1$, con $x_i = ih$, obteniendo la división de la Figura \ref{fig:DivisionOmega}.
 
 \begin{figure}
     \centering
-    \label{fig:DivisionOmega}
     \begin{tikzpicture}
         \draw[thick] (0,0) -- (12,0); % Adjusted length of the line
         \foreach \x in {0,2,4,6,8,10,12} % Adjusted positions of the ticks
@@ -322,12 +443,14 @@ Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdom
         \draw (4,0) node[below=3pt] {$x_2$};
         \draw (6,0) node[below=3pt] {$x_3$};
         \draw (8,0) node[below=3pt] {$\dots$};
-        \draw (10,0) node[below=3pt] {$x_{N-2}$};
-        \draw (12,0) node[below=3pt] {$x_{N-1}=1$};
+        \draw (10,0) node[below=3pt] {$x_{N-1}$};
+        \draw (12,0) node[below=3pt] {$x_{N}=1$};
     \end{tikzpicture}
     \caption{División de $\Omega = (0,1)$ en $N$ elementos finitos}
+    \label{fig:DivisionOmega}
 \end{figure}
-A esta subdivision, se le asocia una base de polinomios a trozos. Así, se reemplaza el subespacio de funciones que habíamos llamado $V$ por un subespacio de dimensión finita $V_h$ formado por polinomios a trozos  de grado fijo. Siguiendo nuestro ejemplo de antes, la base de polinomios que vamos a utilizar será la de los polinomios como los vistos en la Figura \ref{fig:BasePolinomios}. Definidos de la siguiente forma. \colorbox{yellow}{condiciones de contorno}
+
+A esta subdivision, se le asocia una base de polinomios a trozos. Remplazando así el subespacio de funciones que habíamos llamado $H_0^1(\Omega)$ por un subespacio de dimensión finita $V_h$ formado por polinomios a trozos  de grado fijo. Siguiendo nuestro ejemplo de antes, la base de polinomios que vamos a utilizar será la de los polinomios como los vistos en la Figura \ref{fig:BasePolinomios}. Definidos de la siguiente forma.
 \begin{equation*}
     \phi_i(x) = \begin{cases}
         \frac{x-x_{i-1}}{x_i-x_{i-1}}, & \text{si } x\in[x_{i-1},x_i],\\
@@ -336,10 +459,8 @@ A esta subdivision, se le asocia una base de polinomios a trozos. Así, se reemp
     \end{cases} 
 \end{equation*}
 
-En este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_{N-1}\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar $u_h\in V_h$ tal que \colorbox{yellow}{falta condiciones de contorno}
 \begin{figure}
     \centering
-    \label{fig:BasePolinomios}
     \begin{tikzpicture}[scale=0.5]
         \draw[thick] (0,0) -- (12,0); % Adjusted length of the line
         \draw (6 cm,100pt) -- (6 cm,-5pt);
@@ -351,27 +472,31 @@ En este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\
         \draw (11,0) node[below=3pt] {$x_{i+1}$};
     \end{tikzpicture}
     \caption{Polinomio $\phi_i$}
+    \label{fig:BasePolinomios}
 \end{figure}
+
+En este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_{N-1}\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. Con esta definición es claro que todos los $\phi_i\in H_0^1(\Omega)$ pues son funciones derivable en sentido débil que valen $0$ en la frontera de $\Omega =(0,1)$. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar $u_h\in V_h$ tal que
 \begin{equation*}
     a(u_h,v_h) = l(v_h) \quad \forall v_h\in V_h,
 \end{equation*}
+Nótese que las condiciones de contorno van implícitas en la definición de $V_h$ pues todos los $\phi_i\in H_0^1(\Omega)$. 
 
-De forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones de dimensión infinita, como es $V$, se busca una solución en un espacio de funciones de dimensión finita, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños a partir de los cuales hemos construido nuestro nuevo espacio de funciones. \colorbox{yellow}{falta LEX-MILGRAM}
+Con todo, de forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones de dimensión infinita, como es $H_0^1(\Omega)$, se busca una solución en un espacio de funciones de dimensión finita, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños a partir de los cuales hemos construido nuestro nuevo espacio de funciones. 
 
 Ahora, encontrar una solución se convierte en encontrar los coeficientes en la base de polinomios a trozos, es decir, los $U_i$ en la siguiente ecuación
 \begin{equation}
     u_h = \sum_{i=1}^{N-1} U_i\phi_i.
 \end{equation}
-Es decir, resolver la ecuación diferencial se convierte en encontrar $U=(U_1,\dots, U_N) \in \mathbb{R}^{N-1}$ que cumplen:
+Por tanto, resolver la ecuación diferencial se convierte en encontrar $U=(U_1,\dots, U_{N-1}) \in \mathbb{R}^{N-1}$ que cumplen:
 \begin{equation}
     \sum_{i=1}^{N-1} a\left( \phi_i,\phi_j\right)U_i = l(\phi_j) \quad \forall j = 1,\dots,N-1.
 \end{equation}
 
 Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matriz de rigidez (con entradas $A_{ij}=a\left( \phi_i,\phi_j\right)$), y $b$ es el vector de términos fuente (con entradas $b_j = l(\phi_j)$). A este nuevo sistema lineal se le pueden aplicar métodos numéricos tradicionales para resolverlo, como la factorización LU, encontrando así los coeficientes $U$ que nos dan $u_h$, la aproximación de $u$.
-\colorbox{yellow}{generalizar el problema en 2D}
-\begin{mdframed} 
-    \colorbox{yellow}{Poner esto como un ejemplo de la generalización. }
-    
+
+Este proceso se puede generalizar a problemas en más dimensiones, donde se dividen los dominios en elementos finitos de mayor dimensión, y se construye una base de polinomios a trozos en cada uno de estos elementos. Por ejemplo, en dos dimensiones, un elemento finito sería un triángulo, y la base de polinomios a trozos sería una base de funciones que valen $0$ en los bordes del triángulo y que son lineales en cada uno de los lados del triángulo.
+
+\begin{mdframed}  
     \colorbox{yellow}{Hay más información en el libro de como se plantea este  problema}
 
     \colorbox{yellow}{Ponerlo como ejemplo de lex milgram para más dimensiones.}
@@ -414,7 +539,7 @@ Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matri
 \end{exmp}
 \end{mdframed}
 
-\section{El problema elíptico autoadjunto}
+\section{El problema elíptico autoadjunto}\label{sec:ProblemaAutoadjunto}
 
 Vamos a considerar ahora un caso particular que es el llamado problema elíptico autoadjunto, el cual permite caracterizar las soluciones de las EDP elípticas como el mínimo de un funcional. Esto conecta de manera lógica con el enfoque de redes neuronales para aproximar soluciones, donde la función de coste de la red neuronal se puede definir como esta función. Al minimizarla, se obtiene una solución aproximada del problema original. No obstante, esto lo veremos más adelante en detalle. De momento, se define el problema elíptico autoadjunto de la siguiente forma.
 
@@ -455,16 +580,16 @@ En un problema autoadjunto se pueden caracterizar las soluciones débiles como e
 
 \chapter{Aproximación de EDPs mediante redes neuronales}\label{chap2}
 
-\section{PINN: Physics-Informed Neural Networks}
+\section{PINN: Physics-Informed Neural Networks}\label{sec:PINN}
 \subsection{Introducción}
 Las PINN, o Physics-Informed Neural Networks, son una técnica que combina la resolución de ecuaciones en derivadas parciales con redes neuronales. La idea es que, en vez de resolver la ecuación diferencial directamente o con métodos numéricos tradicionales, se entrena una red neuronal para que aproxime la solución de la ecuación. 
 
 Como habíamos comentado en la Sección \ref{sec:RedesNeuronales}, las redes neuronales son capaces de aproximar cualquier función, por lo que, en teoría, pueden aproximar cualquier solución de una ecuación diferencial. De este modo, las PINN van a aprovechar esto, definiendo la aproximación de nuestra solución ${u}$, como la salida de la función red neuronal $\hat{u}(x;\mathbf{\theta})$,  donde $\theta$ hace referencia a los pesos y sesgos vistos en la Sección \ref{sec:RedesNeuronales}. Así, la función en la Figura \ref{fig:PIN} sería la aproximación de la solución de la ecuación diferencial.
 \begin{figure}[htbp]
     \centering
-    \label{fig:PIN}
     \includegraphics[scale=0.6]{Figuras/neural_network_improved.pdf}
     \caption{Esquema de una PINN}
+    \label{fig:PIN}
 \end{figure}
 
 \subsection{Formulación de las PINN}
@@ -636,7 +761,7 @@ Otro obstáculo importante es la ausencia de una justificación teórica que det
 De estos problemas, los dos primeros son característicos del uso de redes neuronales, mientras que el tercero es específico del método. Con esto en mente, exploraremos un enfoque alternativo que considere la forma débil en la composición del residuo, lo que podría permitir superar esta limitación.
 
 
-\section{El ``Deep Ritz Method''}
+\section{El ``Deep Ritz Method''} \label{sec:DeepRitz}
 
 El método ``Deep Ritz'' es una técnica numérica basada en las redes neuronales, que busca encontrar una solución a una ecuación en derivadas parciales utilizando su forma débil. Este método es más coherente con la formulación matemática del problema, y evita las restricciones demasiado fuertes que presentan las PINN.
 
