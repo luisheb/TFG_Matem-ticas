@@ -99,6 +99,7 @@ from ufl import ds, dx, grad, inner
 # <dolfinx.fem.FunctionSpace>` $V$ on the mesh.
 
 # +
+# Create a mesh and function space
 msh = mesh.create_rectangle(
     comm=MPI.COMM_WORLD,
     points=((0.0, 0.0), (2.0, 1.0)),
@@ -106,76 +107,38 @@ msh = mesh.create_rectangle(
     cell_type=mesh.CellType.triangle,
 )
 V = fem.functionspace(msh, ("Lagrange", 1))
-# -
 
-# The second argument to {py:func}`functionspace
-# <dolfinx.fem.functionspace>` is a tuple `(family, degree)`, where
-# `family` is the finite element family, and `degree` specifies the
-# polynomial degree. In this case `V` is a space of continuous Lagrange
-# finite elements of degree 1.
-#
-# To apply the Dirichlet boundary conditions, we find the mesh facets
-# (entities of topological co-dimension 1) that lie on the boundary
-# $\Gamma_D$ using {py:func}`locate_entities_boundary
-# <dolfinx.mesh.locate_entities_boundary>`. The function is provided
-# with a 'marker' function that returns `True` for points `x` on the
-# boundary and `False` otherwise.
-
+# Locate all boundary facets (for Dirichlet BCs on the entire boundary)
 facets = mesh.locate_entities_boundary(
     msh,
     dim=(msh.topology.dim - 1),
-    marker=lambda x: np.isclose(x[0], 0.0) | np.isclose(x[0], 2.0),
+    marker=lambda x: np.full(x.shape[1], True, dtype=bool)
 )
-boundary_facets = mesh.locate_entities_boundary(
-    msh, (msh.topology.dim - 1), lambda x: np.full(x.shape[1], True, dtype=bool))
 
-# We now find the degrees-of-freedom that are associated with the
-# boundary facets using {py:func}`locate_dofs_topological
-# <dolfinx.fem.locate_dofs_topological>`:
-
+# Locate degrees of freedom on the boundary
 dofs = fem.locate_dofs_topological(V=V, entity_dim=1, entities=facets)
 
-# and use {py:func}`dirichletbc <dolfinx.fem.dirichletbc>` to create a
-# {py:class}`DirichletBC <dolfinx.fem.DirichletBC>` class that
-# represents the boundary condition:
-
+# Define Dirichlet BC (u = 0 on all boundaries)
 bc = fem.dirichletbc(PETSc.ScalarType(0), dofs=dofs, V=V)
 
-# Next, the variational problem is defined:
-
-# +
+# Define the variational problem
 u = ufl.TrialFunction(V)
 v = ufl.TestFunction(V)
 x = ufl.SpatialCoordinate(msh)
 f = 10 * ufl.exp(-((x[0] - 0.5) ** 2 + (x[1] - 0.5) ** 2) / 0.02)
-g = ufl.sin(5 * x[0])
 a = inner(grad(u), grad(v)) * dx
-L = inner(f, v) * dx + inner(g, v) * ds
-# -
+L = inner(f, v) * dx  # Neumann term removed
 
-# A {py:class}`LinearProblem <dolfinx.fem.petsc.LinearProblem>` object is
-# created that brings together the variational problem, the Dirichlet
-# boundary condition, and which specifies the linear solver. In this
-# case an LU solver is used. The {py:func}`solve
-# <dolfinx.fem.petsc.LinearProblem.solve>` computes the solution.
-
-# +
+# Solve the problem
 problem = LinearProblem(a, L, bcs=[bc], petsc_options={"ksp_type": "preonly", "pc_type": "lu"})
 uh = problem.solve()
-# -
 
-# The solution can be written to a {py:class}`XDMFFile
-# <dolfinx.io.XDMFFile>` file visualization with ParaView or VisIt:
-
-# +
-with io.XDMFFile(msh.comm, "out_poisson/poisson.xdmf", "w") as file:
+# Write the solution to a file
+with io.XDMFFile(msh.comm, "out_poisson_dirichlet/poisson.xdmf", "w") as file:
     file.write_mesh(msh)
     file.write_function(uh)
-# -
 
-# and displayed using [pyvista](https://docs.pyvista.org/).
-
-# +
+# Optional visualization with pyvista
 try:
     import pyvista
 
@@ -189,10 +152,9 @@ try:
     plotter.add_mesh(warped)
     if pyvista.OFF_SCREEN:
         pyvista.start_xvfb(wait=0.1)
-        plotter.screenshot("uh_poisson.png")
+        plotter.screenshot("uh_poisson_dirichlet.png")
     else:
         plotter.show()
 except ModuleNotFoundError:
     print("'pyvista' is required to visualise the solution")
     print("Install 'pyvista' with pip: 'python3 -m pip install pyvista'")
-# -

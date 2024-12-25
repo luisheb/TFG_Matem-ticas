@@ -268,7 +268,7 @@ También es necesario definir el espacio de Sobolev $H^1(\Omega)$.
     \begin{equation}
         \|u\|_{H^1(\Omega)}=\left(\|u\|^2_{L^2(\Omega)} + \sum_{i=1}^{n}\left\|\frac{\partial u}{\partial x_i}\right\|^2_{L^2(\Omega)}\right)^{1/2}.
     \end{equation}
-    En ambas definiciones las derivadas parciales se entienden en sentido débil, es decir
+    En ambas definiciones las derivadas parciales se entienden en sentido débil.
 \end{defin}
 \end{mdframed}
     
@@ -404,23 +404,12 @@ De esta manera, se demuestran las condiciones (a), (b) y (c) del teorema de Lax-
         \begin{align}
         a(v, v) \geq c_0 \left( \int_{\Omega} |v|^2 dx + \sum_{i=1}^{n} \int_{\Omega} \left| \frac{\partial v}{\partial x_i} \right|^2 dx \right),
         \end{align}
-        donde $c_0 = \tilde{c}/(1 + c_{\star})$, y por lo tanto demostrando (a).
+        donde $c_0 = \tilde{c}/(1 + c_{\star})$, y por queda demostrado (a).
     \end{itemize}
     Se comprueban así las condiciones (a), (b) y (c) del teorema de Lax-Milgram y concluimos que existe una única solución débil en $H^1_0(\Omega)$ para la ecuación \eqref{eq:ProblemaDebilFormaBilineal}.
 \end{dem}
 
-
-
-%Introducir la idea y usar el ejemplo del apartado anterior par ademostrar que no todas las ecuciones en forma fuerte tienen solución
-
-
-
-%quiza tenga sentido hablar de que ni siquiera en forma debil se puede encontrar la solución, y que por eso se recurre a métodos alternativos (metodos numéricos)
-
-%también puede tener sentido hablar de las ecuaciones en las que la solucion es el mínimo de una funcion, y que por eso se puede resolver con redes neuronales
-
 \section{Métodos numéricos tradicionales: el método de los elementos finitos}\label{sc:FEM}
-% hablar de como funciona en detalle, 
 
 El método de los elementos finitos (FEM por su siglas en inglés) es una técnica numérica para resolver ecuaciones en derivadas parciales. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
 
@@ -428,7 +417,8 @@ Para un problema elíptico con condiciones de contorno Dirichlet homogéneas, se
 \begin{equation*}
     a(u,\varphi) = l(\varphi) \quad \forall \varphi\in  H_0^1(\Omega).
 \end{equation*}
-Como hemos visto en la sección \ref{sec:EDPs}, esta ecuación tiene solución única en $H_0^1(\Omega)$ si se cumple la condición de \eqref{eq:condiciones_LaxMilgram_extra}. De este modo, para que la formulación del problema sea válida, asumiremos que se cumple esta condición.
+
+Por lo visto en la sección \ref{sec:EDPs}, esta ecuación tiene solución única en $H_0^1(\Omega)$ si se cumple la condición de \eqref{eq:condiciones_LaxMilgram_extra}. De este modo, para que la formulación del problema sea válida, asumiremos que se cumple esta condición.
 
 Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Por ejemplo, si estamos trabajando con un problema de una dimensión, con $\Omega =(0,1)$, dividimos $\overline{\Omega} = [0,1]$ en $N$ subintervalos $[x_i,x_{i+1}], \, i = 1, \dots, N-1$, con $x_i = ih$, obteniendo la división de la Figura \ref{fig:DivisionOmega}.
 
@@ -497,86 +487,72 @@ Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matri
 Este proceso se puede generalizar a problemas en más dimensiones, donde se dividen los dominios en elementos finitos de mayor dimensión, y se construye una base de polinomios a trozos en cada uno de estos elementos. Por ejemplo, en dos dimensiones, un elemento finito sería un triángulo, y la base de polinomios a trozos sería una base de funciones que valen $0$ en los bordes del triángulo y que son lineales en cada uno de los lados del triángulo.
 
 \begin{mdframed}  
-    \colorbox{yellow}{Hay más información en el libro de como se plantea este  problema}
-
-    \colorbox{yellow}{Ponerlo como ejemplo de lex milgram para más dimensiones.}
 \begin{exmp}
-    Veamos ahora un ejemplo concreto de la aplicación del FEM a través de la ecuación de Poisson. El objetivo es encontrar un campo escalar $ u $ sobre un dominio $\Omega \subset \mathbb{R}^n$ que satisfaga:
+    Veamos ahora un ejemplo concreto de la aplicación del FEM a través de la ecuación de Poisson en dos dimensiones. El objetivo es encontrar un campo escalar $ u $ sobre un dominio $\Omega \subset \mathbb{R}^n$ que satisfaga:
     \begin{equation}
     \begin{aligned}
     - \nabla^2 u &= f \quad \text{en} \ \Omega, \\
-    u &= 0 \quad \text{en} \ \Gamma_D, \\
-    \nabla u \cdot n &= g \quad \text{en} \ \Gamma_N,
+    u &= 0 \quad \text{en} \ \partial\Omega, \\
     \end{aligned}
     \end{equation}
-    donde $ f $ es un término fuente, $ g $ es un flujo en la frontera, $ n $ es el vector normal unitario, $\Gamma_D$ y $\Gamma_N$ son partes de la frontera donde se aplican las condiciones de contorno de Dirichlet y Neumann, respectivamente.
-
-    El método de elementos finitos (FEM) aproxima $ u $ transformando el problema en su forma débil y resolviéndolo en un espacio de funciones de dimensión finita. La forma fuerte del problema se convierte en: \colorbox{yellow}{decir en que espacio esta u}
-    \begin{equation}
-    a(u, v) = l(v) \quad \forall \ v \in V,
+    donde $ f $ es un término fuente y la condición de contorno es de Dirichlet homogénea. Para encontrar una solución, construimos la forma débil de la ecuación. Para ello, tomamos $v\in H_0^1(\Omega)$ y multiplicamos ambos lados por $v$ e integramos sobre $\Omega$.
+    \begin{equation*}
+        -\int_{\Omega} (\nabla^2 u) v \, dx = \int_{\Omega} f v \, dx.
+    \end{equation*}
+    Utilizando la identidad $div(v\nabla u) = (\nabla u)(\nabla v) + v \nabla^2u$ obtenemos:
+    \begin{equation*}
+    \int_{\Omega} \nabla u \nabla v - \int_{\Omega} div(v \nabla u) = \int_{\Omega} f v
+    \end{equation*}
+    Por el teorema de Green, podemos escribir (si \(\partial \Omega\) es suficientemente regular):
+    \begin{equation*}
+    \int_{\Omega} \nabla u \nabla v - \int_{\partial \Omega} (v \nabla u) \cdot \mathbf{n} \, dS = \int_{\Omega} f v
+    \end{equation*}
+    Finalmente, dado que \(v = 0\) en \(\partial \Omega\), concluimos:
+    \begin{equation*}
+    \int_{\Omega} \nabla u \nabla v = \int_{\Omega} f v
+    \end{equation*}
+    La forma fuerte del problema se convierte en: 
+    \begin{equation}\label{eq:forma_debil_poisson}
+    a(u, v) = l(v) \quad \forall \ v \in H_0^1(\Omega),
     \end{equation}
     donde:
     \begin{itemize}
         \item $ a(u, v) = \int_{\Omega} \nabla u \cdot \nabla v \, \text{d}x $
-        \item $ l(v) = \int_{\Omega} f v \, \text{d}x + \int_{\Gamma_N} g v \, \text{d}s $
+        \item $ l(v) = \int_{\Omega} f v \, dx $
     \end{itemize}
+    Para aplicar el FEM, nos interesa encontrar una solución aproximada en un espacio de funciones de dimensión finita. Para ello, dividimos el dominio $\Omega$ en un conjunto de elementos finitos y construimos una base de polinomios a trozos en cada uno de estos elementos. 
+    
+    Antes de seguir avanzando, para este ejemplo específico, tomaremos un dominio rectangular $\Omega = [0,2] \times [0,1]$ y $f(x, y) = 10 \cdot\exp \left( - \frac{(x - 0.5)^2 + (y - 0.5)^2}{0.02} \right)$. Bajo estas condiciones sabemos que existe una solución única en $H_0^1(\Omega)$ para el problema \eqref{eq:forma_debil_poisson}.
 
-    Al discretizar el espacio $V$, el FEM transforma esta ecuación en un sistema de ecuaciones lineales que se puede resolver numéricamente. En este caso concreto usaremos un dominio rectangular $\Omega = [0,2] \times [0,1]$, en el que se imponen las siguientes condiciones:  
-    \begin{itemize}
-        \item Frontera de Dirichlet $\Gamma_D$ en los bordes verticales ($x=0$ y $x=2$) con $u=0$,  
-        \item Frontera de Neumann $\Gamma_N$ en los bordes horizontales ($y=0$ y $y=1$) con flujo $g(x) = \sin(5x)$.
-        \item Término fuente $f(x, y) = 10 \cdot\exp \left( - \frac{(x - 0.5)^2 + (y - 0.5)^2}{0.02} \right)$.  
-    \end{itemize}
-
-    Bajo estas condiciones, si usamos el paquete de python FEniCS, podemos resolver el problema obteniendo el siguiente resultado.
+    A continuación, usamos el paquete de python FEniCS para resolver el problema. En el, lo único reseñable es que se define el dominio $\Omega$ y la malla de elementos finitos con el siguiente comando
+    \begin{lstlisting}[language=Python]
+    msh = mesh.create_rectangle(
+        comm=MPI.COMM_WORLD,
+        points=((0.0, 0.0), (2.0, 1.0)),
+        n=(32, 16),
+        cell_type=mesh.CellType.triangle,
+    )
+    \end{lstlisting}
+    y se especifica el tipo de polinomios a trozos que se van a utilizar para la base de funciones, en este caso polinomios de Lagrange de grado 1
+    \begin{lstlisting}[language=Python]
+        V = FunctionSpace(msh, "Lagrange", 1)
+    \end{lstlisting}
+    Con esto, obtenemos el resultado que se puede ver en la Figura \ref{fig:poisson}.
     \begin{figure}[H] 
         \centering
         \includegraphics[width=0.5\textwidth]{Figuras/poisson.png}
         \caption{Solución de la ecuación de Poisson}
         \label{fig:poisson}
     \end{figure}
-     Se puede apreciar en la Figura \ref{fig:poisson} la malla de elementos finitos utilizada para la aproximación de la solución, siendo esta la que da lugar a la base de polinomios a trozos que hemos mencionado anteriormente. 
+    En el que la malla de elementos finitos utilizada para la aproximación de la solución se puede apreciar en la Figura \ref{fig:poisson_malla}.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{Figuras/malla_poisson.png}
+        \caption{Malla de elementos finitos}
+        \label{fig:poisson_malla}
+    \end{figure}
 \end{exmp}
 \end{mdframed}
-
-\section{El problema elíptico autoadjunto}\label{sec:ProblemaAutoadjunto}
-
-Vamos a considerar ahora un caso particular que es el llamado problema elíptico autoadjunto, el cual permite caracterizar las soluciones de las EDP elípticas como el mínimo de un funcional. Esto conecta de manera lógica con el enfoque de redes neuronales para aproximar soluciones, donde la función de coste de la red neuronal se puede definir como esta función. Al minimizarla, se obtiene una solución aproximada del problema original. No obstante, esto lo veremos más adelante en detalle. De momento, se define el problema elíptico autoadjunto de la siguiente forma.
-
-\begin{mdframed}
-\begin{defin}
-    Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales elíptica autoadjunta, y además se cumplen las siguientes condiciones de simetría en los coeficientes.
-    \begin{equation}\label{eq:simetria_a}
-        \begin{split}
-            a_{ij} = a_{ji},\qquad &i,j = 1,\dots,n,\\
-            b_i = 0, \qquad &i = 1,\dots,n,
-        \end{split}
-    \end{equation}
-\end{defin}
-\end{mdframed}
-Bajo estas condiciones, nuestro problema se puede formular de la siguiente forma.
-\begin{equation}
-    \begin{cases}
-        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + c(x)u = f(x), & x\in\Omega,\\
-        u(x) = 0, & x\in\partial\Omega.
-    \end{cases}
-\end{equation}
-
-En un problema autoadjunto se pueden caracterizar las soluciones débiles como el mínimo de un funcional. Esto es así por el siguiente resultado.
-\begin{lema} \label{lema:MinimoFuncion}
-    \colorbox{yellow}{hacerla más rigurosa. Tengo que hablar de que es la solución única}
-
-    \colorbox{yellow}{Definir el J antes}
-
-    Las siguientes afirmaciones son equivalentes:
-    \begin{enumerate}
-        \item Encontrar $u\in H_0^1(\Omega)$ tal que $a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H_0^1(\Omega)$
-        \item Encontrar $u\in H_0^1(\Omega)$ tal que $J(u) \leq J(\varphi) \quad \forall\varphi\in H_0^1(\Omega)$, siendo $J(u)$ la siguiente función
-        \begin{equation*}
-            J(u) = \frac{1}{2}a(u,u) - l(u), \quad u\in H_0^1(\Omega)
-        \end{equation*}
-    \end{enumerate}
-\end{lema}
 
 \chapter{Aproximación de EDPs mediante redes neuronales}\label{chap2}
 
@@ -616,13 +592,13 @@ Estas funciones $\mathcal{L}_f$ y $\mathcal{L}_b$ se obtienen a través de una r
     &\int_{\mathbf{x} \in \Omega} \left\| -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) \right\|_2^2, \\ 
     &\int_{\mathbf{x} \in \partial\Omega} \left\| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right\|_2^2,
 \end{align*}
-Para poder computar estas integrales, se utiliza una regla de cuadratura que las aproxime mediante sumas ponderadas de los valores de las funciones en un conjunto discreto de puntos. En este contexto, los puntos de evaluación se denominan puntos de colocación o collocation points. En estas ecuaciones, estos puntos de colocación serán, $\mathcal{T}_f$ y $\mathcal{T}_b$, siendo $\mathcal{T}= \mathcal{T}_f\cup\mathcal{T}_b$. En el caso de $\mathcal{L}_f$, se evaluará en puntos del dominio pues $\mathcal{T}_f\subset\Omega$, mientras que en $\mathcal{L}_b$ se evaluará en puntos de la frontera, pues $\mathcal{T}_f\subset\partial\Omega$. 
+Para poder computar estas integrales, se utiliza una regla de cuadratura que las aproxime mediante sumas ponderadas de los valores de las funciones en un conjunto discreto de puntos. En este contexto, los puntos de evaluación se denominan puntos de colocación o collocation points. Para la primera expresión, los puntos de colocación que se usarán será el conjunto $\mathcal{T}_f$, mientras que para la segunda se usará $\mathcal{T}_b$. 
 
 De este modo, para obtener la ecuación \eqref{eq:Lf_Lb} se usará una cuadratura de Gauss con pesos constantes $\frac{w_f}{|\mathcal{T}_f|}$ y $\frac{w_b}{|\mathcal{T}_b|}$ respectivamente. 
 
 Existe mucha literatura sobre como tomar estos puntos pues, al igual que en FEM la malla impacta el resultado, en las PINN, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
 
-Es importante destacar que con esta formulación, se impone que el residuo en forma fuerte de la ecuación diferencial sea cero en los puntos de colocación. 
+Es importante destacar que con esta formulación, se impone que el residuo en forma fuerte de la ecuación diferencial sea cero en los puntos de colocación, lo cual, veremos más adelante que puede ser una fuente de errores. 
 
 Dada la función de coste definida y la distribución de los puntos de colocación, el entrenamiento de la red neuronal se reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. 
 
@@ -749,7 +725,7 @@ No obstante, las PINN pueden presentar errores elevados incluso en sistemas rela
             \caption{Error de la red neuronal}
         \end{figure}
 
-        En esta gráfica
+        En esta gráfica, \colorbox{yellow}{HAY QUE EXPLICAR QUE SIGNIFICA CADA UNA DE LAS LINEAS GRAFICADAS}
 
     \end{exmp}
 \end{mdframed}
@@ -763,7 +739,62 @@ De estos problemas, los dos primeros son característicos del uso de redes neuro
 
 \section{El ``Deep Ritz Method''} \label{sec:DeepRitz}
 
-El método ``Deep Ritz'' es una técnica numérica basada en las redes neuronales, que busca encontrar una solución a una ecuación en derivadas parciales utilizando su forma débil. Este método es más coherente con la formulación matemática del problema, y evita las restricciones demasiado fuertes que presentan las PINN.
+El método ``Deep Ritz'' es una técnica numérica basada en las redes neuronales, que busca encontrar una solución a una ecuación en derivadas parciales utilizando su forma débil. Este método es más coherente con la formulación matemática del problema, y evita las restricciones demasiado fuertes que presentan las PINN. Para poder plantar el método, es necesario primero describir los problemas elípticos autoadjuntos.
+
+\section{El problema elíptico autoadjunto}\label{sec:ProblemaAutoadjunto}
+
+El problema elíptico autoadjunto  permite caracterizar las soluciones de las EDP elípticas como el mínimo de un funcional. Esto conecta de manera lógica con el enfoque de redes neuronales para aproximar soluciones, donde la función de coste de la red neuronal se puede definir como esta función. Al minimizarla, se obtiene una solución aproximada del problema original. No obstante, esto lo veremos más adelante en detalle. De momento, consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, una EDP elíptica sujeta a condiciones de contorno Dirichlet:
+\begin{equation} 
+    \begin{cases} -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial u}{\partial x_i} + c(\mathbf{x})u = f(\mathbf{x}), &\qquad \mathbf{x}\in\Omega,\\ u(\mathbf{x}) = g(\mathbf{x}), &\qquad \mathbf{x}\in\partial\Omega. 
+    \end{cases} 
+\end{equation} 
+Así, se define el problema elíptico autoadjunto de la siguiente forma.
+\begin{mdframed}
+\begin{defin}
+    Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales elíptica es autoadjunta,si se cumplen las siguientes condiciones de simetría en los coeficientes.
+    \begin{equation}\label{eq:simetria_a}
+        \begin{split}
+            a_{ij} = a_{ji},\qquad &i,j = 1,\dots,n,\\
+            b_i = 0, \qquad &i = 1,\dots,n,
+        \end{split}
+    \end{equation}
+\end{defin}
+\end{mdframed}
+Bajo estas condiciones, nuestro problema se puede formular de la siguiente forma.
+\begin{equation} \label{eq:ProblemaAutoadjuntoFuerte}
+    \begin{cases}
+        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + c(x)u = f(x), & x\in\Omega,\\
+        u(x) = 0, & x\in\partial\Omega.
+    \end{cases}
+\end{equation}
+
+Por lo visto en la Sección \ref{sec:EDPs}, el problema \eqref{eq:ProblemaAutoadjuntoFuerte} se puede reescribir en forma débil de la siguiente forma: encontrar $u\in H_0^1(\Omega)$ tal que
+\begin{equation*}
+    a(u,\varphi) = l(\varphi) \quad \forall \varphi\in  H_0^1(\Omega).
+\end{equation*}
+Donde, al tratarse de un problema autoadjunto,  $a(u,\varphi)$ y $l(\varphi)$ son los siguientes funcionales
+\begin{equation*}
+    a(u,\varphi) = \int_{\Omega} \sum_{i,j=1}^{n} a_{ij}(\mathbf{x})\frac{\partial u}{\partial x_i}\frac{\partial \varphi}{\partial x_j} + c(\mathbf{x})u\varphi \, d\mathbf{x}, \quad l(\varphi) = \int_{\Omega} f\varphi \, d\mathbf{x}.
+\end{equation*}
+
+
+
+En un problema autoadjunto se pueden caracterizar las soluciones débiles como el mínimo de un funcional. Esto es así por el siguiente resultado.
+\begin{lema} \label{lema:MinimoFuncion}
+    \colorbox{yellow}{hacerla más rigurosa. Tengo que hablar de que es la solución única}
+
+    \colorbox{yellow}{Definir el J antes}
+
+    Las siguientes afirmaciones son equivalentes:
+    \begin{enumerate}
+        \item Encontrar $u\in H_0^1(\Omega)$ tal que $a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H_0^1(\Omega)$
+        \item Encontrar $u\in H_0^1(\Omega)$ tal que $J(u) \leq J(\varphi) \quad \forall\varphi\in H_0^1(\Omega)$, siendo $J(u)$ la siguiente función
+        \begin{equation*}
+            J(u) = \frac{1}{2}a(u,u) - l(u), \quad u\in H_0^1(\Omega)
+        \end{equation*}
+    \end{enumerate}
+\end{lema}
+
 
 \chapter{Resultados}\label{chap3}
 
