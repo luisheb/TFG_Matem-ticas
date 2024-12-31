@@ -596,7 +596,7 @@ Para poder computar estas integrales, se utiliza una regla de cuadratura que las
 
 De este modo, para obtener la ecuación \eqref{eq:Lf_Lb} se usará una cuadratura de Gauss con pesos constantes $\frac{w_f}{|\mathcal{T}_f|}$ y $\frac{w_b}{|\mathcal{T}_b|}$ respectivamente. 
 
-Existe mucha literatura sobre como tomar estos puntos pues, al igual que en FEM la malla impacta el resultado, en las PINN, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
+Existe mucha literatura sobre como tomar los puntos de colocación pues, al igual que en FEM la malla impacta el resultado, en las PINN, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
 
 Es importante destacar que con esta formulación, se impone que el residuo en forma fuerte de la ecuación diferencial sea cero en los puntos de colocación, lo cual, veremos más adelante que puede ser una fuente de errores. 
 
@@ -718,14 +718,14 @@ No obstante, las PINN pueden presentar errores elevados incluso en sistemas rela
             \label{fig:deviation}
         \end{figure}
 
-        Obviamente, el método no logra encontrar la solución exacta $u$. La diferencia entre $u$ y $\hat{u}(\mathbf{x};\theta)$ es tan grande como la magnitud de $u$, es decir, cuanto más grande es la solución en valor absoluto, nuestra aproximación se aleja más de ella. Además, si nos fijamos en la gráfica de entrenamiento y test, vemos que el error no disminuye con el número de iteraciones.
+        Obviamente, el método no logra encontrar la solución exacta $u$. La diferencia entre $u$ y $\hat{u}(\mathbf{x};\theta)$ es tan grande como la magnitud de $u$, es decir, cuanto más grande es la solución en valor absoluto, nuestra aproximación se aleja más de ella. Además, si nos fijamos en la gráfica de entrenamiento y test, vemos que el error relativo a la solución real, calculado con la distancia de $L_2$ no disminuye con el número de iteraciones.
         \begin{figure}[H]
             \centering
             \includegraphics[width=0.6\textwidth]{Figuras/test_train_pinn_error.png}
             \caption{Error de la red neuronal}
         \end{figure}
 
-        En esta gráfica, \colorbox{yellow}{HAY QUE EXPLICAR QUE SIGNIFICA CADA UNA DE LAS LINEAS GRAFICADAS}
+        En esta gráfica, las curvas \textit{Error entrenamiento} y \textit{Error test} hacen referencia al error de la aproximación en los puntos de entrenamiento y test respectivamente. Por otro lado, el error relativo L2 mide la diferencia entre la función aproximada por la red neuronal y la solución real, evaluando dicha diferencia mediante su integración sobre el dominio, $(-1,1)$ en este caso.
 
     \end{exmp}
 \end{mdframed}
@@ -741,7 +741,7 @@ De estos problemas, los dos primeros son característicos del uso de redes neuro
 
 El método ``Deep Ritz'' es una técnica numérica basada en las redes neuronales, que busca encontrar una solución a una ecuación en derivadas parciales utilizando su forma débil. Este método es más coherente con la formulación matemática del problema, y evita las restricciones demasiado fuertes que presentan las PINN. Para poder plantar el método, es necesario primero describir los problemas elípticos autoadjuntos.
 
-\section{El problema elíptico autoadjunto}\label{sec:ProblemaAutoadjunto}
+\subsection{El problema elíptico autoadjunto}\label{sec:ProblemaAutoadjunto}
 
 El problema elíptico autoadjunto  permite caracterizar las soluciones de las EDP elípticas como el mínimo de un funcional. Esto conecta de manera lógica con el enfoque de redes neuronales para aproximar soluciones, donde la función de coste de la red neuronal se puede definir como esta función. Al minimizarla, se obtiene una solución aproximada del problema original. No obstante, esto lo veremos más adelante en detalle. De momento, consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, una EDP elíptica sujeta a condiciones de contorno Dirichlet:
 \begin{equation} 
@@ -769,31 +769,41 @@ Bajo estas condiciones, nuestro problema se puede formular de la siguiente forma
 \end{equation}
 
 Por lo visto en la Sección \ref{sec:EDPs}, el problema \eqref{eq:ProblemaAutoadjuntoFuerte} se puede reescribir en forma débil de la siguiente forma: encontrar $u\in H_0^1(\Omega)$ tal que
+\begin{equation}\label{eq:ProblemaAutoadjuntoDebil}
+    a(u,v) = l(v) \quad \forall v\in  H_0^1(\Omega).
+\end{equation}
+Donde, al ser un problema autoadjunto, el funcional $a(\cdot,\cdot)$ es simétrico
 \begin{equation*}
-    a(u,\varphi) = l(\varphi) \quad \forall \varphi\in  H_0^1(\Omega).
+    a(u,w) = a(w,u) \quad \forall u,w\in H_0^1(\Omega).
 \end{equation*}
-Donde, al tratarse de un problema autoadjunto,  $a(u,\varphi)$ y $l(\varphi)$ son los siguientes funcionales
+
+De ahora en adelante vamos a asumir que \eqref{eq:ProblemaAutoadjuntoFuerte} cumple las condiciones de elipticidad uniforme y además se cumple que
 \begin{equation*}
-    a(u,\varphi) = \int_{\Omega} \sum_{i,j=1}^{n} a_{ij}(\mathbf{x})\frac{\partial u}{\partial x_i}\frac{\partial \varphi}{\partial x_j} + c(\mathbf{x})u\varphi \, d\mathbf{x}, \quad l(\varphi) = \int_{\Omega} f\varphi \, d\mathbf{x}.
+    c(x) - \frac{1}{2} \sum_{i=1}^n \frac{\partial b_i}{\partial x_i} \geq 0, \quad x \in \overline{\Omega},
 \end{equation*}
+por lo que, tal como se estableció en la sección \ref{sec:EDPs}, el problema \eqref{eq:ProblemaAutoadjuntoFuerte} admite una única solución débil. En consecuencia, si se satisfacen las condiciones correspondientes, la solución débil de \eqref{eq:ProblemaAutoadjuntoDebil} no solo es única, sino que también puede caracterizarse como el mínimo de un funcional. Esto es así por el siguiente resultado.
 
 
 
-En un problema autoadjunto se pueden caracterizar las soluciones débiles como el mínimo de un funcional. Esto es así por el siguiente resultado.
 \begin{lema} \label{lema:MinimoFuncion}
-    \colorbox{yellow}{hacerla más rigurosa. Tengo que hablar de que es la solución única}
-
-    \colorbox{yellow}{Definir el J antes}
-
-    Las siguientes afirmaciones son equivalentes:
+    
+    Definimos el funcional cuadrático $J: H_0^1(\Omega) \to \mathbb{R}$ como
+    \begin{equation*}
+        J(u) = \frac{1}{2}a(v,v) - l(v), \quad u\in H_0^1(\Omega),
+    \end{equation*}
+    de modo que las siguientes afirmaciones son equivalentes:
     \begin{enumerate}
-        \item Encontrar $u\in H_0^1(\Omega)$ tal que $a(u,\varphi) = l(\varphi) \quad \forall \varphi\in H_0^1(\Omega)$
-        \item Encontrar $u\in H_0^1(\Omega)$ tal que $J(u) \leq J(\varphi) \quad \forall\varphi\in H_0^1(\Omega)$, siendo $J(u)$ la siguiente función
-        \begin{equation*}
-            J(u) = \frac{1}{2}a(u,u) - l(u), \quad u\in H_0^1(\Omega)
-        \end{equation*}
+        \item Encontrar el único $u\in H_0^1(\Omega)$ tal que $a(u,v) = l(v) \quad \forall v\in H_0^1(\Omega)$
+        \item Encontrar el único $u\in H_0^1(\Omega)$ tal que $J(u) \leq J(v) \quad \forall v\in H_0^1(\Omega)$
     \end{enumerate}
 \end{lema}
+\begin{dem}
+    ÁQUÍ PORÍA IR LA DEMOSTRACIÓN
+\end{dem}
+
+\subsection{Formulación del método ``Deep Ritz''}
+
+
 
 
 \chapter{Resultados}\label{chap3}
