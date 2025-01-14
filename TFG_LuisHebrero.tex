@@ -587,12 +587,12 @@ donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un tér
     \end{split}
 \end{equation}
     
-Estas funciones $\mathcal{L}_f$ y $\mathcal{L}_b$ se obtienen a través de una regla de cuadratura. Con las PINN nosotros queremos encontrar una función $\hat{u}$ que minimice el residuo en $\Omega$ y que cumpla las condiciones de contorno en $\partial\Omega$. Para ello, lo que queremos es el $\hat{u}$ que haga que las siguientes expresiones sean mínimas:
+Estas funciones $\mathcal{L}_f$ y $\mathcal{L}_b$ se obtienen a través de una regla de cuadratura. Con las PINN nosotros queremos encontrar una función $\hat{u}$ que minimice el residuo en $\Omega$ y que cumpla las condiciones de contorno en $\partial\Omega$. Para ello, lo que queremos es la $\hat{u}$ que haga que las siguientes expresiones sean mínimas:
 \begin{align*}
     &\int_{\mathbf{x} \in \Omega} \left\| -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) \right\|_2^2, \\ 
     &\int_{\mathbf{x} \in \partial\Omega} \left\| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right\|_2^2,
 \end{align*}
-Para poder computar estas integrales, se utiliza una regla de cuadratura que las aproxime mediante sumas ponderadas de los valores de las funciones en un conjunto discreto de puntos. En este contexto, los puntos de evaluación se denominan puntos de colocación o collocation points. Para la primera expresión, los puntos de colocación que se usarán será el conjunto $\mathcal{T}_f$, mientras que para la segunda se usará $\mathcal{T}_b$. 
+Para poder computar estas integrales, se utiliza una regla de cuadratura que las aproxime mediante sumas ponderadas de los valores de las funciones en un conjunto discreto de puntos. En este contexto, los puntos de evaluación se denominan puntos de colocación o collocation points. Para la primera expresión, los puntos de colocación que se usarán los denominaremos $\mathcal{T}_f$, mientras que para la segunda los denominaremos $\mathcal{T}_b$. 
 
 De este modo, para obtener la ecuación \eqref{eq:Lf_Lb} se usará una cuadratura de Gauss con pesos constantes $\frac{w_f}{|\mathcal{T}_f|}$ y $\frac{w_b}{|\mathcal{T}_b|}$ respectivamente. 
 
@@ -600,7 +600,7 @@ Existe mucha literatura sobre como tomar los puntos de colocación pues, al igua
 
 Es importante destacar que con esta formulación, se impone que el residuo en forma fuerte de la ecuación diferencial sea cero en los puntos de colocación, lo cual, veremos más adelante que puede ser una fuente de errores. 
 
-Dada la función de coste definida y la distribución de los puntos de colocación, el entrenamiento de la red neuronal se reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. 
+Dada la función de coste definida y la distribución de los puntos de colocación, el siguiente paso es el entrenamiento. Este re reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. 
 
 Una ventaja fundamental del uso de redes neuronales en este contexto es la diferenciación automática, una técnica numérica muy potente que facilita la obtención de las derivadas de $\hat{u}$ con respecto a sus entradas de forma exacta y eficiente.
 A continuación, vamos a ver dos ejemplos para ver como se aplican las PINN a problemas concretos.
@@ -803,7 +803,11 @@ por lo que, tal como se estableció en la sección \ref{sec:EDPs}, el problema \
 
 \subsection{Formulación del método ``Deep Ritz''}
 
+Al igual que hicimos en la sección \ref{sec:PINN}, vamos a ver dos ejemplos de la aplicación de las PINN a problemas concretos. 
 
+\begin{exmp}
+    Consideramos la siguiente ecuación elíptica autoadjunta:
+\end{exmp}
 
 
 \chapter{Resultados}\label{chap3}
