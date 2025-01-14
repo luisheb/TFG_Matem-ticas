@@ -803,12 +803,132 @@ por lo que, tal como se estableció en la sección \ref{sec:EDPs}, el problema \
 
 \subsection{Formulación del método ``Deep Ritz''}
 
+ESTO ESTÁ BASTANTE CALCADO DEL PAPER A FALTA DE ACLARAR ALGUNOS CONCEPTOS
+
+El método ``Deep Ritz'' busca resolver problemas de la siguiente forma:
+
+\colorbox{yellow}{ESTO ME CHIRRÍA, VOY A DEJAR LA NOTACIÓN DEL}
+
+\colorbox{yellow}{PAPER, PERO NO VEO MUY BIEN COMO CASA CON EL FUNCIONAL J}
+
+\begin{equation}
+\min_{u \in H} I(u)
+\end{equation}
+donde
+\begin{equation}
+I(u) = \int_{\Omega} \left( \frac 12  |\nabla u(x)|^2 -  f(x) u(x) \right) dx
+\label{I(u)}
+\end{equation}
+y $H$ es el conjunto de funciones admisibles (también llamado función de prueba, representada aquí por $u$), $f$ es una función dada, que representa la fuerza externa aplicada al sistema en consideración. Problemas de este tipo son bastante comunes en las ciencias físicas. El método Deep Ritz se basa en el siguiente conjunto de ideas:
+
+\begin{enumerate}
+\item Aproximación basada en redes neuronales profundas para la función de prueba.
+\item Una regla de cuadratura numérica para el funcional.
+\item Un algoritmo para resolver el problema de optimización final.
+\end{enumerate}
+
+
+El componente básico del método Deep Ritz es una transformación no lineal $ x \rightarrow z_\theta (x)\in \mathbb{R}^{m} $ definida por una red neuronal profunda. Aquí $\theta$ denota los parámetros, típicamente los pesos de la red neuronal, que ayudan a definir esta transformación. En la arquitectura que utilizamos, cada capa de la red se construye apilando varios bloques, cada bloque consiste en dos transformaciones lineales, dos funciones de activación y una conexión residual. Tanto la entrada $s$ como la salida $t$ del bloque son vectores en $\mathbb{R}^{m}$. El $i$-ésimo bloque puede expresarse como:
+\begin{equation}
+t=f_i(s)=\phi(W_{i,2} \cdot \phi(W_{i,1} s +b_{i,1})+b_{i,2})+s
+\label{block}
+\end{equation}
+donde $W_{i,1},W_{i,2} \in \mathbb{R}^{m \times m}$, $b_{i,1},b_{i,2} \in \mathbb{R}^{m}$ las correspondientes matrices de pesos y sesgos asociadas al bloque $i$. $\phi$ es la función de activación (escalar)
+
+Tal y como se precisa en \cite{e2017deepritzmethoddeep} la función de activación $\phi$ juega un papel clave en la precisión del algoritmo. Para equilibrar simplicidad y precisión, hemos decidido utilizar 
+\begin{equation}
+\phi(x)=\max\{x^3,0\}
+\end{equation}
+El último término en \eqref{block}, la conexión residual, facilita mucho el entrenamiento de la red ya que ayuda a evitar el problema del gradiente que desaparece. La estructura de los dos bloques, incluyendo dos conexiones residuales, se muestra en la Figura \ref{fig:net_structure_1}.
+ 
+\begin{figure}[!h]
+\centering
+\vspace{2pt}
+\includegraphics[width=0.5\textwidth]{TEX_Figures/deep_ritz_nn.pdf}
+\caption{La figura muestra una red con dos bloques y una capa lineal de salida.
+Cada bloque consiste en dos capas completamente conectadas y una conexión de salto.\label{fig:net_structure_1}}
+\end{figure}
+
+La red completa de $n$ capas puede expresarse ahora como:
+\begin{equation}
+z_{\theta}(x)=f_n\circ ... \circ f_1(x)
+\end{equation}
+$\theta$ denota el conjunto de todos los parámetros en toda la red.
+Nota que la entrada $x$ para el primer bloque está en $\mathbb{R}^d$, no en $\mathbb{R}^{m}$.
+Para manejar esta discrepancia podemos ya sea
+completar $x$ con un vector de ceros cuando $d<m$, o aplicar una transformación lineal 
+a $x$ cuando $d>m$. 
+Teniendo $z_\theta$, obtenemos $u$ mediante
+\begin{equation}
+u(x; \theta) = a \cdot z_\theta (x) + b
+\label{function-form}
+\end{equation}
+Aquí en el lado izquierdo y en lo que sigue, usaremos
+$\theta$ para denotar el conjunto completo de parámetros $\{\theta, a, b \}$. Sustituyendo esto en la forma de $I$, obtenemos una función de $\theta$,
+que debemos minimizar.
+
+Para el funcional que aparece en \eqref{I(u)}, denotamos:
+\begin{equation}
+g(x; \theta) = \frac 12 |\nabla_x u(x; \theta)|^2 - f(x) u(x; \theta)
+\end{equation}
+entonces nos queda el problema de optimización:
+\begin{equation}
+\min_\theta L(\theta), \quad L(\theta) = \int_\Omega g(x; \theta) dx
+\label{integral}
+\end{equation}
+
+El cual, de nuevo se resuelve mediante algoritmos de optimización basados en gradientes.
+
 Al igual que hicimos en la sección \ref{sec:PINN}, vamos a ver dos ejemplos de la aplicación de las PINN a problemas concretos. 
-
+\begin{mdframed}  
 \begin{exmp}
-    Consideramos la siguiente ecuación elíptica autoadjunta:
+    Consideremos el problema 
+    
+    \colorbox{yellow}{Esto solo esta transcrito, falta sacar conclusiones}
+    \begin{equation*}
+    -u'' = 1, \quad u(0) = u(1) = 0,
+    \end{equation*}
+    cuya solución exacta es 
+    \begin{equation*}
+    u(x) = -x^2/2 + x/2.
+    \end{equation*}
+    Planteamos el método de Ritz para este problema (\(f = 1\): \(\Omega = (0,1)\)),
+    encontrar 
+    \begin{align*}
+    \min_{u_0} \left( \frac{1}{2} \int_\Omega \left((u_0')^2 - \int_\Omega fu_0 + \lambda (u_0(0)^2 + u_0(1)^2)\right)\right) =\\
+    \min_{u_0} \left(\frac{1}{2} \int_0^1 \left((u_0')^2 - \int_0^1 fu_0 + \lambda (u_0(0)^2 + u_0(1)^2)\right)\right),
+    \end{align*}
+    donde \(u_0\) es una función de una red neuronal.
+    Si consideramos el funcional \(J: H^1(0,1) \to \mathbb{R}\) definido por 
+    \begin{equation*}
+    J(u) = \frac{1}{2} \int_0^1 \left((u')^2 - \int_0^1 fu + \lambda (u(0)^2 + u(1)^2)\right)
+    \end{equation*}
+    y buscamos un mínimo, vamos a encontrar \(u\) tal que
+    \begin{equation*}
+    J'(u)v := \lim_{\beta \to 0} \frac{J(u + \beta v) - J(u)}{\beta} = 0.
+    \end{equation*}
+    Es fácil ver que \(u\) verifica, \(u \in H^1(0,1)\), y 
+    \begin{equation*}
+    \int_0^1 u'v' - \int_0^1 fv + 2\lambda u(0)v(0) + 2\lambda u(1)v(1) = 0, \quad \forall v \in H^1(0,1).
+    \end{equation*}
+    Consideramos ahora el siguiente problema: encontrar \(u \in C^2(0,1)\) tal que 
+    \begin{equation*}
+    -u'' = f, \quad u'(0) = 2\lambda u(0), \quad u'(1) = -2\lambda u(1),
+    \end{equation*}
+    que tiene como solución para \(f = 1\)
+    \begin{equation*}
+    u_\lambda = -x^2/2 + x/2 + 1/(4\lambda).
+    \end{equation*}
+    La solución débil de este problema es: encontrar \(u \in H^1(0,1)\) tal que 
+    \begin{equation*}
+    \int_0^1 u'v' + 2\lambda u(1)v(1) + 2\lambda u(0)v(0) = \int_0^1 fv, \quad \forall v \in H^1(0,1).
+    \end{equation*}
+    O lo que es lo mismo, encontrar \(u \in H^1(0,1)\) tal que 
+    \begin{equation*}
+    \int_0^1 u'v' + 2\lambda v(1)u(1) + 2\lambda v(0)u(0) = \int_0^1 fv, \quad \forall v \in H^1(0,1).
+    \end{equation*}
 \end{exmp}
-
+\end{mdframed}
 
 \chapter{Resultados}\label{chap3}
 

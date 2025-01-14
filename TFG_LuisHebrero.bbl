@@ -71,6 +71,39 @@
     \field{year}{2021}
   \endentry
 
+  \entry{e2017deepritzmethoddeep}{misc}{}
+    \name{author}{2}{}{%
+      {{hash=EW}{%
+         family={E},
+         familyi={E},
+         given={Weinan},
+         giveni={W\bibinitperiod},
+      }}%
+      {{hash=YB}{%
+         family={Yu},
+         familyi={Y\bibinitperiod},
+         given={Bing},
+         giveni={B\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{EWYB1}
+    \strng{fullhash}{EWYB1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{E}
+    \field{sortinithash}{E}
+    \verb{eprint}
+    \verb 1710.00211
+    \endverb
+    \field{title}{The Deep Ritz method: A deep learning-based numerical algorithm for solving variational problems}
+    \verb{url}
+    \verb https://arxiv.org/abs/1710.00211
+    \endverb
+    \field{eprinttype}{arXiv}
+    \field{eprintclass}{cs.LG}
+    \field{year}{2017}
+  \endentry
+
   \entry{hou2023enhancing}{article}{}
     \name{author}{3}{}{%
       {{hash=HJ}{%
