@@ -1,0 +1,177 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{hyperref}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{epic}
+\usepackage{eepic}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{fancybox}
+\usepackage[backend=bibtex, style=numeric]{biblatex} 
+
+
+\textwidth = 16truecm 
+\textheight = 22truecm
+\oddsidemargin =-20pt
+\evensidemargin = 5pt
+\topmargin=-1truecm
+
+
+
+\addbibresource{references.bib} % Link to your .bib file
+
+\begin{document}
+%\thispagestyle{empty}
+\hrule
+\vskip 6pt
+
+\noindent{\bf TRABAJO DE FIN DE GRADO EN MATEM\'ATICAS} \\
+Departamento de Matem\'aticas\\
+Universidad Aut\'onoma de Madrid. Curso acad\'emico 2024-25\\
+
+\vskip 6pt \hrule
+
+\vskip 5mm
+
+\noindent{\bf T\'itulo del proyecto}: Redes Neuronales en la Aproximación de Ecuaciones en Derivadas Parciales // Neural Networks in the Approximation of Partial Differential Equations
+\vskip 5mm
+
+\noindent{\bf Nombre y Apellidos}: Luis Hebrero Garicano
+
+\vskip 5mm
+
+\noindent{\bf Nombre del tutor(es)}: Julia Novo
+
+\vskip 2cm
+
+
+\centerline{\bf INFORME INTERMEDIO \footnote{ El informe debe ser elaborado por el estudiante y presentado al tutor -o tutores- que deber\'a dar su conformidad antes de ser entregado al coordinador.}}
+
+\vskip 5mm
+
+\begin{enumerate}
+
+\item[1.-] {\bf Labor desarrollada hasta la fecha}: (\textit{reuniones con el tutor; búsqueda de bibliograf\'ia; planteamiento de los objetivos.})
+\\
+Hasta ahora, el trabajo se ha centrado en estudiar métodos basados en redes neuronales para resolver ecuaciones en derivadas parciales (EDPs). Se ha revisado la literatura para entender los enfoques clásicos, como el método de elementos finitos (FEM), y compararlos con técnicas más recientes como las Physics-Informed Neural Networks (PINNs) y el método Deep Ritz.
+
+También se han hecho implementaciones experimentales en Python, utilizando librerías especializadas en inteligencia artificial y métodos numéricos.
+
+A lo largo del proyecto, ha habido reuniones con Julia en media una vez cada dos semanas, en las que hemos discutido avances, dificultades y posibles enfoques para seguir. Estas reuniones han sido clave para recibir feedback y ajustar la dirección del trabajo según lo necesario.
+
+\item[2.-] {\bf Esquema de los distintos apartados del trabajo}: (\textit{puede usarse como gu\'ia la propia tabla de contenidos.})
+
+\begin{enumerate}
+    \item \textbf{Introducción y preliminares}
+    \begin{enumerate}
+        \item Introducción a las redes neuronales
+        \begin{enumerate}
+            \item Comentarios sobre la función sigmoide
+        \end{enumerate}
+        \item Conceptos preliminares sobre las ecuaciones en derivadas parciales
+        \item Métodos numéricos tradicionales: el método de los elementos finitos
+    \end{enumerate}
+
+    \item \textbf{Aproximación de EDPs mediante redes neuronales}
+    \begin{enumerate}
+        \item PINN: Physics-Informed Neural Networks
+        \begin{enumerate}
+            \item Introducción
+            \item Formulación de las PINN
+        \end{enumerate}
+        \item El ``Deep Ritz Method''
+        \begin{enumerate}
+            \item El problema elíptico autoadjunto
+            \item Formulación del método ``Deep Ritz''
+        \end{enumerate}
+    \end{enumerate}
+
+\end{enumerate}
+
+\item[3.-] {\bf Descripci\'on del proyecto}: (\textit{motivaci\'on; principales resultados y, en su caso, aplicaciones que se esperan obtener.}) M\'aximo 2 p\'aginas.
+
+\begin{itemize}
+    \item \textbf{Motivación:} Las ecuaciones en derivadas parciales (EDPs) desempeñan un papel esencial en la modelización de fenómenos físicos, económicos y biológicos. Tradicionalmente, se han resuelto mediante métodos numéricos como el método de elementos finitos. Sin embargo, en los últimos años, las redes neuronales han surgido como una alternativa prometedora.
+
+    Gracias a su capacidad para aproximar funciones arbitrarias, una red neuronal puede entrenarse para aproximar la solución de una EDP si se define adecuadamente la función de coste. En particular, enfoques como las Physics-Informed Neural Networks (PINNs) y el método Deep Ritz han despertado un gran interés en la comunidad científica.
+    
+    Este proyecto analiza la aplicación de redes neuronales en la resolución de EDPs elípticas, centrándose en los métodos PINN y Deep Ritz. Se estudian sus limitaciones y los casos en los que no producen los resultados esperados, examinando las causas subyacentes de estos problemas.
+    
+    \item \textbf{Principales resultados:}
+    \begin{enumerate}
+        \item \textbf{Sobre la redes neuronales}:
+        
+        Las redes neuronales son funciones que transforman una entrada en una salida a través de múltiples capas de neuronas. Cada capa aplica transformaciones mediante pesos y sesgos, seguidas de una función de activación, como la sigmoide, tangente hiperbólica o ReLU.
+
+        Se presenta una red neuronal concreta de cuatro capas, que clasifica puntos en un plano en tres categorías. Su entrenamiento consiste en ajustar los pesos y sesgos para minimizar el error entre la salida real y la deseada, utilizando una función de coste y optimización por descenso del gradiente.
+        
+        Se destaca la importancia de las funciones de activación no lineales, demostrando que sin ellas, la red se reduce a una simple función lineal, lo que limita su capacidad de aproximación. Se menciona un resultado de Pinkus que establece que una red neuronal de una sola capa puede aproximar cualquier función continua si y solo si la función de activación no es polinómica.
+        \item \textbf{Sobre las EDPs}:
+
+        Este trabajo se centra en las ecuaciones en derivadas parciales (EDP) elípticas, que tienen una forma general definida por la ecuación
+        
+        \begin{equation*}
+            -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad x\in\Omega.
+        \end{equation*}
+        Donde los coeficientes $a_{ij}(x)$, $b_i(x)$, $c(x)$ y $f$ cumplen ciertas condiciones de regularidad y una condición de elipticidad uniforme. 
+
+        Se estudian problemas con condiciones de contorno de Dirichlet, donde la solución toma valores fijos en el borde del dominio. 
+        
+        Dado que en muchos casos no es posible encontrar soluciones clásicas (que satisfacen la ecuación en todo el dominio con derivadas en sentido fuerte), se introduce la noción de solución débil. Para ello, se definen la derivada débil y los espacios de Sobolev \( H^1(\Omega) \) y \( H^1_0(\Omega) \), que permiten trabajar con soluciones en un espacio funcional más amplio.
+
+        La formulación débil de la ecuación elíptica se establece mediante una forma bilineal \( a(u, \varphi) \) y un funcional lineal \( l(\varphi) \), lo que permite reformular el problema en términos más simples. Además, se demuestra la existencia y unicidad de soluciones débiles aplicando el teorema de Lax-Milgram, que garantiza la existencia de una única solución en \( H^1_0(\Omega) \) bajo ciertas condiciones adicionales de elipticidad y regularidad de los coeficientes.
+
+        \item \textbf{Sobre los métodos numéricos tradicionales}:
+        
+        Se basa en la formulación débil del problema y en la aproximación de la solución dentro de un subespacio de dimensión finita.
+
+        Para un problema elíptico con condiciones de contorno de Dirichlet homogéneas, se divide el dominio \(\Omega\) en pequeños subdominios llamados elementos finitos. En una dimensión, estos son intervalos, mientras que en dos dimensiones pueden ser triángulos. Se define un subespacio \(V_h\) compuesto por polinomios a trozos, construidos sobre una base de funciones que valen cero en los bordes del dominio.
+
+        El problema diferencial se reformula en este espacio finito, reduciendo la búsqueda de una solución a encontrar los coeficientes \(U_i\) en la combinación lineal de funciones base. Esto da lugar a un sistema lineal de la forma \(AU = b\), donde \(A\) es la matriz de rigidez y \(b\) el vector de términos fuente. Este sistema se resuelve mediante métodos numéricos como la factorización LU, obteniendo una aproximación \(u_h\) de la solución \(u\).
+
+        El método se generaliza a más dimensiones utilizando elementos finitos adecuados (triángulos en 2D, tetraedros en 3D) y bases de funciones apropiadas para cada caso.
+        
+        \item \textbf{Sobre las PINNs}:
+        
+        Las Physics-Informed Neural Networks (PINN) son una técnica que combina redes neuronales con la resolución de ecuaciones en derivadas parciales (EDP). La función de coste de las PINN se define como una combinación ponderada de dos términos: uno que minimiza el residuo de la ecuación diferencial en el dominio y otro que impone las condiciones de contorno.
+
+        Para calcular la función de coste, se utilizan puntos de colocación (collocation points) que discretizan la ecuación en el dominio y en la frontera. El entrenamiento de la red neuronal consiste en encontrar los pesos y sesgos que minimizan esta función de coste mediante métodos de optimización como Adam o L-BFGS.
+
+        Se presentan ejemplos de aplicación, incluyendo la ecuación de Poisson en 1D, resolviéndola con la librería DeepXDE. Sin embargo, se demuestra que las PINN pueden fallar en ciertos problemas, especialmente cuando el problema no tiene solución fuerte. En estos casos, la red neuronal no logra aproximar correctamente la solución.
+
+        Los principales problemas de las PINN incluyen:
+        \begin{itemize}
+            \item Falta de unicidad en la solución, ya que el entrenamiento es un problema de optimización no convexo.
+            \item Falta de criterios teóricos para elegir los hiperparámetros óptimos.
+            \item Aproximación del residuo en forma fuerte, lo que impide capturar soluciones débiles cuando estas existen pero no son diferenciables en el sentido clásico.
+        \end{itemize}
+
+        \item \textbf{Sobre el método Deep Ritz}:\\
+        El método ``Deep Ritz'' utiliza redes neuronales para resolver ecuaciones en derivadas parciales (EDP) mediante su formulación débil, evitando las restricciones de las PINN. Se basa en minimizar un funcional que caracteriza la solución del problema elíptico autoadjunto.
+
+        La red neuronal aproxima la solución, y su entrenamiento consiste en minimizar este funcional mediante algoritmos de optimización por gradiente.
+    \end{enumerate}
+    
+\end{itemize}
+
+\item[4.-] {\bf Grado de consecuci\'on de los objetivos y plan de trabajo a desarrollar en la segunda mitad del periodo}:
+
+Los objetivos iniciales del trabajo se han cumplido en su mayoría. Durante el resto del semestre, me centraré en formalizar algunos de los conceptos y en ampliar los ejemplos implementando algunas ecuaciones en Python para evaluar el desempeño de los métodos estudiados.
+
+\item[5.-] {\bf Bibliograf\'ia usada hasta la fecha o que se piensa utilizar}: \\
+Se van a utilizar todas las siguientes referencias como m\'inimo. 
+\cite{aikawa2024improving},\cite{hou2023enhancing}\cite{pinkus1999approximation}\cite{lu2021deepxde}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{krishnapriyan2021characterizingpossiblefailuremodes}\cite{c2021failure}\cite{grossmann2023physicsinformedneuralnetworksbeat}\cite{luo2023residualminimizationpdesfailure}\cite{e2017deepritzmethoddeep}\cite{mnzer2022curriculumtrainingbasedstrategydistributingcollocation}
+
+\printbibliography
+\cleardoublepage
+
+\end{enumerate}
+
+
+
+\end{document}
+

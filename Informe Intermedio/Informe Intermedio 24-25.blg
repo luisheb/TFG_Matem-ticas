@@ -1,0 +1,65 @@
+This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: Informe Intermedio 24-25.aux
+The style file: biblatex.bst
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: Informe_Intermedio_24-25-blx.bib
+Database file #2: references.bib
+Biblatex version: 3.19
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+You've used 13 entries,
+            6399 wiz_defined-function locations,
+            1279 strings with 11538 characters,
+and the built_in function-call counts, 100055 in all, are:
+= -- 8041
+> -- 1403
+< -- 374
++ -- 2934
+- -- 564
+* -- 7271
+:= -- 11699
+add.period$ -- 0
+call.type$ -- 13
+change.case$ -- 156
+chr.to.int$ -- 42
+cite$ -- 24
+duplicate$ -- 10504
+empty$ -- 8647
+format.name$ -- 869
+if$ -- 20026
+int.to.chr$ -- 0
+int.to.str$ -- 27
+missing$ -- 0
+newline$ -- 454
+num.names$ -- 543
+pop$ -- 4435
+preamble$ -- 1
+purify$ -- 230
+quote$ -- 0
+skip$ -- 2249
+stack$ -- 0
+substring$ -- 14931
+swap$ -- 1907
+text.length$ -- 373
+text.prefix$ -- 13
+top$ -- 1
+type$ -- 430
+warning$ -- 0
+while$ -- 1452
+width$ -- 0
+write$ -- 442
