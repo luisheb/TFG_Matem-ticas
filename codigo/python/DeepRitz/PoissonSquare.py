@@ -186,7 +186,7 @@ def main():
     params["depth"] = 2 # Depth of the network: depth+2
     params["numQuad"] = 40000 # Number of quadrature points for testing
     params["trainStep"] = 10000
-    params["penalty"] = 500
+    params["penalty"] = 1e-5
     params["preStep"] = 0
     params["diff"] = 0.001
     params["writeStep"] = 500

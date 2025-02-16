@@ -931,7 +931,39 @@ Esta formulación permite el uso de redes neuronales en la aproximación de ecua
     
 Con este ejemplo, nos damos cuenta de que el método Deep Ritz, en su formulación utilizada aquí, no aproxima exactamente el problema original, sino que en su lugar resuelve una ecuación con condiciones de frontera modificadas. Esto introduce un sesgo en la solución obtenida, lo que implica que el método no es exacto para el problema original de Poisson con condiciones de Dirichlet homogéneas. Siendo más específicos, el método Deep Ritz estaría aproximando la solución $u_\lambda(x) = -x^2/2 + x/2 + 1/(4\lambda)$ en lugar de la solución exacta $u(x) = -x^2/2 + x/2$, suponiendo un error de $O(1/\lambda)$ en la solución obtenida. 
 
-A 
+A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado y en una L, para lo cual he tenido que programar el método Deep Ritz en Python usando PyTorch. El objetivo con este ejemplo es entender cómo se comporta el método Deep Ritz ante los distintos valores que puede tomar el parámetro de penalización $\lambda$.
+
+\begin{mdframed}
+    \begin{exmp}
+        Consideramos el siguiente problema de Poisson en un cuadrado unitario $\Omega = (0,1)^2$ con condiciones de contorno de Dirichlet homogéneas:
+        \begin{equation}\label{eq:poisson_square}
+        \begin{cases}
+        -\Delta u = 1, & \text{en } \Omega,\\
+        u = 0, & \text{en } \partial \Omega.
+        \end{cases}            
+        \end{equation}
+        Para aplicar el método, lo primero que necesitamos es definir el funcional $J_\lambda(u)$ asociado a este problema. En este caso, $a(u,v) = \int_\Omega \nabla u \cdot \nabla v$ y $l(v) = \int_\Omega v$. Así, el funcional $J_\lambda(u)$ se define como:
+        \begin{equation*}
+        J_\lambda(u) = \frac{1}{2} \int_\Omega |\nabla u|^2 - \int_\Omega u + \lambda \int_{\partial \Omega} u^2.
+        \end{equation*}
+        Para resolver este problema, he implementado el método Deep Ritz en Python usando PyTorch. La red neuronal utilizada tiene la siguiente configuración: $2$-$8$-$8$-$1$. En la Figura \ref{fig:poisson_square} se muestra la solución obtenida con $\lambda = 500$. No obstante, siguiendo la intuición que desarrollado en el ejemplo en una dimensión, si usamos $\lambda = 10^-5$, el resultado es el que encontramos en la Figura \ref{fig:poisson_square_lambda_1e-5}, en la que se ve que claramente no se logra aproximar la solución.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.6\textwidth]{Figuras/PoissonSquare.png}
+            \caption{Solución de la ecuación de Poisson en un cuadrado unitario con $\lambda = 500$.}
+            \label{fig:poisson_square}
+        \end{figure}
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.6\textwidth]{Figuras/PoissonSquare10e-5.png}
+            \caption{Solución de la ecuación de Poisson en un cuadrado unitario con $\lambda = 10^-5$.}
+            \label{fig:poisson_square_lambda_1e-5}
+        \end{figure}
+
+    \end{exmp}
+\end{mdframed}
 
 \subsection{El método ``Deep Ritz'' versión antigua}
 
