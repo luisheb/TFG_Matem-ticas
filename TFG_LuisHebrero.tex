@@ -942,11 +942,31 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
         u = 0, & \text{en } \partial \Omega.
         \end{cases}            
         \end{equation}
-        Para aplicar el método, lo primero que necesitamos es definir el funcional $J_\lambda(u)$ asociado a este problema. En este caso, $a(u,v) = \int_\Omega \nabla u \cdot \nabla v$ y $l(v) = \int_\Omega v$. Así, el funcional $J_\lambda(u)$ se define como:
+        Para aplicar el método, lo primero que necesitamos es definir el funcional $J_\lambda(u)$ asociado a este problema. Para ello lo primero que tenemos que hacer es obtener la forma débil de la ecuación. Sea \( v \) una función en el espacio de funciones \(H_0^1(\Omega) \), donde:
+        \begin{equation*}
+        H_0^1(\Omega) = \{ v \in H^1(\Omega) \mid v = 0 \text{ en } \partial \Omega \}.
+        \end{equation*}
+        Multiplicamos la ecuación diferencial por \( v \) y integramos en \(\Omega\):
+        \begin{equation*}
+        \int_{\Omega} (-\Delta u) v \,dx = \int_{\Omega} 1 \cdot v \,dx.
+        \end{equation*}
+        Integramos por partes:
+        \begin{equation*}
+        \int_{\Omega} (-\Delta u) v \,dx = \int_{\Omega} \nabla u \cdot \nabla v \,dx - \int_{\partial\Omega} \frac{\partial u}{\partial n} v \,ds.
+        \end{equation*}
+        Dado que \( v = 0 \) en \( \partial \Omega \), el término de la frontera desaparece, dejando la forma débil:
+        \begin{equation*}
+        \int_{\Omega} \nabla u \cdot \nabla v \,dx = \int_{\Omega} v \,dx, \quad \forall v \in H_0^1(\Omega).
+        \end{equation*}
+        El funcional asociado a este problema se define como:
+        \begin{equation*}
+        J(u) = \frac{1}{2} \int_{\Omega} |\nabla u|^2 \,dx - \int_{\Omega} u \,dx.
+        \end{equation*}
+        Así, el funcional $J_\lambda(u)$ se define como:
         \begin{equation*}
         J_\lambda(u) = \frac{1}{2} \int_\Omega |\nabla u|^2 - \int_\Omega u + \lambda \int_{\partial \Omega} u^2.
         \end{equation*}
-        Para resolver este problema, he implementado el método Deep Ritz en Python usando PyTorch. La red neuronal utilizada tiene la siguiente configuración: $2$-$8$-$8$-$1$. En la Figura \ref{fig:poisson_square} se muestra la solución obtenida con $\lambda = 500$. No obstante, siguiendo la intuición que desarrollado en el ejemplo en una dimensión, si usamos $\lambda = 10^-5$, el resultado es el que encontramos en la Figura \ref{fig:poisson_square_lambda_1e-5}, en la que se ve que claramente no se logra aproximar la solución.
+        Para resolver este problema, he implementado el método Deep Ritz en Python usando PyTorch. La red neuronal utilizada tiene la siguiente configuración: $2$-$8$-$8$-$1$. En la Figura \ref{fig:poisson_square} se muestra la solución obtenida con $\lambda = 500$. No obstante, siguiendo la intuición que desarrollado en el ejemplo en una dimensión, si usamos $\lambda = 10^-5$ esperamos obtener una aproximación mucho peor. Efectivamente, al realizar esta aproximación, el resultado que obtenemos no se parece nada a la solución real de la EDP. Podemos ver el resultado de este método en la Figura \ref{fig:poisson_square_lambda_1e-5}.
 
         \begin{figure}[H]
             \centering
@@ -958,80 +978,16 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
         \begin{figure}[H]
             \centering
             \includegraphics[width=0.6\textwidth]{Figuras/PoissonSquare10e-5.png}
-            \caption{Solución de la ecuación de Poisson en un cuadrado unitario con $\lambda = 10^-5$.}
+            \caption{Solución de la ecuación de Poisson en un cuadrado unitario con $\lambda = 10^{-5}$.}
             \label{fig:poisson_square_lambda_1e-5}
         \end{figure}
 
     \end{exmp}
 \end{mdframed}
 
-\subsection{El método ``Deep Ritz'' versión antigua}
+El método Deep Ritz ofrece una formulación efectiva para superar las limitaciones de las PINN tradicionales, que imponen el residuo en forma fuerte. Sin embargo, como se ha ilustrado en los ejemplos, la manera en que este método maneja las condiciones de contorno no es del todo óptima. En particular, el uso de un término de penalización para forzar el cumplimiento de las condiciones de frontera introduce una modificación en el problema original, lo que puede generar soluciones sesgadas, especialmente cuando el parámetro de penalización $\lambda$ no es suficientemente grande.
 
-El método Deep Ritz, propuesto por E y Yu en \cite{e2017deepritzmethoddeep}, se basa en la formulación débil de problemas elípticos autoadjuntos, donde la solución se obtiene como el mínimo del funcional $J(u)$ descrito en el Lema \ref{lema:MinimoFuncion}. En esencia, este enfoque comparte similitudes con el método de los elementos finitos, pero en lugar de utilizar funciones de base predefinidas, el espacio de funciones en el que se busca la solución será el espacio de funciones redes neuronal.
-
-\begin{equation}
-\min_{u \in H} I(u)
-\end{equation}
-donde
-\begin{equation}
-I(u) = \int_{\Omega} \left( \frac 12  |\nabla u(x)|^2 -  f(x) u(x) \right) dx
-\label{I(u)}
-\end{equation}
-y $H$ es el conjunto de funciones admisibles (también llamado función de prueba, representada aquí por $u$), $f$ es una función dada, que representa la fuerza externa aplicada al sistema en consideración. Problemas de este tipo son bastante comunes en las ciencias físicas. El método Deep Ritz se basa en el siguiente conjunto de ideas:
-
-\begin{enumerate}
-\item Aproximación basada en redes neuronales profundas para la función de prueba.
-\item Una regla de cuadratura numérica para el funcional.
-\item Un algoritmo para resolver el problema de optimización final.
-\end{enumerate}
-
-
-El componente básico del método Deep Ritz es una transformación no lineal $ x \rightarrow z_\theta (x)\in \mathbb{R}^{m} $ definida por una red neuronal profunda. Aquí $\theta$ denota los parámetros, típicamente los pesos de la red neuronal, que ayudan a definir esta transformación. En la arquitectura que utilizamos, cada capa de la red se construye apilando varios bloques, cada bloque consiste en dos transformaciones lineales, dos funciones de activación y una conexión residual. Tanto la entrada $s$ como la salida $t$ del bloque son vectores en $\mathbb{R}^{m}$. El $i$-ésimo bloque puede expresarse como:
-\begin{equation}
-t=f_i(s)=\phi(W_{i,2} \cdot \phi(W_{i,1} s +b_{i,1})+b_{i,2})+s
-\label{block}
-\end{equation}
-donde $W_{i,1},W_{i,2} \in \mathbb{R}^{m \times m}$, $b_{i,1},b_{i,2} \in \mathbb{R}^{m}$ las correspondientes matrices de pesos y sesgos asociadas al bloque $i$. $\phi$ es la función de activación (escalar)
-
-Tal y como se precisa en \cite{e2017deepritzmethoddeep} la función de activación $\phi$ juega un papel clave en la precisión del algoritmo. Para equilibrar simplicidad y precisión, hemos decidido utilizar 
-\begin{equation}
-\phi(x)=\max\{x^3,0\}
-\end{equation}
-El último término en \eqref{block}, la conexión residual, facilita mucho el entrenamiento de la red ya que ayuda a evitar el problema del gradiente que desaparece. La estructura de los dos bloques, incluyendo dos conexiones residuales, se muestra en la Figura \ref{fig:net_structure_1}.
- 
-
-
-La red completa de $n$ capas puede expresarse ahora como:
-\begin{equation}
-z_{\theta}(x)=f_n\circ ... \circ f_1(x)
-\end{equation}
-$\theta$ denota el conjunto de todos los parámetros en toda la red.
-Nota que la entrada $x$ para el primer bloque está en $\mathbb{R}^d$, no en $\mathbb{R}^{m}$.
-Para manejar esta discrepancia podemos ya sea
-completar $x$ con un vector de ceros cuando $d<m$, o aplicar una transformación lineal 
-a $x$ cuando $d>m$. 
-Teniendo $z_\theta$, obtenemos $u$ mediante
-\begin{equation}
-u(x; \theta) = a \cdot z_\theta (x) + b
-\label{function-form}
-\end{equation}
-Aquí en el lado izquierdo y en lo que sigue, usaremos
-$\theta$ para denotar el conjunto completo de parámetros $\{\theta, a, b \}$. Sustituyendo esto en la forma de $I$, obtenemos una función de $\theta$,
-que debemos minimizar.
-
-Para el funcional que aparece en \eqref{I(u)}, denotamos:
-\begin{equation}
-g(x; \theta) = \frac 12 |\nabla_x u(x; \theta)|^2 - f(x) u(x; \theta)
-\end{equation}
-entonces nos queda el problema de optimización:
-\begin{equation}
-\min_\theta L(\theta), \quad L(\theta) = \int_\Omega g(x; \theta) dx
-\label{integral}
-\end{equation}
-
-El cual, de nuevo se resuelve mediante algoritmos de optimización basados en gradientes.
-
-Al igual que hicimos en la Sección \ref{sec:PINN}, vamos a ver dos ejemplos de la aplicación de las PINNs a problemas concretos. 
+En comparación con el método de elementos finitos (FEM), el Deep Ritz tiene la ventaja de no requerir la construcción explícita de funciones base, lo que resulta especialmente útil en problemas de alta dimensionalidad. No obstante, esta misma característica es también una limitación, ya que, en el FEM, las funciones base garantizan automáticamente el cumplimiento de las condiciones de contorno, mientras que en el método Deep Ritz esto debe ser impuesto externamente, con los problemas asociados que hemos analizado.
 
 \chapter{Resultados}\label{chap3}
 
@@ -1244,6 +1200,76 @@ Para pasar de forma fuerte a débil, lo que hacemos es seguir el siguiente proce
 
     \end{exmp}
 \end{mdframed}
+
+
+\subsection{El método ``Deep Ritz'' versión antigua}
+
+El método Deep Ritz, propuesto por E y Yu en \cite{e2017deepritzmethoddeep}, se basa en la formulación débil de problemas elípticos autoadjuntos, donde la solución se obtiene como el mínimo del funcional $J(u)$ descrito en el Lema \ref{lema:MinimoFuncion}. En esencia, este enfoque comparte similitudes con el método de los elementos finitos, pero en lugar de utilizar funciones de base predefinidas, el espacio de funciones en el que se busca la solución será el espacio de funciones redes neuronal.
+
+\begin{equation}
+\min_{u \in H} I(u)
+\end{equation}
+donde
+\begin{equation}
+I(u) = \int_{\Omega} \left( \frac 12  |\nabla u(x)|^2 -  f(x) u(x) \right) dx
+\label{I(u)}
+\end{equation}
+y $H$ es el conjunto de funciones admisibles (también llamado función de prueba, representada aquí por $u$), $f$ es una función dada, que representa la fuerza externa aplicada al sistema en consideración. Problemas de este tipo son bastante comunes en las ciencias físicas. El método Deep Ritz se basa en el siguiente conjunto de ideas:
+
+\begin{enumerate}
+\item Aproximación basada en redes neuronales profundas para la función de prueba.
+\item Una regla de cuadratura numérica para el funcional.
+\item Un algoritmo para resolver el problema de optimización final.
+\end{enumerate}
+
+
+El componente básico del método Deep Ritz es una transformación no lineal $ x \rightarrow z_\theta (x)\in \mathbb{R}^{m} $ definida por una red neuronal profunda. Aquí $\theta$ denota los parámetros, típicamente los pesos de la red neuronal, que ayudan a definir esta transformación. En la arquitectura que utilizamos, cada capa de la red se construye apilando varios bloques, cada bloque consiste en dos transformaciones lineales, dos funciones de activación y una conexión residual. Tanto la entrada $s$ como la salida $t$ del bloque son vectores en $\mathbb{R}^{m}$. El $i$-ésimo bloque puede expresarse como:
+\begin{equation}
+t=f_i(s)=\phi(W_{i,2} \cdot \phi(W_{i,1} s +b_{i,1})+b_{i,2})+s
+\label{block}
+\end{equation}
+donde $W_{i,1},W_{i,2} \in \mathbb{R}^{m \times m}$, $b_{i,1},b_{i,2} \in \mathbb{R}^{m}$ las correspondientes matrices de pesos y sesgos asociadas al bloque $i$. $\phi$ es la función de activación (escalar)
+
+Tal y como se precisa en \cite{e2017deepritzmethoddeep} la función de activación $\phi$ juega un papel clave en la precisión del algoritmo. Para equilibrar simplicidad y precisión, hemos decidido utilizar 
+\begin{equation}
+\phi(x)=\max\{x^3,0\}
+\end{equation}
+El último término en \eqref{block}, la conexión residual, facilita mucho el entrenamiento de la red ya que ayuda a evitar el problema del gradiente que desaparece. La estructura de los dos bloques, incluyendo dos conexiones residuales, se muestra en la Figura \ref{fig:net_structure_1}.
+ 
+
+
+La red completa de $n$ capas puede expresarse ahora como:
+\begin{equation}
+z_{\theta}(x)=f_n\circ ... \circ f_1(x)
+\end{equation}
+$\theta$ denota el conjunto de todos los parámetros en toda la red.
+Nota que la entrada $x$ para el primer bloque está en $\mathbb{R}^d$, no en $\mathbb{R}^{m}$.
+Para manejar esta discrepancia podemos ya sea
+completar $x$ con un vector de ceros cuando $d<m$, o aplicar una transformación lineal 
+a $x$ cuando $d>m$. 
+Teniendo $z_\theta$, obtenemos $u$ mediante
+\begin{equation}
+u(x; \theta) = a \cdot z_\theta (x) + b
+\label{function-form}
+\end{equation}
+Aquí en el lado izquierdo y en lo que sigue, usaremos
+$\theta$ para denotar el conjunto completo de parámetros $\{\theta, a, b \}$. Sustituyendo esto en la forma de $I$, obtenemos una función de $\theta$,
+que debemos minimizar.
+
+Para el funcional que aparece en \eqref{I(u)}, denotamos:
+\begin{equation}
+g(x; \theta) = \frac 12 |\nabla_x u(x; \theta)|^2 - f(x) u(x; \theta)
+\end{equation}
+entonces nos queda el problema de optimización:
+\begin{equation}
+\min_\theta L(\theta), \quad L(\theta) = \int_\Omega g(x; \theta) dx
+\label{integral}
+\end{equation}
+
+El cual, de nuevo se resuelve mediante algoritmos de optimización basados en gradientes.
+
+Al igual que hicimos en la Sección \ref{sec:PINN}, vamos a ver dos ejemplos de la aplicación de las PINNs a problemas concretos. 
+
 
 \printbibliography
 \cleardoublepage
