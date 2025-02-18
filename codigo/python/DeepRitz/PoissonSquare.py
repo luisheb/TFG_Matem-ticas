@@ -6,8 +6,12 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 import sys, os
 import writeSolution
+import numpy as np
+import scipy.sparse as sp
+import scipy.sparse.linalg as spla
+import matplotlib.pyplot as plt
 
-# Network structure
+# Estructura de la red
 class RitzNet(torch.nn.Module):
     def __init__(self, params):
         super(RitzNet, self).__init__()
@@ -20,7 +24,7 @@ class RitzNet(torch.nn.Module):
         self.linearOut = nn.Linear(self.params["width"], self.params["dd"])
 
     def forward(self, x):
-        x = torch.tanh(self.linearIn(x)) # Match dimension
+        x = torch.tanh(self.linearIn(x)) # Coincidir dimensión
         for layer in self.linear:
             x_temp = torch.tanh(layer(x))
             x = x_temp
@@ -32,7 +36,7 @@ def preTrain(model,device,params,preOptimizer,preScheduler,fun):
     file = open("lossData.txt","w")
 
     for step in range(params["preStep"]):
-        # The volume integral
+        # La integral de volumen
         data = torch.from_numpy(generateData.sampleFromDisk(params["radius"],params["bodyBatch"])).float().to(device)
 
         output = model(data)
@@ -46,14 +50,14 @@ def preTrain(model,device,params,preOptimizer,preScheduler,fun):
             with torch.no_grad():
                 ref = exact(data)
                 error = errorFun(output,ref,params)
-                # print("Loss at Step %s is %s."%(step+1,loss.item()))
+                # print("Pérdida en el paso %s es %s."%(step+1,loss.item()))
                 print("Error at Step %s is %s."%(step+1,error))
             file.write(str(step+1)+" "+str(error)+"\n")
 
         model.zero_grad()
         loss.backward()
 
-        # Update the weights.
+        # Actualizar los pesos.
         preOptimizer.step()
         # preScheduler.step()
 
@@ -68,7 +72,7 @@ def train(model,device,params,optimizer,scheduler):
     data1_x_shift = data1+x_shift
     data1_y_shift = data1+y_shift
 
-    loss_history = []  # Store loss values
+    loss_history = []  # Almacenar valores de pérdida
 
     for step in range(params["trainStep"]-params["preStep"]):
         output1 = model(data1)
@@ -80,22 +84,22 @@ def train(model,device,params,optimizer,scheduler):
 
         model.zero_grad()
 
-        # Loss function 1
+        # Función de pérdida 1
         fTerm = ffun(data1).to(device)
         loss1 = torch.mean(0.5*(dfdx*dfdx+dfdy*dfdy)-fTerm*output1)
 
-        # Loss function 2
+        # Función de pérdida 2
         output2 = model(data2)
         target2 = exact(data2)
         loss2 = torch.mean((output2-target2)*(output2-target2) * params["penalty"] * ratio)
         loss = loss1+loss2              
-        loss_history.append(loss.item())  # Save loss
+        loss_history.append(loss.item())  # Guardar pérdida
 
         if step%params["writeStep"] == params["writeStep"]-1:
             with torch.no_grad():
                 target = exact(data1)
                 error = errorFun(output1,target,params)
-                # print("Loss at Step %s is %s."%(step+params["preStep"]+1,loss.item()))
+                # print("Pérdida en el paso %s es %s."%(step+params["preStep"]+1,loss.item()))
                 print("Loss at Step %s is %s."%(step+params["preStep"]+1,loss.item()))
             file = open("lossData.txt","a")
             file.write(str(step+params["preStep"]+1)+" "+str(error)+"\n")
@@ -115,7 +119,7 @@ def train(model,device,params,optimizer,scheduler):
         optimizer.step()
         scheduler.step()
 
-    return loss_history  # Return loss values
+    return loss_history  # Devolver valores de pérdida
 
 
 def errorFun(output, target, params):
@@ -123,8 +127,8 @@ def errorFun(output, target, params):
     error = math.sqrt(torch.mean(error * error))
     ref = math.sqrt(torch.mean(target * target))
     
-    if ref == 0:  # Avoid division by zero
-        return error  # Return absolute error instead of relative error
+    if ref == 0:  # Evitar división por cero
+        return error  # Devolver error absoluto en lugar de error relativo
     
     return error / ref  
 
@@ -139,13 +143,12 @@ def test(model, device, params):
     error = math.sqrt(torch.mean(error * error))
     ref = math.sqrt(torch.mean(target * target))
 
-    if ref == 0:  # Avoid division by zero
-        return error  # Return absolute error instead of relative error
+    if ref == 0:  # Evitar división por cero
+        return error  # Devolver error absoluto en lugar de error relativo
 
     return error / ref
 
 def ffun(data):
-    # f = 1
     return torch.ones([data.shape[0],1],dtype=torch.float)
 
 def exact(data):
@@ -164,29 +167,29 @@ def plot_loss(loss_history):
     plt.plot(range(len(loss_history)), loss_history, linestyle='-')
     plt.xlabel("Iterations (every {} steps)".format(500))
     plt.ylabel("Loss")
-    plt.yscale("log")  # Set y-axis to log scale
+    plt.yscale("log")  # Establecer el eje y en escala logarítmica
     plt.title("Training Loss Over Time (Log Scale)")
-    plt.grid(True, which="both", linestyle="--", linewidth=0.5)  # Improve grid visibility
+    plt.grid(True, which="both", linestyle="--", linewidth=0.5)  # Mejorar la visibilidad de la cuadrícula
     plt.show()
 
 
 def main():
-    # Parameters
+    # Parámetros
     # torch.manual_seed(21)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     params = dict()
     params["d"] = 2 # 2D
-    params["dd"] = 1 # Scalar field
-    params["bodyBatch"] = 1024 # Batch size
-    params["bdryBatch"] = 1024 # Batch size for the boundary integral
-    params["lr"] = 0.01 # Learning rate
-    params["preLr"] = 0.01 # Learning rate (Pre-training)
-    params["width"] = 8 # Width of layers
-    params["depth"] = 2 # Depth of the network: depth+2
-    params["numQuad"] = 40000 # Number of quadrature points for testing
-    params["trainStep"] = 10000
-    params["penalty"] = 1e-5
+    params["dd"] = 1 # Campo escalar
+    params["bodyBatch"] = 1024 # Tamaño del lote
+    params["bdryBatch"] = 1024 # Tamaño del lote para la integral de contorno
+    params["lr"] = 0.0001 # Tasa de aprendizaje
+    params["preLr"] = 0.01 # Tasa de aprendizaje (Pre-entrenamiento)
+    params["width"] = 64 # Ancho de las capas
+    params["depth"] = 4 # Profundidad de la red: profundidad+2
+    params["numQuad"] = 40000 # Número de puntos de cuadratura para prueba
+    params["trainStep"] = int(1e4)
+    params["penalty"] = 400
     params["preStep"] = 0
     params["diff"] = 0.001
     params["writeStep"] = 500
@@ -214,11 +217,55 @@ def main():
 
     torch.save(model.state_dict(), "last_model.pt")
 
-    # Plot loss graph
+    # Graficar la pérdida
     plot_loss(loss_history)
 
     pltResult(model, device, 500)
 
+    valn = femPoissonSquare(50)
+
+    compare_fem_model(50, model, valn)
+
+def femPoissonSquare(n):
+    h = 1 / n
+
+    e = np.ones(n-1)
+    B = sp.diags([-e, 4*e, -e], [-1, 0, 1], shape=(n-1, n-1))
+    I = sp.eye(n-1)
+    I1 = sp.diags([-e, -e], [-1, 1], shape=(n-1, n-1))
+    A = sp.kron(I, B) + sp.kron(I1, I)
+    A /= h**2
+
+    f = np.ones((n-1)**2)
+
+    y = spla.spsolve(A, f)
+
+    val = np.zeros((n-1, n-1))
+    for i in range(n-1):
+        for j in range(n-1):
+            val[i, j] = y[j + (n-1) * i]
+
+    valnn = np.zeros((n+1, n+1))
+    valnn[1:n, 1:n] = val
+
+    xx = np.linspace(0, 1, n+1)
+    yy = xx
+    X, Y = np.meshgrid(xx, yy)
+
+    fig = plt.figure(figsize=(12, 5))
+
+    ax1 = fig.add_subplot(121, projection='3d')
+    ax1.plot_surface(X, Y, valnn, cmap='viridis')
+    ax1.set_title('Solution Mesh')
+
+    ax2 = fig.add_subplot(122)
+    c = ax2.contourf(X, Y, valnn, cmap='viridis')
+    plt.colorbar(c, ax=ax2)
+    ax2.set_title('Contour Plot')
+
+    plt.show()
+
+    return valnn
 
 def pltResult(model, device, nSample):
     xList = np.linspace(0, 1, nSample)
@@ -232,13 +279,47 @@ def pltResult(model, device, nSample):
             coord = np.array([xx[i, j], yy[i, j]])
             zz[i, j] = model(torch.tensor(coord, dtype=torch.float).to(device)).item()
 
-    plt.figure(figsize=(8, 6))
-    plt.contourf(xx, yy, zz, levels=100, cmap="viridis")
-    plt.colorbar(label="Solution Value")
-    plt.xlabel("x")
-    plt.ylabel("y")
-    plt.title("Solution Plot")
+    xx = np.linspace(0, 1, nSample)
+    yy = xx
+    X, Y = np.meshgrid(xx, yy)
+
+    fig = plt.figure(figsize=(12, 5))
+
+    ax1 = fig.add_subplot(121, projection='3d')
+    ax1.plot_surface(X, Y, zz, cmap='viridis')
+    ax1.set_title('Solution Mesh')
+
+    ax2 = fig.add_subplot(122)
+    c = ax2.contourf(X, Y, zz, cmap='viridis')
+    plt.colorbar(c, ax=ax2)
+    ax2.set_title('Contour Plot')
+
     plt.show()
+
+def compare_fem_model(n, model, fem_values):
+    xx = np.linspace(0, 1, n+1)
+    yy = xx
+    X, Y = np.meshgrid(xx, yy)
+
+    zz = np.zeros_like(fem_values)
+
+    for i in range(fem_values.shape[0]):
+        for j in range(fem_values.shape[1]):
+            coord = np.array([X[i, j], Y[i, j]])
+            zz[i, j] = model(torch.tensor(coord, dtype=torch.float)).item()
+    fig = plt.figure(figsize=(12, 5))
+
+    ax1 = fig.add_subplot(121, projection='3d')
+    ax1.plot_surface(X, Y, np.abs(zz-fem_values), cmap='viridis')
+    ax1.set_title('Solution Mesh')
+
+    ax2 = fig.add_subplot(122)
+    c = ax2.contourf(X, Y, np.abs(zz-fem_values), cmap='viridis')
+    plt.colorbar(c, ax=ax2)
+    ax2.set_title('Contour Plot')
+
+    plt.show()
+
 
 if __name__=="__main__":
     main()
