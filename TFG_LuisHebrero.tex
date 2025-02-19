@@ -16,6 +16,9 @@
 \usepackage{listings}
 \usepackage{xcolor}
 
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
 % Define custom colors for syntax highlighting
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -246,7 +249,7 @@ Concretamente, a lo largo del trabajo, nos centraremos en problemas de condició
     u(x) = g(x), \qquad \forall x\in\partial\Omega.
 \end{equation}
 
-En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en todo el dominio y que además cumpla las condiciones de frontera. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Para entender la formulación débil de una ecuación en derivadas parciales, es necesario introducir el concepto de derivada débil.
+En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en un conjunto finito de puntos cumpla las condiciones de frontera. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Para entender la formulación débil de una ecuación en derivadas parciales, es necesario introducir el concepto de derivada débil.
 
 \begin{mdframed}
     \begin{defin}
@@ -379,15 +382,19 @@ De esta manera, se demuestran las condiciones (a), (b) y (c) del teorema de Lax-
         por lo que, tomando $c_1 = (n+1)\hat{c}$, obtenemos la desigualdad de (b).
         \item[(a)] Por último, demostramos la condición (a). Aquí utilizaremos la condición extra requerida en \eqref{eq:condiciones_LaxMilgram_extra} y la condición de elipticidad uniforme \eqref{eq:condiciones_EDP_eliptica_elipticidad_uniforme}. Usando  \eqref{eq:condiciones_EDP_eliptica_elipticidad_uniforme} y la desigualdad de Cauchy-Schwarz, 
         
-        \colorbox{yellow}{Me corrgeiste un - por un +, pero yo tengo - en las notas, ¿está bien así?}
-        \begin{align*}
-        a(v, v) &\geq \tilde{c} |v|^2_{H^1(\Omega)} - 
-        \left( \sum_{i=1}^{n} \|b_i\|^2_{L_{\infty}(\Omega)} \right)^{1/2} 
-        |v|_{H^1(\Omega)} \|v\|_{L_2(\Omega)} 
-        + \int_{\Omega} c(x) |v(x)|^2 dx \\
-        &\geq \frac{1}{2} \tilde{c} |v|^2_{H^1(\Omega)} 
-        + \int_{\Omega} \left( c(x) - \frac{2}{\tilde{c}} \sum_{i=1}^{n} \|b_i\|^2_{L_{\infty}(\Omega)} \right) |v(x)|^2 dx.
-        \end{align*}
+        \begin{equation*}
+        a(v, v) \geq \tilde{c} \sum_{i=1}^n \int_\Omega \left| \frac{\partial v}{\partial x_i} \right|^2 dx
+        + \sum_{i=1}^n \int_\Omega b_i(x) \frac{1}{2} \frac{\partial}{\partial x_i} (v^2) dx
+        + \int_\Omega c(x) |v|^2 dx,
+        \end{equation*}
+
+        donde escribimos \(\frac{\partial v}{\partial x_i} \cdot v\) como \(\frac{1}{2} \frac{\partial}{\partial x_i}(v^2)\). Integrando por partes el segundo término en el lado derecho, obtenemos
+
+        \begin{equation*}
+        a(v, v) \geq \tilde{c} \sum_{i=1}^n \int_\Omega \left| \frac{\partial v}{\partial x_i} \right|^2 dx
+        + \int_\Omega \left( c(x) - \frac{1}{2} \sum_{i=1}^n \frac{\partial b_i}{\partial x_i} \right) |v|^2 dx.
+        \end{equation*}
+
         Asumiendo que 
         \begin{align*}
         c(x) - \frac{2}{\tilde{c}} \sum_{i=1}^{n} \|b_i\|^2_{L_{\infty}(\Omega)} \geq 0,
@@ -574,7 +581,18 @@ Consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, 
     \begin{cases} -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial u}{\partial x_i} + c(\mathbf{x})u = f(\mathbf{x}), &\qquad \mathbf{x}\in\Omega,\\ u(\mathbf{x}) = g(\mathbf{x}), &\qquad \mathbf{x}\in\partial\Omega. 
     \end{cases} 
 \end{equation} 
-donde $\Omega \subset \mathbb{R}^n$ es un dominio y las funciones $a_{ij}(\mathbf{x})$, $b_i(\mathbf{x})$, $c(\mathbf{x})$, $f(\mathbf{x})$ y $g(\mathbf{x})$ son conocidas. La incógnita es la función $u: \Omega \to \mathbb{R}$ que satisface la ecuación diferencial y las condiciones de contorno. Para poder construir y ajustar los pesos de una red neuronal que aproxime $u$ es esencial tener una función de coste, es decir, una función que nos indique la calidad de nuestra aproximación. En el caso de las PINNs, la función de coste se define como la suma ponderada de dos términos. El primero de ellos garantiza que la función aproximada por la red neuronal satisface la ecuación diferencial en todo el dominio. El segundo término asegura que la aproximación satisface las condiciones de contorno de Dirichlet
+donde $\Omega \subset \mathbb{R}^n$ es un dominio abierto y acotado y las funciones $a_{ij}(\mathbf{x})$, $b_i(\mathbf{x})$, $c(\mathbf{x})$, $f(\mathbf{x})$ y $g(\mathbf{x})$ son conocidas. La incógnita es la función $u: \Omega \to \mathbb{R}$ que satisface la ecuación diferencial y las condiciones de contorno. Para poder construir y ajustar los pesos de una red neuronal que aproxime $u$ es esencial tener una función de coste, es decir, una función que nos indique la calidad de nuestra aproximación. 
+
+Con las PINNs nosotros queremos encontrar una función $\hat{u}$ que minimice el residuo en $\Omega$ y que cumpla las condiciones de contorno en $\partial\Omega$. Para ello, lo que queremos es la $\hat{u}$ que haga que las siguientes expresiones sean mínimas:
+\begin{align*}
+    &\int_{\Omega} \left( -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) \right)^2, \\ 
+    &\int_{\partial\Omega} \left( \hat{u} (\mathbf{x}) - g(\mathbf{x})\right)^2.
+\end{align*}
+
+Para poder computar estas integrales, se utiliza una regla de cuadratura que las aproxime mediante sumas ponderadas de los valores de las funciones en un conjunto discreto de puntos. En este contexto, los puntos de evaluación se denominan puntos de colocación o collocation points. Para la primera expresión, los puntos de colocación que se usarán los denominaremos $\mathcal{T}_f$, mientras que para la segunda los denominaremos $\mathcal{T}_b$. 
+
+Por tanto, en el caso de las PINNs, la función de coste se compone de la suma ponderada de dos términos. El primero garantiza que la red neuronal aproxime la solución de la ecuación diferencial en un conjunto discreto de puntos. El segundo asegura que dicha aproximación cumpla las condiciones de contorno de Dirichlet en otro conjunto finito de puntos.
+
 \begin{equation} \label{eq:L_PINN}
     \mathcal{L}(\boldsymbol{\theta}; \mathcal{T}) = w_f \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) + w_b \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b),
 \end{equation}
@@ -586,15 +604,12 @@ donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un tér
         \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right|^2,
     \end{split}
 \end{equation}
-    
-Estas funciones, $\mathcal{L}_f$ y $\mathcal{L}_b$, representan la aproximación al residuo fuerte, y la condición de contorno, por una regla de cuadratura. Con las PINNs nosotros queremos encontrar una función $\hat{u}$ que minimice el residuo en $\Omega$ y que cumpla las condiciones de contorno en $\partial\Omega$. Para ello, lo que queremos es la $\hat{u}$ que haga que las siguientes expresiones sean mínimas:
-\begin{align*}
-    &\int_{\Omega} \left( -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) \right)^2, \\ 
-    &\int_{\partial\Omega} \left( \hat{u} (\mathbf{x}) - g(\mathbf{x})\right)^2,
-\end{align*}
-Para poder computar estas integrales, se utiliza una regla de cuadratura que las aproxime mediante sumas ponderadas de los valores de las funciones en un conjunto discreto de puntos. En este contexto, los puntos de evaluación se denominan puntos de colocación o collocation points. Para la primera expresión, los puntos de colocación que se usarán los denominaremos $\mathcal{T}_f$, mientras que para la segunda los denominaremos $\mathcal{T}_b$. 
 
-Existe mucha literatura sobre como tomar los puntos de colocación pues, al igual que en FEM la malla impacta el resultado, en las PINNs, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}\cite{aikawa2024improving}\cite{matsubara2023goodlatticetrainingphysicsinformed}\cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}\cite{hou2023enhancing}.  
+Como hemos indicado, aquí $\mathcal{T}_f$ y $\mathcal{T}_b$ representan conjuntos de puntos en el dominio $\Omega$ y en la frontera $\partial\Omega$, respectivamente. De este modo, las funciones, $\mathcal{L}_f$ y $\mathcal{L}_b$, representan la aproximación al residuo fuerte, y la condición de contorno, por una regla de cuadratura. 
+
+
+
+Existe mucha literatura sobre como tomar los puntos de colocación pues, al igual que en FEM la malla impacta el resultado, en las PINNs, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}, \cite{aikawa2024improving}, \cite{matsubara2023goodlatticetrainingphysicsinformed}, \cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}, \cite{hou2023enhancing}.  
 
 Es importante destacar que con esta formulación, se impone que el residuo en forma fuerte de la ecuación diferencial sea cero en los puntos de colocación, lo cual, veremos más adelante que puede ser una fuente de errores. 
 
@@ -823,7 +838,7 @@ por lo que, tal como se estableció en la Sección \ref{sec:EDPs}, el problema \
     J(v) \geq J(u) \quad \forall v \in H_0^1(\Omega)
     \end{equation}
     es decir, \( u \) minimiza \( J(\cdot) \) sobre \( H_0^1(\Omega) \).
-    De hecho, \( \tilde{u} \) es el único minimizador de \( J(\cdot) \) en \( H_0^1(\Omega) \). En efecto, si \( \tilde{u} \) también minimiza \( J(\cdot) \) en \( H_0^1 (\Omega) \), entonces
+    De hecho, \( \tilde{u} \) es el único mínimo de \( J(\cdot) \) en \( H_0^1(\Omega) \). En efecto, si \( \tilde{u} \) también minimiza \( J(\cdot) \) en \( H_0^1 (\Omega) \), entonces
     \begin{equation}\label{eq:J(v)geq(utilde)}
     J(v) \geq J(\tilde{u}) \quad \forall v \in H_0^1(\Omega).
     \end{equation}
@@ -835,7 +850,30 @@ por lo que, tal como se estableció en la Sección \ref{sec:EDPs}, el problema \
     \begin{equation*}
     \| \tilde{u} - u \|_{H_0^1(\Omega)} = 0,
     \end{equation*}
-    y, por lo tanto, \( u = \tilde{u} \).
+    y, por lo tanto, \( u = \tilde{u} \). 
+
+
+    Para la implicación en sentido contrario, es fácil demostrar que $J(\cdot)$ es convexa (hacia abajo), es decir:
+    \begin{equation*}
+    J((1 - \theta)v + \theta w) \leq (1 - \theta)J(v) + \theta J(w) \quad \forall \theta \in [0,1], \quad \forall v, w \in H_0^1(\Omega).
+    \end{equation*}   
+    Esto se deduce de la identidad
+    \begin{equation*}
+    (1 - \theta)J(v) + \theta J(w) = J((1 - \theta)v + \theta w) + \frac{1}{2} \theta (1 - \theta)a(v - w, v - w)
+    \end{equation*}   
+    y del hecho de que $a(v - w, v - w) \geq 0$. Además, si $u$ minimiza $J(\cdot)$, entonces $J(\cdot)$ tiene un punto estacionario en $u$; es decir:
+    \begin{equation*}
+    J'(u)v := \lim_{\lambda \to 0} \frac{J(u + \lambda v) - J(u)}{\lambda} = 0
+    \end{equation*}   
+    para todo $v \in H_0^1(\Omega)$. Dado que
+    \begin{equation*}
+    \frac{J(u + \lambda v) - J(u)}{\lambda} = a(u, v) - l(v) + \frac{\lambda}{2} a(v, v),
+    \end{equation*}   
+    deducimos que si $u$ minimiza $J(\cdot)$ entonces
+    \begin{equation*}
+    \lim_{\lambda \to 0} [a(u, v) - l(v) + \frac{\lambda}{2} a(v, v)] = a(u, v) - l(v) = 0 \quad \forall v \in H_0^1(\Omega),
+    \end{equation*}   
+    lo que demuestra el resultado.\qed
 \end{dem}
 
 \subsection{Formulación del método ``Deep Ritz''}
@@ -843,7 +881,7 @@ por lo que, tal como se estableció en la Sección \ref{sec:EDPs}, el problema \
 El método Deep Ritz, propuesto por E y Yu en \cite{e2017deepritzmethoddeep}, se basa en minimizar el funcional \( J(u) \) (definido en el Lema \ref{lema:MinimoFuncion}) representando la solución desconocida mediante una red neuronal \( \hat{u}_\theta: \mathbb{R}^d \to \mathbb{R} \), en lugar de emplear funciones base del método de los elementos finitos. Es decir, en lugar de aproximar la función \( u \in H_0^1(\Omega) \) que minimiza \( J(u) \) dentro del espacio de elementos finitos \( V_h \), se busca una aproximación en el espacio de funciones red neuronal. Aquí, \( \theta \in \mathbb{R}^{\# \mathcal{N}} \) denota el conjunto de parámetros de la red, donde \( \# \mathcal{N} \) es el número total de parámetros libres.
 
 
-El marco teórico del método Deep Ritz requiere que la red neuronal sea diferenciable, es decir, que utilice funciones de activación diferenciables. En la Figura \ref{fig:net_structure_1}, se muestra la arquitectura de la red neuronal profunda utilizada por E y Yu.
+El marco teórico del método Deep Ritz requiere que la red neuronal sea diferenciable, es decir, que utilice funciones de activación diferenciables. En la Figura \ref{fig:net_structure_1}, se muestra la arquitectura de la red neuronal profunda utilizada por E y Yu en \cite{e2017deepritzmethoddeep}.
 
 \begin{figure}[h!]
     \centering
@@ -865,7 +903,7 @@ Para abordar esta limitación, se introduce el funcional de energía penalizado:
 \begin{equation*}
 J_{\lambda}(v) := J(v) + \frac{\lambda}{2} |v|^2_{\partial \Omega},
 \end{equation*}
-donde \( \lambda \in \mathbb{R}^+ \) es un parámetro de penalización y \( | \cdot |_{\partial \Omega} \) denota la norma \( L^2 \) en la frontera del dominio. El término de penalización adicional impone que \( v \) tienda a cero en \( \partial \Omega \).
+donde \( \lambda \in \mathbb{R}^+ \) es un parámetro de penalización y \( | \cdot |_{\partial \Omega} \) denota la norma \( L^2 \) en la frontera del dominio. El término de penalización adicional impone que \( v \) sea próximo a cero en \( \partial \Omega \).
 
 Esta formulación permite el uso de redes neuronales en la aproximación de ecuaciones diferenciales parciales sin necesidad de definir funciones de base explícitas, facilitando la resolución de problemas de altas dimensiones donde los métodos clásicos pueden volverse ineficientes. No obstante, igual que en el caso de las PINN el problema de la formulación residía en que se aproximaba el residuo de forma fuerte, en el método Deep Ritz, el problema radica en que se minimiza el funcional \( J_{\lambda} \) en lugar de \( J \), es decir, se altera el problema para imponer las condiciones de contorno, variando así la solución. Para ver esto de forma más clara, vamos a aplicar el método Deep Ritz a la ecuación de Poisson en una dimensión.
 
@@ -895,8 +933,8 @@ Esta formulación permite el uso de redes neuronales en la aproximación de ecua
         \end{equation*}
         Con esta información podemos plantear el método de Ritz para este problema como encontrar \( \hat{u}_\theta \in V_{\mathcal{N}} \) tal que: 
         \begin{align*}
-        \min_{\hat{u}_\theta} \left( \frac{1}{2} \int_\Omega \left((\hat{u}_\theta')^2 - \int_\Omega \hat{u}_\theta + \lambda (\hat{u}_\theta(0)^2 + \hat{u}_\theta(1)^2)\right)\right) =\\
-        \min_{\hat{u}_\theta} \left(\frac{1}{2} \int_0^1 \left((\hat{u}_\theta')^2 - \int_0^1 \hat{u}_\theta + \lambda (\hat{u}_\theta(0)^2 + \hat{u}_\theta(1)^2)\right)\right),
+        \argmin_{\{\hat{u}_\theta:\; \theta \in \mathbb{R}^{\#\mathcal{N}} \}} \left( \frac{1}{2} \int_\Omega \left((\hat{u}_\theta')^2 - \int_\Omega \hat{u}_\theta + \lambda (\hat{u}_\theta(0)^2 + \hat{u}_\theta(1)^2)\right)\right) =\\
+        \argmin_{\{\hat{u}_\theta:\; \theta \in \mathbb{R}^{\#\mathcal{N}} \}} \left(\frac{1}{2} \int_0^1 \left((\hat{u}_\theta')^2 - \int_0^1 \hat{u}_\theta + \lambda (\hat{u}_\theta(0)^2 + \hat{u}_\theta(1)^2)\right)\right),
         \end{align*}
         donde \(\hat{u}_\theta\) es una función de una red neuronal. Así, el funcional que estamos minimizando, $J_\lambda: H^1(0,1) \to \mathbb{R}$ se define como:
         \begin{equation*}
@@ -904,9 +942,9 @@ Esta formulación permite el uso de redes neuronales en la aproximación de ecua
         \end{equation*}
         Si buscamos el mínimo de \( J_\lambda \), vamos a encontrar que $u$ verifica la siguiente ecuación:
         \begin{equation*}
-        J_\lambda'(u)v := \lim_{\beta \to 0} \frac{J_\lambda(u + \beta v) - J_\lambda(u)}{\beta} = 0.
+        J_\lambda'(u)v := \lim_{\beta \to 0} \frac{J_\lambda(u + \beta v) - J_\lambda(u)}{\beta} = 0, \qquad \forall v \in H^1(0,1).
         \end{equation*}
-        Es fácil ver que \(u \in H^1(0,1)\), y 
+        Es fácil ver que \(u \in H^1(0,1)\) verifica
         \begin{equation*}
         \int_0^1 u'v' - \int_0^1 v + 2\lambda u(0)v(0) + 2\lambda u(1)v(1) = 0, \quad \forall v \in H^1(0,1).
         \end{equation*}
@@ -929,13 +967,13 @@ Esta formulación permite el uso de redes neuronales en la aproximación de ecua
     \end{exmp}
 \end{mdframed}
     
-Con este ejemplo, nos damos cuenta de que el método Deep Ritz, en su formulación utilizada aquí, no aproxima exactamente el problema original, sino que en su lugar resuelve una ecuación con condiciones de frontera modificadas. Esto introduce un sesgo en la solución obtenida, lo que implica que el método no es exacto para el problema original de Poisson con condiciones de Dirichlet homogéneas. Siendo más específicos, el método Deep Ritz estaría aproximando la solución $u_\lambda(x) = -x^2/2 + x/2 + 1/(4\lambda)$ en lugar de la solución exacta $u(x) = -x^2/2 + x/2$, suponiendo un error de $O(1/\lambda)$ en la solución obtenida. 
+Con este ejemplo, nos damos cuenta de que el método Deep Ritz, en su formulación utilizada aquí, no aproxima exactamente el problema original, sino que en su lugar resuelve una ecuación con condiciones de frontera modificadas. Esto introduce un sesgo en la solución obtenida, lo que implica que el método no es exacto para el problema original de Poisson con condiciones de Dirichlet homogéneas. Siendo más específicos, el método Deep Ritz estaría aproximando la solución $u_\lambda(x) = -x^2/2 + x/2 + 1/(4\lambda)$ en lugar de la solución exacta $u(x) = -x^2/2 + x/2$, lo que implica un error de $O(1/\lambda)$ en la solución obtenida. 
 
 A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado y en una L, para lo cual he tenido que programar el método Deep Ritz en Python usando PyTorch. El objetivo con este ejemplo es entender cómo se comporta el método Deep Ritz ante los distintos valores que puede tomar el parámetro de penalización $\lambda$.
 
 \begin{mdframed}
     \begin{exmp}
-        Consideramos el siguiente problema de Poisson en un cuadrado unitario $\Omega = (0,1)^2$ con condiciones de contorno de Dirichlet homogéneas:
+        Consideramos el siguiente problema de Poisson en un cuadrado unitario $\Omega = (0,1)^2$ con condiciones de contorno Dirichlet homogéneas:
         \begin{equation}\label{eq:poisson_square}
         \begin{cases}
         -\Delta u = 1, & \text{en } \Omega,\\
@@ -966,7 +1004,7 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
         \begin{equation*}
         J_\lambda(u) = \frac{1}{2} \int_\Omega |\nabla u|^2 - \int_\Omega u + \lambda \int_{\partial \Omega} u^2.
         \end{equation*}
-        Para resolver este problema, he implementado el método Deep Ritz en Python usando PyTorch. La red neuronal utilizada tiene la siguiente configuración: $2$-$8$-$8$-$1$. En la Figura \ref{fig:poisson_square} se muestra la solución obtenida con $\lambda = 500$. No obstante, siguiendo la intuición que desarrollado en el ejemplo en una dimensión, si usamos $\lambda = 10^-5$ esperamos obtener una aproximación mucho peor. Efectivamente, al realizar esta aproximación, el resultado que obtenemos no se parece nada a la solución real de la EDP. Podemos ver el resultado de este método en la Figura \ref{fig:poisson_square_lambda_1e-5}.
+        Para resolver este problema, he implementado el método Deep Ritz en Python usando PyTorch. La red neuronal utilizada tiene la siguiente configuración: $2$-$8$-$8$-$1$. En la Figura \ref{fig:poisson_square} se muestra la solución obtenida con $\lambda = 500$. No obstante, siguiendo la intuición que desarrollado en el ejemplo en una dimensión, si usamos $\lambda = 10^{-5}$ esperamos obtener una aproximación mucho peor. Efectivamente, al realizar esta aproximación, el resultado que obtenemos no se parece nada a la solución real de la EDP. Podemos ver el resultado de este método en la Figura \ref{fig:poisson_square_lambda_1e-5}.
 
         \begin{figure}[H]
             \centering
@@ -1095,7 +1133,7 @@ En la formulación que hemos dado de las ecuaciones en derivadas parciales elíp
 \end{defin}
 \end{mdframed}
 
-No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en todo el dominio y que además cumpla las condiciones de frontera. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. A continuación, vemos un ejemplo que motiva la necesidad de recurrir a la formulación débil de una ecuación.
+No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en un conjunto finito de puntos cumpla las condiciones de frontera. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. A continuación, vemos un ejemplo que motiva la necesidad de recurrir a la formulación débil de una ecuación.
 
 \begin{exmp}
     Supongamos que tenemos la siguiente ecuación de Poisson con una condición de frontera de Dirichlet homogénea,
@@ -1106,7 +1144,7 @@ No obstante, en muchos casos, no es posible encontrar una solución en forma fue
             u = 0, & \text{en } \partial\Omega.
         \end{cases}
     \end{equation*}
-    Donde $\Omega$ es un conjunto acotado y abierto en $\mathbb{R}^n$. En este caso, no siempre es posible encontrar una solución en forma fuerte, es decir, una función $u$ que cumpla la ecuación en todo el dominio $\Omega$ y que además cumpla la condición de frontera. Por ejemplo, si $f$ no es una función suave, no se puede garantizar la existencia de una solución en forma fuerte pues estaríamos rompiendo la condición de \eqref{eq:condiciones_EDP_eliptica_f}. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. 
+    Donde $\Omega$ es un conjunto acotado y abierto en $\mathbb{R}^n$. En este caso, no siempre es posible encontrar una solución en forma fuerte, es decir, una función $u$ que cumpla la ecuación en un conjunto finito de puntos y que además cumpla la condición de frontera. Por ejemplo, si $f$ no es una función suave, no se puede garantizar la existencia de una solución en forma fuerte pues estaríamos rompiendo la condición de \eqref{eq:condiciones_EDP_eliptica_f}. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. 
 \end{exmp}
 
 
