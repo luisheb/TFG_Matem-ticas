@@ -1036,286 +1036,445 @@ El método Deep Ritz ofrece una formulación efectiva para superar las limitacio
 
 En comparación con el método de elementos finitos (FEM), el Deep Ritz tiene la ventaja de no requerir la construcción explícita de funciones base, lo que resulta especialmente útil en problemas de alta dimensionalidad. No obstante, esta misma característica es también una limitación, ya que, en el FEM, las funciones base garantizan automáticamente el cumplimiento de las condiciones de contorno, mientras que en el método Deep Ritz esto debe ser impuesto externamente, con los problemas asociados que hemos analizado.
 
-\chapter{Anexo}\label{chap3}
+\chapter{Conclusiones}\label{chap4}
 
-\chapter{Partes eliminadas - NO IMPRIMIR}
-\section{Espacios de funciones}
+El uso de redes neuronales para la aproximación de ecuaciones en derivadas parciales es un campo con un gran potencial teórico. Su capacidad de aproximar funciones complejas y de operar en dimensiones altas sin la necesidad de una malla explícita las hace atractivas en escenarios donde los métodos numéricos tradicionales pueden resultar costosos o impracticables. No obstante, en la práctica, su aplicación a problemas relativamente simples muestra importantes deficiencias en comparación con métodos bien establecidos como el método de los elementos finitos (FEM).
 
-Para poder entender y formular de forma matemática el problema de aproximación de EDPs mediante redes neuronales, es necesario tener un conocimiento previo de los espacios de funciones en los que trabajamos. Como veremos más adelante al estudiar los problemas de frontera para EDPs elípticas, es importante tener una caracterización del espacio $H_1^0$. Para entenderlo, empezaremos por los espacios de Hilbert Soobolev.
+Los enfoques basados en redes neuronales, como las PINNs (Physics-Informed Neural Networks), presentan limitaciones importantes al forzar el cumplimiento de la ecuación diferencial en su forma fuerte. Esto implica que, en situaciones donde no existe una solución en este sentido, la red neuronal no puede aproximar correctamente la solución débil. Además, la falta de garantías de convergencia y la ausencia de una base matemática sólida para la selección de hiperparámetros complican su aplicación efectiva.
 
-\begin{mdframed}
-\begin{defin}
-    Seam $\Omega$ un conjunto abierto de $\mathbb{R}^n$. Definimos el espacio de Sobolev $H^1(\Omega)$ como el conjunto de funciones en el siguiente conjunto
-    \begin{equation}
-        H^1(\Omega)=\{u\in L^2(\Omega): \frac{\partial u}{\partial x_i}\in L^2(\Omega), \, i=1,\dots,n\}.
-    \end{equation}
-    En este espacio, se define la norma de funciones de con la siguiente ecuación
-    \begin{equation}
-        \|u\|_{H^1(\Omega)}=\left(\|u\|^2_{L^2(\Omega)} + \sum_{i=1}^{n}\left\|\frac{\partial u}{\partial x_i}\right\|^2_{L^2(\Omega)}\right)^{1/2}.
-    \end{equation}
-\end{defin}
-\end{mdframed}
+Por otro lado, el método Deep Ritz plantea una alternativa más alineada con la formulación variacional de los problemas elípticos, minimizando un funcional de energía en lugar de imponer restricciones puntuales. Sin embargo, el uso de penalizaciones para imponer condiciones de contorno introduce modificaciones en el problema original, lo que afecta la precisión de la solución obtenida. A pesar de ello, este enfoque podría ser más viable en problemas de alta dimensionalidad, donde los métodos tradicionales pierden eficiencia.
 
-Dada esta definición, se define el espacio $H_0^1(\Omega)$ como el cierre de las funciones de $C_0^\infty(\Omega)$ en la norma de $H^1(\Omega)$. Es decir, $H_0^1(\Omega)$ es el conjunto de funciones $u\in H^1(\Omega)$ que se obtienen como límite en $H^1(\Omega)$ de una serie de funciones $\{u_m\}_{m=1}^\infty$ todas ellas en $C_0^\infty(\Omega)$. Así, de forma más simple, se puede demostrar que $H_0^1(\Omega)$ se trata del siguiente conjunto.
+En resumen, aunque las redes neuronales ofrecen herramientas novedosas para la resolución de ecuaciones diferenciales, su aplicación en contextos prácticos aún enfrenta numerosos desafíos. Su rendimiento es inferior al de métodos numéricos establecidos en escenarios convencionales, y la interpretabilidad de los resultados sigue siendo limitada. La dificultad para diagnosticar fallos y la falta de garantías teóricas claras refuerzan la idea de que, por el momento, estas técnicas deben verse como complementarias a los métodos clásicos, en lugar de como un reemplazo directo.
 
-\begin{equation}
-    H_0^1(\Omega)=\{u\in H^1(\Omega): u=0 \text{ en } \partial\Omega\}.
-\end{equation}
+\appendix   
+\chapter{Código en Matlab para la red neuronal de clasificación}
 
-Nótese que $H_0^1(\Omega)$ es un espacio de Hilbert con la misma norma y producto interno que $H^1(\Omega)$.
+\begin{lstlisting}[language=Matlab]
+
+function pclassifier_more_points
+%PCLASSIFIER
+%   
+%   Set up data for neural net test
+%   Use backpropagation to train 
+%   Visualize results
+%
+% Luis Hebrero 2024
+%
+%%%%%%% DATA %%%%%%%%%%%
+% xcoords, ycoords, targets
+x1 = [0.1,0.3,0.1,0.2,0.4,0.6,0.5,0.9,0.4,0.7,0.3,0.4,0.2,0.1,0.5, 0.9,0.8];
+x2 = [0.1,0.4,0.5,0.2,0.2,0.3,0.6,0.2,0.4,0.6,0.9,0.7,0.6,0.8,0.8, 0.6,0.1];
+y = [ones(1,5) zeros(1,11) 1; zeros(1,5) ones(1,5) zeros(1,7); zeros(1,10) ones(1,6) 0];
+
+figure(1)
+clf
+a1 = subplot(1,1,1);
+plot(x1(1:5),x2(1:5),'ro','MarkerSize',12,'LineWidth',4)
+hold on
+plot(x1(17),x2(17),'ro','MarkerSize',12,'LineWidth',4)
+plot(x1(6:10),x2(6:10),'bx','MarkerSize',12,'LineWidth',4)
+plot(x1(11:16),x2(11:16),'yv','MarkerSize',12,'LineWidth',4)
+a1.XTick = [0 1];
+a1.YTick = [0 1];
+a1.FontWeight = 'Bold';
+a1.FontSize = 10;
+xlim([0,1])
+ylim([0,1])
+
+print -dpng pic_more_points.png
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialize weights and biases 
+rng(5000);
+W2 = 0.5*randn(2,2);
+W3 = 0.5*randn(3,2);
+W4 = 0.5*randn(3,3);
+b2 = 0.5*randn(2,1);
+b3 = 0.5*randn(3,1);
+b4 = 0.5*randn(3,1);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Forward and Back propagate 
+% Pick a training point at random
+eta = 0.05;
+Niter = 1e6;
+savecost = zeros(Niter,1);
+for counter = 1:Niter
+    k = randi(17);
+    x = [x1(k); x2(k)];
+    % Forward pass
+    a2 = activate(x,W2,b2);
+    a3 = activate(a2,W3,b3);
+    a4 = activate(a3,W4,b4);
+    % Backward pass
+    delta4 = a4.*(1-a4).*(a4-y(:,k));
+    delta3 = a3.*(1-a3).*(W4'*delta4);
+    delta2 = a2.*(1-a2).*(W3'*delta3);
+    % Gradient step
+    W2 = W2 - eta*delta2*x';
+    W3 = W3 - eta*delta3*a2';
+    W4 = W4 - eta*delta4*a3';
+    b2 = b2 - eta*delta2;
+    b3 = b3 - eta*delta3;
+    b4 = b4 - eta*delta4;
+    % Monitor progress
+    newcost = cost(W2,W3,W4,b2,b3,b4);   % display cost to screen
+    savecost(counter) = newcost;
+end
+
+figure(2)
+clf
+semilogy(1:1e4:Niter,savecost(1:1e4:Niter),'b-','LineWidth',2)
+xlabel('Iteration Number')
+ylabel('Value of cost function')
+set(gca,'FontWeight','Bold','FontSize',10)
+print -dpng pic_cost_more_points.png
+
+%%%%%%%%%%% Display shaded and unshaded regions 
+N = 500;
+Dx = 1/N;
+Dy = 1/N;
+xvals = 0:Dx:1;
+yvals = 0:Dy:1;
+for k1 = 1:N+1
+    xk = xvals(k1);
+    for k2 = 1:N+1
+        yk = yvals(k2);
+        xy = [xk;yk];
+        a2 = activate(xy,W2,b2);
+        a3 = activate(a2,W3,b3);
+        a4 = activate(a3,W4,b4);
+        Aval(k2,k1) = a4(1);
+        Bval(k2,k1) = a4(2);
+        Cval(k2,k1) = a4(3);
+     end
+end
+[X,Y] = meshgrid(xvals,yvals);
+
+figure(3)
+clf
+a2 = subplot(1,1,1);
+
+Mval = ones(size(Aval));
+
+Mval(Cval >= Aval & Cval >= Bval) = 2;
+Mval(Aval >= Bval & Aval >= Cval) = 1;
+Mval(Bval >= Aval & Bval >= Cval) = 0;
+
+contourf(X, Y, Mval, [-1 0.75 1.5 2.5]); 
+
+hold on
+
+colormap([1 1 1; 0.8 0.8 0.8; 0.5 0.5 0.5]);
+
+plot(x1(1:5),x2(1:5),'ro','MarkerSize',12,'LineWidth',4)
+plot(x1(17),x2(17),'ro','MarkerSize',12,'LineWidth',4)
+plot(x1(6:10),x2(6:10),'bx','MarkerSize',12,'LineWidth',4)
+plot(x1(11:16),x2(11:16),'yv','MarkerSize',12,'LineWidth',4)
+a2.XTick = [0 1];
+a2.YTick = [0 1];
+a2.FontWeight = 'Bold';
+a2.FontSize = 10;
+xlim([0,1])
+ylim([0,1])
+
+print -dpng classifier_back_more_points.png
+
+  function costval = cost(W2,W3,W4,b2,b3,b4)
+
+     costvec = zeros(10,1); 
+     for i = 1:10
+         x =[x1(i);x2(i)];
+         a2 = activate(x,W2,b2);
+         a3 = activate(a2,W3,b3);
+         a4 = activate(a3,W4,b4);
+         costvec(i) = norm(y(:,i) - a4,2);
+     end
+     costval = norm(costvec,2)^2;
+   end % of nested function
+
+end
+
+\end{lstlisting}
+\chapter{Código en Python para el método de los elementos finitos en un cuadrado}
+
+\begin{lstlisting}[language=Python]
+    
+import numpy as np
+import scipy.sparse as sp
+import scipy.sparse.linalg as spla
+import matplotlib.pyplot as plt
+
+n = 50
+h = 1 / n
+
+e = np.ones(n-1)
+B = sp.diags([-e, 4*e, -e], [-1, 0, 1], shape=(n-1, n-1))
+I = sp.eye(n-1)
+I1 = sp.diags([-e, -e], [-1, 1], shape=(n-1, n-1))
+A = sp.kron(I, B) + sp.kron(I1, I)
+A /= h**2
+
+f = np.ones((n-1)**2)
+
+y = spla.spsolve(A, f)
+
+val = np.zeros((n-1, n-1))
+for i in range(n-1):
+    for j in range(n-1):
+        val[i, j] = y[j + (n-1) * i]
+
+valnn = np.zeros((n+1, n+1))
+valnn[1:n, 1:n] = val
+
+xx = np.linspace(0, 1, n+1)
+yy = xx
+X, Y = np.meshgrid(xx, yy)
+
+fig = plt.figure(figsize=(12, 5))
+
+ax1 = fig.add_subplot(121, projection='3d')
+ax1.plot_surface(X, Y, valnn, cmap='viridis')
+ax1.set_title('Solution Mesh')
+
+ax2 = fig.add_subplot(122)
+c = ax2.contourf(X, Y, valnn, cmap='viridis')
+plt.colorbar(c, ax=ax2)
+ax2.set_title('Contour Plot')
+
+plt.show()
+
+\end{lstlisting}
+\chapter{Código en Python método DeepRitz}
+
+\begin{lstlisting}[language=Python]
+
+ import numpy as np 
+import math, torch, generateData, time
+import torch.nn.functional as F
+from torch.optim.lr_scheduler import MultiStepLR, StepLR
+import torch.nn as nn
+import matplotlib.pyplot as plt
+import sys, os
+import writeSolution
+import numpy as np
+import scipy.sparse as sp
+import scipy.sparse.linalg as spla
+import matplotlib.pyplot as plt
 
 
+class RitzNet(torch.nn.Module):
+    def __init__(self, params):
+        super(RitzNet, self).__init__()
+        self.params = params
+        self.linearIn = nn.Linear(self.params["d"], self.params["width"])
+        self.linear = nn.ModuleList()
+        for _ in range(params["depth"]):
+            self.linear.append(nn.Linear(self.params["width"], self.params["width"]))
 
-\begin{exmp}
-    Es fácil ver por ejemplo que la función $u = x^2 + y^2 - 4$ pertenece a $H^1_0(C)$, siendo $C = \{(x,y)\in \mathbb{R}^2: x^2 + y^2 < 4\}$ el círculo abierto de radio 2 centrada en el origen. Esto se debe a que $u\in L^2(C)$ y además:
-    \begin{equation*}
-        \frac{\partial u}{\partial x} = 2x\in L^2(C), \quad \frac{\partial u}{\partial y} = 2y \in L^2(C), \quad u=0\text{ en  } \partial C.
-    \end{equation*}
-    Por tanto, $u\in H_0^1(C)$.
-\end{exmp}
+        self.linearOut = nn.Linear(self.params["width"], self.params["dd"])
 
-
-\section{Introducción a las ecuaciones en derivadas parciales}
-
-Las ecuaciones en derivadas parciales (EDPs) son ecuaciones que relacionan una función desconocida con sus derivadas parciales. Son fundamentales en la física y en la ingeniería, ya que permiten modelar fenómenos físicos y predecir su evolución en el tiempo. 
-
-Existen varios tipos de EDPs, no obstante, nosotros nos centraremos en los problemas de frontera para ecuaciones en derivadas parciales elípticas. Estas se utilizan para resolver problemas de equilibrio, que implican encontrar la solución de una ecuación diferencial en un dominio acotado con condiciones de frontera específicas. Estos problemas incluyen la distribución estacionaria de temperatura, el flujo de fluidos incompresibles no viscosos, la distribución de tensiones en sólidos en equilibrio, y el cálculo de campos eléctricos en regiones con densidad de carga. En general, se aplican cuando se busca determinar un potencial en situaciones estacionarias. 
-
-Lo he sacado de: \href{https://www.ugr.es/~prodelas/ftp/ETSICCP/Resoluci%F3nNum%E9ricaEDPs.pdf}{este enlace, \colorbox{yellow}{este tipo de cosas se citan?}}
-
-
-%se puede hablar de los espacios de funciones en los que trabajamos, que es el supp de una función. Poner un ejemplo de ecuación diferencial y por que no se puede encontrar su solución en forma fuerte
-Uno de los primero ejemplos de este tipo de ecuaciones es la ecuación de Poisson,
-\begin{equation*}
-    -\Delta  u = f,
-\end{equation*}
-donde $\Delta$ es el operador laplaciano, que se define como la suma de las segundas derivadas parciales de la función $u$:
-\begin{equation*}
-    \Delta u = \sum_{i=1}^{n}\frac{\partial^2 u}{\partial x_i^2}
-\end{equation*}
-
-Esta ecuación es una EDP elíptica pues cumple la siguiente definición general.
-
-
-\begin{mdframed}
-\begin{defin}
-    Dado un conjunto $\Omega$, acotado y abierto en $\mathbb{R}^n$, decimos que una ecuación en derivadas parciales es elíptica si:
-    \begin{equation}
-        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad x\in\Omega.
-    \end{equation}
-    Donde los coeficientes $a_{ij}(x)$, $b_i(x)$, $c(x)$ y $f$ son funciones que satisfacen las siguientes condiciones
-    \begin{align}
-        a_{ij} \in C^1(\overline{\Omega}),& \qquad i,j = 1, \dots ,n \\
-        b_i, c \in C(\overline{\Omega}),& \qquad i = 1, \dots ,n \\
-        c \in C(\overline{\Omega}),& \\
-        f\in C(\overline{\Omega})&
-    \end{align}
-\end{defin}
-\end{mdframed}
-
-De entre los problemas elípticos definidos en \ref{def:EDP_eliptica}, como comentábamos, nos interesan las ecuaciones en derivadas parciales elípticas con condiciones de frontera, en concreto, las condiciones de frontera de Dirichlet.
-
-\begin{mdframed}
-\begin{defin}    
-    El problema de condición de frontera de Dirichlet es concretamente el que tenemos una EDP elíptica como la definida en \ref{def:EDP_eliptica}, tal que, nuestra solución $u$, además de cumplir las ecuación \eqref{eq:EDP_eliptica}, cumple la siguiente condición de frontera
-    \begin{equation}
-        u(x) = g(x), \qquad \forall x\in\partial\Omega.
-    \end{equation}
-    Asimismo, el problema homogéneo de Dirichlet es aquel en el que $g=0$. A lo largo del trabajo nos centraremos principalmente en es te tipo de EDPs.
-\end{defin}
-\end{mdframed}
-
-Con todo, el tipo de ecuaciones elípticas en el que nos vamos a centrar (entendiendo que se cumplen las condiciones de \eqref{eq:condiciones_EDP_eliptica_a} - \eqref{eq:condiciones_EDP_eliptica_f}) serán de la siguiente forma.
-\begin{equation}
-    \begin{cases}
-        -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u = f(x), \qquad & x\in\Omega \\
-        u(x) = 0, & x\in\partial\Omega.
-    \end{cases}
-\end{equation}
-
-\section{Forma fuerte y débil de una EDP}
-En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. De forma intuitiva, esta es la que se obtiene directamente de la definición de la ecuación, y es la que relaciona la función desconocida con sus derivadas parciales. La solución de estas ecuaciones en forma fuerte es la que se conoce como solución clásica. De esto surge la siguiente definición.
-
-\begin{mdframed}
-\begin{defin}
-    Una función $u \in C^2(\Omega)$ que cumples las condiciones de frontera de Dirichlet y satisface la ecuación \eqref{eq:EDP_eliptica} en $\Omega$ se dice que es una solución clásica o fuerte de la ecuación \eqref{eq:EDP_eliptica}. 
-\end{defin}
-\end{mdframed}
-
-No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en un conjunto finito de puntos cumpla las condiciones de frontera. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. A continuación, vemos un ejemplo que motiva la necesidad de recurrir a la formulación débil de una ecuación.
-
-\begin{exmp}
-    Supongamos que tenemos la siguiente ecuación de Poisson con una condición de frontera de Dirichlet homogénea,
-    \begin{equation*}
-        \begin{cases}
-            -\Delta u = f, & \text{en } \Omega,
-            \\
-            u = 0, & \text{en } \partial\Omega.
-        \end{cases}
-    \end{equation*}
-    Donde $\Omega$ es un conjunto acotado y abierto en $\mathbb{R}^n$. En este caso, no siempre es posible encontrar una solución en forma fuerte, es decir, una función $u$ que cumpla la ecuación en un conjunto finito de puntos y que además cumpla la condición de frontera. Por ejemplo, si $f$ no es una función suave, no se puede garantizar la existencia de una solución en forma fuerte pues estaríamos rompiendo la condición de \eqref{eq:condiciones_EDP_eliptica_f}. En estos casos, se recurre a métodos alternativos, como la formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. 
-\end{exmp}
-
-
-Para pasar de forma fuerte a débil, lo que hacemos es seguir el siguiente proceso
-\begin{enumerate}
-    \item Multiplicamos a ambos lados de la igualdad por una función $\varphi \in C^\infty_0(\Omega)$ e integramos.
-    \begin{align*}
-        \int_\Omega\left(-\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(x)\frac{\partial u}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(x)\frac{\partial u}{\partial x_i} + c(x)u \right) \varphi  \,dx\\ =\int_\Omega f(x)\varphi  \,dx
-    \end{align*}
-    \item Expandimos la multiplicación e integramos por partes en la primera integral, llegando a
-    \begin{align*}
-        \sum_{i,j=1}^{n} \int_\Omega a_{ij}(x) \frac{\partial \varphi }{\partial x_j} \frac{\partial u}{\partial x_i} + \sum_{i=1}^{n} \int_\Omega b_i(x)\frac{\partial u}{\partial x_i}\varphi  + \int_\Omega c(x)\varphi u  \,dx\\ =\int_\Omega f(x)\varphi  \,dx
-    \end{align*}
-    Con esta manipulación hemos conseguido una cosa muy interesante: ya no tenemos segundas derivadas de $u$, es decir, ya no necesitamos que $u\in C^2$. Para que esta igualdad tenga sentido, solo hace falta que $u\in L^2(\Omega)$ y que $\partial y /\partial x_i \in L^2(\Omega),\, i =1,\dots,n$. Nótese además que, para que se cumpla la condición de frontera de Dirichlet, $u=0 \in \partial\Omega$. Todo esto se traduce a que $u\in H_0^1(\Omega)$ Esto simplifica las condiciones del problema pues el espacio de funciones en el que puede estar $u$, ahora es mucho más amplio.
-    \item Para simplificar aun más el problema, nótese que $a_{ij}$ ya no aparecen tras derivadas de ningún tipo, luego no es necesario asumir que $a_{ij}\in C^1(\overline{\Omega})$, basta con que $a_{ij}\in L^\infty(\Omega)$. Por lo mismo, $b_i,\,c\in L^\infty(\Omega), i=1,\dots,n$ es suficiente.
-    \item Por último, nótese que $C^\infty_0(\Omega) \subset H^1_0(\Omega)$, luego se puede ver que teniendo $u,v\in H^1_0(\Omega)$, nuestra ecuación sigue teniendo sentido. Con todo esto, surge la siguiente definición de forma débil.
-\end{enumerate}
-
-\begin{mdframed}
-    \begin{exmp}
+    def forward(self, x):
+        x = torch.tanh(self.linearIn(x)) 
+        for layer in self.linear:
+            x_temp = torch.tanh(layer(x))
+            x = x_temp
         
-        Resolveremos una ecuación de calor:
-        \begin{equation*}
-        \frac{\partial u}{\partial t} = \alpha \frac{\partial^2 u}{\partial x^2}, \quad x \in [0, 1], \quad t \in [0, 1]
-        \end{equation*}
-        donde \(\alpha = 0.4\) es la constante de difusividad térmica. Con condiciones de frontera de Dirichlet:
-        \begin{equation*}
-        u(0, t) = u(1, t) = 0,
-        \end{equation*}
-        y condición inicial periódica (sinusoidal):
-        \begin{equation*}
-        u(x, 0) = \sin\left(\frac{n \pi x}{L}\right), \quad 0 < x < L, \quad n = 1, 2, \ldots
-        \end{equation*}
-        donde \(L = 1\) es la longitud de la barra y \(n = 1\) es la frecuencia de la condición inicial sinusoidal.
-        Para este problema, sabemos que la solución exacta es:
-        \begin{equation*}
-        u(x, t) = e^{-\frac{n^2 \pi^2 \alpha t}{L^2}} \sin\left(\frac{n \pi x}{L}\right).
-        \end{equation*}
-        Que si la vemos de forma gráfica, obtenemos la Figura \ref{fig:calor_exacta}.
-        \begin{figure}[H] 
-            \centering
-            \includegraphics[width=0.5\textwidth]{Figuras/calor_exacta.png}
-            \caption{Solución de la ecuación de calor}
-            \label{fig:calor_exacta}
-        \end{figure}
-        Si nos ayudamos de la librería DeepXDE, podemos programar la red neuronal y entrenarla para que aproxime la solución de la ecuación de calor. El resultado obtenido es el obtenido en la Figura \ref{fig:calor_estimacion}.
-        \begin{figure}[H] 
-            \centering
-            \includegraphics[width=0.5\textwidth]{Figuras/calor_estimacion.png}
-            \caption{Aproximación de la solución de la ecuación de calor}
-            \label{fig:calor_estimacion}
-        \end{figure}
+        return self.linearOut(x)
 
-    \end{exmp}
-\end{mdframed}
+def preTrain(model,device,params,preOptimizer,preScheduler,fun):
+    model.train()
+    file = open("lossData.txt","w")
 
-\begin{mdframed}
-    \begin{exmp}
-        Consideramos un problema de convección unidimensional, una EDP hiperbólica:
-        \begin{equation*}
-            \frac{\partial u}{\partial t} + \beta \frac{\partial u}{\partial x} = 0, \quad x \in \Omega, \; t \in [0, T],
-        \end{equation*}
-        \begin{equation*}
-            u(x, 0) = h(x), \quad x \in \Omega.
-        \end{equation*}
-        Aquí, $\beta$ es el coeficiente de convección y $h(x)$ es la condición inicial. Para un $\beta$ constante y condiciones de contorno periódicas, este problema tiene una solución analítica simple:
-        \begin{equation*}
-            u_{\text{analytical}}(x, t) = \mathcal{F}^{-1} \big( \mathcal{F}(h(x)) e^{-i k \beta t} \big),
-        \end{equation*}
-        donde $\mathcal{F}$ es la transformada de Fourier, $i = \sqrt{-1}$ y $k$ denota la frecuencia en el dominio de Fourier. La función de pérdida general para este problema (correspondiente a la Ecuación \eqref{eq:L_PINN}) es
-        \begin{equation*}
-            \mathcal{L}(\theta) = \frac{1}{N_u} \sum_{i=1}^{N_u} \left( \hat{u} - u^0_i \right)^2 
-            + \frac{1}{N_f} \sum_{i=1}^{N_f} \lambda_i \left( \frac{\partial \hat{u}}{\partial t} + \beta \frac{\partial \hat{u}}{\partial x} \right)^2 + \mathcal{L}_B,
-        \end{equation*}
-        donde $\hat{u}$ es la salida de la red neuronal, y $\mathcal{L}_B$ es la pérdida de contorno. Para condiciones de contorno periódicas con $\Omega = [0, 2\pi]$, esta pérdida es:
-        \begin{equation*}
-            \mathcal{L}_B = \frac{1}{N_B} \sum_{i=1}^{N_B} \left( \hat{u}(\theta, 0, t) - \hat{u}(\theta, 2\pi, t) \right)^2.
-        \end{equation*}
-        Usamos las siguientes condiciones iniciales y de contorno periódico simples:
-        \begin{align*}
-            u(x, 0) = \sin(x),\\
-            u(0, t) = u(2\pi, t).
-        \end{align*}
-        Si usamos la librería propuesta por Xu et al. en el Repositorio \cite{c2021failure} para resolver este problema, obtenemos la aproximación se puede ver en la Figura \ref{fig:error_PINN_temporal}. En esta, se puede observar que la aproximación y la solución exacta no coinciden y además, el error es muy elevado para $\beta > 1$.
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=0.9\textwidth]{Figuras/error_PINN_temporal.png}
-            \caption{Solución de la ecuación de convección}
-            \label{fig:error_PINN_temporal}
-        \end{figure}
+    for step in range(params["preStep"]):
+        
+        data = torch.from_numpy(generateData.sampleFromDisk(params["radius"],params["bodyBatch"])).float().to(device)
 
-    \end{exmp}
-\end{mdframed}
+        output = model(data)
 
+        target = fun(params["radius"],data)
 
-\subsection{El método ``Deep Ritz'' versión antigua}
+        loss = output-target
+        loss = torch.mean(loss*loss)*math.pi*params["radius"]**2
 
-El método Deep Ritz, propuesto por E y Yu en \cite{e2017deepritzmethoddeep}, se basa en la formulación débil de problemas elípticos autoadjuntos, donde la solución se obtiene como el mínimo del funcional $J(u)$ descrito en el Lema \ref{lema:MinimoFuncion}. En esencia, este enfoque comparte similitudes con el método de los elementos finitos, pero en lugar de utilizar funciones de base predefinidas, el espacio de funciones en el que se busca la solución será el espacio de funciones redes neuronal.
+        if step%params["writeStep"] == params["writeStep"]-1:
+            with torch.no_grad():
+                ref = exact(data)
+                error = errorFun(output,ref,params)
+                
+                print("Error at Step %s is %s."%(step+1,error))
+            file.write(str(step+1)+" "+str(error)+"\n")
 
-\begin{equation}
-\min_{u \in H} I(u)
-\end{equation}
-donde
-\begin{equation}
-I(u) = \int_{\Omega} \left( \frac 12  |\nabla u(x)|^2 -  f(x) u(x) \right) dx
-\label{I(u)}
-\end{equation}
-y $H$ es el conjunto de funciones admisibles (también llamado función de prueba, representada aquí por $u$), $f$ es una función dada, que representa la fuerza externa aplicada al sistema en consideración. Problemas de este tipo son bastante comunes en las ciencias físicas. El método Deep Ritz se basa en el siguiente conjunto de ideas:
+        model.zero_grad()
+        loss.backward()
 
-\begin{enumerate}
-\item Aproximación basada en redes neuronales profundas para la función de prueba.
-\item Una regla de cuadratura numérica para el funcional.
-\item Un algoritmo para resolver el problema de optimización final.
-\end{enumerate}
+        
+        preOptimizer.step()
+        
+
+def train(model,device,params,optimizer,scheduler):
+    ratio = (4*2.0+2*math.pi*0.3)/(2.0*2.0-math.pi*0.3**2)
+    model.train()
+
+    data1 = torch.from_numpy(generateData.sampleFromSquare(1,params["bodyBatch"])).float().to(device)
+    data2 = torch.from_numpy(generateData.sampleFromSquareBoundary(1,params["bdryBatch"])).float().to(device)
+    x_shift = torch.from_numpy(np.array([params["diff"],0.0])).float().to(device)
+    y_shift = torch.from_numpy(np.array([0.0,params["diff"]])).float().to(device)
+    data1_x_shift = data1+x_shift
+    data1_y_shift = data1+y_shift
+
+    loss_history = []  
+
+    for step in range(params["trainStep"]-params["preStep"]):
+        output1 = model(data1)
+        output1_x_shift = model(data1_x_shift)
+        output1_y_shift = model(data1_y_shift)
+
+        dfdx = (output1_x_shift-output1)/params["diff"]
+        dfdy = (output1_y_shift-output1)/params["diff"]
+
+        model.zero_grad()
+
+        
+        fTerm = ffun(data1).to(device)
+        loss1 = torch.mean(0.5*(dfdx*dfdx+dfdy*dfdy)-fTerm*output1)
+
+        
+        output2 = model(data2)
+        target2 = exact(data2)
+        loss2 = torch.mean((output2-target2)*(output2-target2) * params["penalty"] * ratio)
+        loss = loss1+loss2              
+        loss_history.append(loss.item())  
+
+        if step%params["writeStep"] == params["writeStep"]-1:
+            with torch.no_grad():
+                target = exact(data1)
+                error = errorFun(output1,target,params)
+                
+                print("Loss at Step %s is %s."%(step+params["preStep"]+1,loss.item()))
+            file = open("lossData.txt","a")
+            file.write(str(step+params["preStep"]+1)+" "+str(error)+"\n")
+
+        if step%params["sampleStep"] == params["sampleStep"]-1:
+            data1 = torch.from_numpy(generateData.sampleFromSquare(1, params["bodyBatch"])).float().to(device)
+            data2 = torch.from_numpy(generateData.sampleFromSquareBoundary(1, params["bdryBatch"])).float().to(device)
+
+            data1_x_shift = data1+x_shift
+            data1_y_shift = data1+y_shift
+
+        if 10*(step+1)%params["trainStep"] == 0:
+            print("%s%% finished..."%(100*(step+1)//params["trainStep"]))
+
+        loss.backward()
+
+        optimizer.step()
+        scheduler.step()
+
+    return loss_history  
 
 
-El componente básico del método Deep Ritz es una transformación no lineal $ x \rightarrow z_\theta (x)\in \mathbb{R}^{m} $ definida por una red neuronal profunda. Aquí $\theta$ denota los parámetros, típicamente los pesos de la red neuronal, que ayudan a definir esta transformación. En la arquitectura que utilizamos, cada capa de la red se construye apilando varios bloques, cada bloque consiste en dos transformaciones lineales, dos funciones de activación y una conexión residual. Tanto la entrada $s$ como la salida $t$ del bloque son vectores en $\mathbb{R}^{m}$. El $i$-ésimo bloque puede expresarse como:
-\begin{equation}
-t=f_i(s)=\phi(W_{i,2} \cdot \phi(W_{i,1} s +b_{i,1})+b_{i,2})+s
-\label{block}
-\end{equation}
-donde $W_{i,1},W_{i,2} \in \mathbb{R}^{m \times m}$, $b_{i,1},b_{i,2} \in \mathbb{R}^{m}$ las correspondientes matrices de pesos y sesgos asociadas al bloque $i$. $\phi$ es la función de activación (escalar)
+def errorFun(output, target, params):
+    error = output - target
+    error = math.sqrt(torch.mean(error * error))
+    ref = math.sqrt(torch.mean(target * target))
+    
+    if ref == 0:  
+        return error  
+    
+    return error / ref  
 
-Tal y como se precisa en \cite{e2017deepritzmethoddeep} la función de activación $\phi$ juega un papel clave en la precisión del algoritmo. Para equilibrar simplicidad y precisión, hemos decidido utilizar 
-\begin{equation}
-\phi(x)=\max\{x^3,0\}
-\end{equation}
-El último término en \eqref{block}, la conexión residual, facilita mucho el entrenamiento de la red ya que ayuda a evitar el problema del gradiente que desaparece. La estructura de los dos bloques, incluyendo dos conexiones residuales, se muestra en la Figura \ref{fig:net_structure_1}.
- 
+def test(model, device, params):
+    numQuad = params["numQuad"]
+
+    data = torch.from_numpy(generateData.sampleFromSquare(1,numQuad)).float().to(device)
+    output = model(data)
+    target = exact(data).to(device)
+
+    error = output - target
+    error = math.sqrt(torch.mean(error * error))
+    ref = math.sqrt(torch.mean(target * target))
+
+    if ref == 0:  
+        return error  
+
+    return error / ref
+
+def ffun(data):
+    return torch.ones([data.shape[0],1],dtype=torch.float)
+
+def exact(data):
+    return torch.zeros((data.shape[0], 1), dtype=torch.float, device=data.device)
 
 
-La red completa de $n$ capas puede expresarse ahora como:
-\begin{equation}
-z_{\theta}(x)=f_n\circ ... \circ f_1(x)
-\end{equation}
-$\theta$ denota el conjunto de todos los parámetros en toda la red.
-Nota que la entrada $x$ para el primer bloque está en $\mathbb{R}^d$, no en $\mathbb{R}^{m}$.
-Para manejar esta discrepancia podemos ya sea
-completar $x$ con un vector de ceros cuando $d<m$, o aplicar una transformación lineal 
-a $x$ cuando $d>m$. 
-Teniendo $z_\theta$, obtenemos $u$ mediante
-\begin{equation}
-u(x; \theta) = a \cdot z_\theta (x) + b
-\label{function-form}
-\end{equation}
-Aquí en el lado izquierdo y en lo que sigue, usaremos
-$\theta$ para denotar el conjunto completo de parámetros $\{\theta, a, b \}$. Sustituyendo esto en la forma de $I$, obtenemos una función de $\theta$,
-que debemos minimizar.
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters())
 
-Para el funcional que aparece en \eqref{I(u)}, denotamos:
-\begin{equation}
-g(x; \theta) = \frac 12 |\nabla_x u(x; \theta)|^2 - f(x) u(x; \theta)
-\end{equation}
-entonces nos queda el problema de optimización:
-\begin{equation}
-\min_\theta L(\theta), \quad L(\theta) = \int_\Omega g(x; \theta) dx
-\label{integral}
-\end{equation}
+def plot_loss(loss_history):
+    plt.figure(figsize=(8, 6))
+    plt.plot(range(len(loss_history)), loss_history, linestyle='-')
+    plt.xlabel("Iterations (every {} steps)".format(500))
+    plt.ylabel("Loss")
+    plt.yscale("log")  
+    plt.title("Training Loss Over Time (Log Scale)")
+    plt.grid(True, which="both", linestyle="--", linewidth=0.5)  
+    plt.show()
 
-El cual, de nuevo se resuelve mediante algoritmos de optimización basados en gradientes.
 
-Al igual que hicimos en la Sección \ref{sec:PINN}, vamos a ver dos ejemplos de la aplicación de las PINNs a problemas concretos. 
+def main():
+    
+    
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    params = dict()
+    params["d"] = 2 
+    params["dd"] = 1 
+    params["bodyBatch"] = 1024 
+    params["bdryBatch"] = 1024 
+    params["lr"] = 0.0001 
+    params["preLr"] = 0.01 
+    params["width"] = 64 
+    params["depth"] = 4 
+    params["numQuad"] = 40000 
+    params["trainStep"] = int(1e4)
+    params["penalty"] = 1e-5
+    params["preStep"] = 0
+    params["diff"] = 0.001
+    params["writeStep"] = 500
+    params["sampleStep"] = 10
+    params["step_size"] = 5000
+    params["gamma"] = 0.3
+    params["decay"] = 0.00001
+
+    startTime = time.time()
+    model = RitzNet(params).to(device)
+    print("Generating network costs %s seconds."%(time.time()-startTime))
+
+    preOptimizer = torch.optim.Adam(model.parameters(),lr=params["preLr"])
+    optimizer = torch.optim.Adam(model.parameters(),lr=params["lr"],weight_decay=params["decay"])
+    scheduler = StepLR(optimizer,step_size=params["step_size"],gamma=params["gamma"])
+
+    startTime = time.time()
+    loss_history = train(model,device,params,optimizer,scheduler)
+    print("Training costs %s seconds."%(time.time()-startTime))
+
+    model.eval()
+    testError = test(model,device,params)
+    print("The test error (of the last model) is %s."%testError)
+    print("The number of parameters is %s,"%count_parameters(model))
+
+    torch.save(model.state_dict(), "last_model.pt")
+
+    
+    plot_loss(loss_history)
+
+    pltResult(model, device, 500)
+
+    valn = femPoissonSquare(50)
+
+    compare_fem_model(50, model, valn)
+
+\end{lstlisting}
 
 
 \printbibliography

@@ -53,24 +53,6 @@
     \field{year}{2024}
   \endentry
 
-  \entry{c2021failure}{misc}{}
-    \name{author}{1}{}{%
-      {{hash=C}{%
-         family={C.},
-         familyi={C\bibinitperiod},
-      }}%
-    }
-    \strng{namehash}{C1}
-    \strng{fullhash}{C1}
-    \field{labelnamesource}{author}
-    \field{labeltitlesource}{title}
-    \field{sortinit}{C}
-    \field{sortinithash}{C}
-    \field{howpublished}{\url{https://github.com/a1k12/characterizing-pinns-failure-modes}}
-    \field{title}{Possible Failure Modes in Physics-Informed Neural Networks}
-    \field{year}{2021}
-  \endentry
-
   \entry{e2017deepritzmethoddeep}{misc}{}
     \name{author}{2}{}{%
       {{hash=EW}{%
