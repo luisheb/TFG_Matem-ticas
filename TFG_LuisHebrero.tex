@@ -1004,13 +1004,22 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
         \begin{equation*}
         J_\lambda(u) = \frac{1}{2} \int_\Omega |\nabla u|^2 - \int_\Omega u + \lambda \int_{\partial \Omega} u^2.
         \end{equation*}
-        Para resolver este problema, he implementado el método Deep Ritz en Python usando PyTorch. La red neuronal utilizada tiene la siguiente configuración: $2$-$8$-$8$-$1$. En la Figura \ref{fig:poisson_square} se muestra la solución obtenida con $\lambda = 500$. No obstante, siguiendo la intuición que desarrollado en el ejemplo en una dimensión, si usamos $\lambda = 10^{-5}$ esperamos obtener una aproximación mucho peor. Efectivamente, al realizar esta aproximación, el resultado que obtenemos no se parece nada a la solución real de la EDP. Podemos ver el resultado de este método en la Figura \ref{fig:poisson_square_lambda_1e-5}.
+        Para resolver este problema, implementé el método Deep Ritz en Python con PyTorch. La red neuronal que usé tiene la arquitectura 2-8-8-1. En la Figura \ref{fig:poisson_square} se muestra la solución obtenida con $\lambda=500$, y en la Figura \ref{fig:diferencia_cuadrado} se compara con la solución del método de elementos finitos. Se observa que la solución obtenida con el método Deep Ritz presenta diferencias significativas con respecto a la del método de los elementos finitos. De hecho, este resultado, a pesar de ser de los mejores que se pueden lograr con Deep Ritz en este problema, sigue estando lejos de la solución real.
+
+        Siguiendo la intuición del caso unidimensional, al reducir $\lambda$ a $10^5$, esperamos una aproximación mucho peor. Y, efectivamente, la solución resultante no se parece en nada a la real. La Figura \ref{fig:poisson_square_lambda_1e-5} muestra este resultado.
 
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.6\textwidth]{Figuras/PoissonSquare.png}
+            \includegraphics[width=0.6\textwidth]{Figuras/PoissonSquareBien.png}
             \caption{Solución de la ecuación de Poisson en un cuadrado unitario con $\lambda = 500$.}
             \label{fig:poisson_square}
+        \end{figure}
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.6\textwidth]{Figuras/DiferenciaCuadrado.png}
+            \caption{Diferencia entre FEM y Deep Ritz con $\lambda = 10^{-5}$.}
+            \label{fig:diferencia_cuadrado}
         \end{figure}
 
         \begin{figure}[H]
@@ -1027,7 +1036,7 @@ El método Deep Ritz ofrece una formulación efectiva para superar las limitacio
 
 En comparación con el método de elementos finitos (FEM), el Deep Ritz tiene la ventaja de no requerir la construcción explícita de funciones base, lo que resulta especialmente útil en problemas de alta dimensionalidad. No obstante, esta misma característica es también una limitación, ya que, en el FEM, las funciones base garantizan automáticamente el cumplimiento de las condiciones de contorno, mientras que en el método Deep Ritz esto debe ser impuesto externamente, con los problemas asociados que hemos analizado.
 
-\chapter{Resultados}\label{chap3}
+\chapter{Anexo}\label{chap3}
 
 \chapter{Partes eliminadas - NO IMPRIMIR}
 \section{Espacios de funciones}

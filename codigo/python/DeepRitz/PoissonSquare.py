@@ -189,7 +189,7 @@ def main():
     params["depth"] = 4 # Profundidad de la red: profundidad+2
     params["numQuad"] = 40000 # Número de puntos de cuadratura para prueba
     params["trainStep"] = int(1e4)
-    params["penalty"] = 400
+    params["penalty"] = 1e-5
     params["preStep"] = 0
     params["diff"] = 0.001
     params["writeStep"] = 500
