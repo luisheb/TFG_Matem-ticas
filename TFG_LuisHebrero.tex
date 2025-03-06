@@ -529,35 +529,22 @@ Este proceso se puede generalizar a problemas en más dimensiones, donde se divi
     \end{itemize}
     Para aplicar el FEM, nos interesa encontrar una solución aproximada en un espacio de funciones de dimensión finita. Para ello, dividimos el dominio $\Omega$ en un conjunto de elementos finitos y construimos una base de polinomios a trozos en cada uno de estos elementos. 
     
-    Antes de seguir avanzando, para este ejemplo específico, tomaremos un dominio rectangular $\Omega = [0,2] \times [0,1]$ y $f(x, y) = 10 \cdot\exp \left( - \frac{(x - 0.5)^2 + (y - 0.5)^2}{0.02} \right)$. Bajo estas condiciones sabemos que existe una solución única en $H_0^1(\Omega)$ para el problema \eqref{eq:forma_debil_poisson}.
+    Antes de seguir avanzando, para este ejemplo específico, tomaremos un dominio cuadrado $\Omega = (0,1)^2$ y $f(x, y) = 1$. Bajo estas condiciones sabemos que existe una solución única en $H_0^1(\Omega)$ para el problema \eqref{eq:forma_debil_poisson}.
 
-    A continuación, usamos el paquete de python FEniCS para resolver el problema. En el, lo único reseñable es que se define el dominio $\Omega$ y la malla de elementos finitos con el siguiente comando
-    \begin{lstlisting}[language=Python]
-    msh = mesh.create_rectangle(
-        comm=MPI.COMM_WORLD,
-        points=((0.0, 0.0), (2.0, 1.0)),
-        n=(32, 16),
-        cell_type=mesh.CellType.triangle,
-    )
-    \end{lstlisting}
-    y se especifica el tipo de polinomios a trozos que se van a utilizar para la base de funciones, en este caso polinomios de Lagrange de grado 1
-    \begin{lstlisting}[language=Python]
-        V = FunctionSpace(msh, "Lagrange", 1)
-    \end{lstlisting}
-    Con esto, obtenemos el resultado que se puede ver en la Figura \ref{fig:poisson}.
+    A continuación, usamos el paquete de python Scipy, con el que construimos la malla de elementos finitos y la base de polinomios para resolver el problema (código comentado en el Anexo \ref{sec:codigo_fem_cuadrado}). Con esto, obtenemos el resultado que se puede ver en la Figura \ref{fig:poisson}.
     \begin{figure}[H] 
         \centering
-        \includegraphics[width=0.5\textwidth]{Figuras/poisson.png}
+        \includegraphics[width=0.7\textwidth]{Figuras/FEMSquare.png}
         \caption{Solución de la ecuación de Poisson}
         \label{fig:poisson}
     \end{figure}
-    En el que la malla de elementos finitos utilizada para la aproximación de la solución se puede apreciar en la Figura \ref{fig:poisson_malla}.
-    \begin{figure}[H]
+    En el que, la malla de elementos finitos se puede ver en la Figura \ref{fig:mesh}.
+    \begin{figure}[H] 
         \centering
-        \includegraphics[width=0.5\textwidth]{Figuras/malla_poisson.png}
+        \includegraphics[width=0.4\textwidth]{Figuras/FEM_Grid.png}
         \caption{Malla de elementos finitos}
-        \label{fig:poisson_malla}
-    \end{figure}
+        \label{fig:mesh}
+    \end{figure}    
 \end{exmp}
 \end{mdframed}
 
@@ -1197,10 +1184,9 @@ print -dpng classifier_back_more_points.png
 end
 
 \end{lstlisting}
-\chapter{Código en Python para el método de los elementos finitos en un cuadrado}
+\chapter{Código en Python para el método de los elementos finitos en un cuadrado\label{sec:codigo_fem_cuadrado}}
 
 \begin{lstlisting}[language=Python]
-    
 import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
