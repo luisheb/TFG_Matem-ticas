@@ -1029,30 +1029,29 @@ El uso de redes neuronales para la aproximación de ecuaciones en derivadas parc
 
 Los enfoques basados en redes neuronales, como las PINNs (Physics-Informed Neural Networks), presentan limitaciones importantes al forzar el cumplimiento de la ecuación diferencial en su forma fuerte. Esto implica que, en situaciones donde no existe una solución en este sentido, la red neuronal no puede aproximar correctamente la solución débil. Además, la falta de garantías de convergencia y la ausencia de una base matemática sólida para la selección de hiperparámetros complican su aplicación efectiva.
 
-Por otro lado, el método Deep Ritz plantea una alternativa más alineada con la formulación variacional de los problemas elípticos, minimizando un funcional de energía en lugar de imponer restricciones puntuales. Sin embargo, el uso de penalizaciones para imponer condiciones de contorno introduce modificaciones en el problema original, lo que afecta la precisión de la solución obtenida. A pesar de ello, este enfoque podría ser más viable en problemas de alta dimensionalidad, donde los métodos tradicionales pierden eficiencia.
+Por otro lado, el método Deep Ritz plantea una alternativa más alineada con la formulación variacional de los problemas elípticos, minimizando un funcional en lugar de imponer restricciones puntuales. Sin embargo, el uso de penalizaciones para imponer condiciones de contorno introduce modificaciones en el problema original, lo que afecta la precisión de la solución obtenida. A pesar de ello, este enfoque podría ser más viable en problemas de alta dimensionalidad, donde los métodos tradicionales pierden eficiencia.
 
 En resumen, aunque las redes neuronales ofrecen herramientas novedosas para la resolución de ecuaciones diferenciales, su aplicación en contextos prácticos aún enfrenta numerosos desafíos. Su rendimiento es inferior al de métodos numéricos establecidos en escenarios convencionales, y la interpretabilidad de los resultados sigue siendo limitada. La dificultad para diagnosticar fallos y la falta de garantías teóricas claras refuerzan la idea de que, por el momento, estas técnicas deben verse como complementarias a los métodos clásicos, en lugar de como un reemplazo directo.
 
 \appendix   
 \chapter{Código en Matlab para la red neuronal de clasificación}
 
-\begin{lstlisting}[language=Matlab]
+El código aquí escrito está basado en el propuesto por por Catherine et al. en \cite{deeplearningSIAM} pero extendiendolo para incluir más puntos de entrenamiento de distinto tipo.
 
+Lo primero que se hace es declarar cada punto de entrenamiento y su respectiva etiqueta. En este caso, las etiquetas son vectores de 3 componentes, donde cada componente representa la probabilidad de que el punto pertenezca a una de las tres clases. 
+
+\begin{lstlisting}[language=Matlab]
 function pclassifier_more_points
-%PCLASSIFIER
-%   
-%   Set up data for neural net test
-%   Use backpropagation to train 
-%   Visualize results
-%
-% Luis Hebrero 2024
-%
-%%%%%%% DATA %%%%%%%%%%%
+
 % xcoords, ycoords, targets
 x1 = [0.1,0.3,0.1,0.2,0.4,0.6,0.5,0.9,0.4,0.7,0.3,0.4,0.2,0.1,0.5, 0.9,0.8];
 x2 = [0.1,0.4,0.5,0.2,0.2,0.3,0.6,0.2,0.4,0.6,0.9,0.7,0.6,0.8,0.8, 0.6,0.1];
 y = [ones(1,5) zeros(1,11) 1; zeros(1,5) ones(1,5) zeros(1,7); zeros(1,10) ones(1,6) 0];
+\end{lstlisting}
 
+A continuación, visualizamos los puntos creados. En este caso, la primera clase esta representada por círculos rojos, la segunda por cruces azules y la tercera por triángulos verdes.
+
+\begin{lstlisting}[language=Matlab]
 figure(1)
 clf
 a1 = subplot(1,1,1);
@@ -1060,7 +1059,7 @@ plot(x1(1:5),x2(1:5),'ro','MarkerSize',12,'LineWidth',4)
 hold on
 plot(x1(17),x2(17),'ro','MarkerSize',12,'LineWidth',4)
 plot(x1(6:10),x2(6:10),'bx','MarkerSize',12,'LineWidth',4)
-plot(x1(11:16),x2(11:16),'yv','MarkerSize',12,'LineWidth',4)
+plot(x1(11:16),x2(11:16),'gv','MarkerSize',12,'LineWidth',4)
 a1.XTick = [0 1];
 a1.YTick = [0 1];
 a1.FontWeight = 'Bold';
@@ -1070,8 +1069,12 @@ ylim([0,1])
 
 print -dpng pic_more_points.png
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Initialize weights and biases 
+\end{lstlisting}
+
+Es siguiente paso es crear las matrices de pesos y sesgos que van a definir la red neuronal. En este caso, la red tiene 2 capas ocultas y una capa de salida. La primera capa oculta tiene 2 neuronas, la segunda 3 y la capa de salida 3 neuronas.
+
+\begin{lstlisting}[language=Matlab]
+
 rng(5000);
 W2 = 0.5*randn(2,2);
 W3 = 0.5*randn(3,2);
@@ -1079,11 +1082,12 @@ W4 = 0.5*randn(3,3);
 b2 = 0.5*randn(2,1);
 b3 = 0.5*randn(3,1);
 b4 = 0.5*randn(3,1);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Forward and Back propagate 
-% Pick a training point at random
+\end{lstlisting}
+
+Finalmente, queda el paso de entreamiento de la red neuronal. Este sigue el algoritmo de retropropagación, donde se calcula el gradiente del coste y se actualizan los pesos y sesgos de la red. 
+
+\begin{lstlisting}[language=Matlab]
 eta = 0.05;
 Niter = 1e6;
 savecost = zeros(Niter,1);
@@ -1110,6 +1114,11 @@ for counter = 1:Niter
     savecost(counter) = newcost;
 end
 
+\end{lstlisting}
+
+Acabado el entrenamiento, el paso final es visualizar los resultados, para ver que reagiones asigna la red neuronal a cada una de las clases existentes.
+
+\begin{lstlisting}[language=Matlab]
 figure(2)
 clf
 semilogy(1:1e4:Niter,savecost(1:1e4:Niter),'b-','LineWidth',2)
@@ -1182,11 +1191,14 @@ print -dpng classifier_back_more_points.png
    end % of nested function
 
 end
-
 \end{lstlisting}
+
+
 \chapter{Código en Python para el método de los elementos finitos en un cuadrado\label{sec:codigo_fem_cuadrado}}
 
-\begin{lstlisting}[language=Python]
+El primer paso consiste en definir la malla sobre la que se realizará la aproximación. Se elige un número de puntos en cada dirección, denotado como $n$, y se calcula el tamaño del paso $h = 1/n$. Esto permite dividir el dominio $\Omega = [0,1] \times [0,1]$ en una malla uniforme.
+
+\begin{lstlisting}[language=Python] 
 import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
@@ -1194,18 +1206,34 @@ import matplotlib.pyplot as plt
 
 n = 50
 h = 1 / n
+\end{lstlisting}
 
+El siguiente paso es definir la matriz de coeficientes del sistema lineal, que representa la discretización del operador diferencial en la malla. Se utiliza una combinación de matrices tridiagonales y productos de Kronecker para construir la estructura del problema.
+
+\begin{lstlisting}[language=Python] 
 e = np.ones(n-1)
 B = sp.diags([-e, 4*e, -e], [-1, 0, 1], shape=(n-1, n-1))
 I = sp.eye(n-1)
 I1 = sp.diags([-e, -e], [-1, 1], shape=(n-1, n-1))
 A = sp.kron(I, B) + sp.kron(I1, I)
 A /= h**2
+\end{lstlisting}
 
+Se define el término independiente del sistema, que en este caso es un vector lleno de unos en todo el dominio, excepto en la frontera. Esto refleja que la solución aproximada debe tomar el valor $1$ en cada punto interior de la malla y $0$ en la frontera.
+
+\begin{lstlisting}[language=Python] 
 f = np.ones((n-1)**2)
+\end{lstlisting}
 
+Para obtener la solución, se resuelve el sistema lineal $A y = f$ utilizando la función \texttt{spsolve} de la librería \texttt{scipy}. El resultado se almacena en la variable $y$.
+
+\begin{lstlisting}[language=Python] 
 y = spla.spsolve(A, f)
+\end{lstlisting}
 
+Finalmente, la solución se reorganiza en una matriz para representarla gráficamente. Se muestran dos visualizaciones: una malla tridimensional y un gráfico de contorno, que permiten interpretar mejor la distribución de valores obtenidos.
+
+\begin{lstlisting}[language=Python] 
 val = np.zeros((n-1, n-1))
 for i in range(n-1):
     for j in range(n-1):
@@ -1230,13 +1258,16 @@ plt.colorbar(c, ax=ax2)
 ax2.set_title('Contour Plot')
 
 plt.show()
-
 \end{lstlisting}
+
 \chapter{Código en Python método DeepRitz}
 
-\begin{lstlisting}[language=Python]
+Este código implementa una red neuronal para resolver ecuaciones en derivadas parciales mediante el método de Ritz. Se describe la construcción del modelo, el proceso de entrenamiento y la evaluación de la solución.
 
- import numpy as np 
+Se importan las bibliotecas necesarias para realizar gráficas, implementar redes neuronales en PyTorch y realizar operaciones matemáticas.
+
+\begin{lstlisting}[language=Python]
+import numpy as np 
 import math, torch, generateData, time
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import MultiStepLR, StepLR
@@ -1248,8 +1279,11 @@ import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
 import matplotlib.pyplot as plt
+\end{lstlisting}
 
+Se define la clase \texttt{RitzNet}, que implementa una red neuronal profunda para aproximar soluciones.
 
+\begin{lstlisting}[language=Python]
 class RitzNet(torch.nn.Module):
     def __init__(self, params):
         super(RitzNet, self).__init__()
@@ -1269,36 +1303,11 @@ class RitzNet(torch.nn.Module):
         
         return self.linearOut(x)
 
-def preTrain(model,device,params,preOptimizer,preScheduler,fun):
-    model.train()
-    file = open("lossData.txt","w")
+\end{lstlisting}
 
-    for step in range(params["preStep"]):
-        
-        data = torch.from_numpy(generateData.sampleFromDisk(params["radius"],params["bodyBatch"])).float().to(device)
+Se define el proceso de entrenamiento de la red neuronal mediante el método de optimización de Adam.
 
-        output = model(data)
-
-        target = fun(params["radius"],data)
-
-        loss = output-target
-        loss = torch.mean(loss*loss)*math.pi*params["radius"]**2
-
-        if step%params["writeStep"] == params["writeStep"]-1:
-            with torch.no_grad():
-                ref = exact(data)
-                error = errorFun(output,ref,params)
-                
-                print("Error at Step %s is %s."%(step+1,error))
-            file.write(str(step+1)+" "+str(error)+"\n")
-
-        model.zero_grad()
-        loss.backward()
-
-        
-        preOptimizer.step()
-        
-
+\begin{lstlisting}[language=Python]
 def train(model,device,params,optimizer,scheduler):
     ratio = (4*2.0+2*math.pi*0.3)/(2.0*2.0-math.pi*0.3**2)
     model.train()
@@ -1359,7 +1368,11 @@ def train(model,device,params,optimizer,scheduler):
 
     return loss_history  
 
+\end{lstlisting}
 
+Se incluyen funciones para calcular el error y visualizar la evolución de la pérdida durante el entrenamiento.
+
+\begin{lstlisting}[language=Python]
 def errorFun(output, target, params):
     error = output - target
     error = math.sqrt(torch.mean(error * error))
@@ -1405,10 +1418,26 @@ def plot_loss(loss_history):
     plt.title("Training Loss Over Time (Log Scale)")
     plt.grid(True, which="both", linestyle="--", linewidth=0.5)  
     plt.show()
+\end{lstlisting}
 
+La función \texttt{principal} define los parámetros, inicializa la red, ejecuta el entrenamiento y evaluación y grafica los resultados. Los parámetros utilizados tienen el siguiente significado:
+\begin{itemize}
+    \item \texttt{d}: Dimensionalidad del problema (2 para el cuadrado).
+    \item \texttt{dd}: Dimensionalidad de la salida (1 para un escalar).
+    \item \texttt{bodyBatch}: Tamaño del lote para el cuerpo.
+    \item \texttt{bdryBatch}: Tamaño del lote para la frontera.
+    \item \texttt{lr}: Tasa de aprendizaje.
+    \item \texttt{width}: Ancho de la red neuronal.
+    \item \texttt{depth}: Profundidad de la red neuronal.
+    \item \texttt{numQuad}: Número de puntos de colocación.
+    \item \texttt{trainStep}: Número total de pasos de entrenamiento.
+    \item \texttt{penalty}: Parámetro de penalización.
+    \item \texttt{preStep}: Pasos previos al entrenamiento principal.
+    \item \texttt{diff}: Diferencia utilizada en el cálculo del gradiente.
+\end{itemize}
 
+\begin{lstlisting}
 def main():
-    
     
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -1418,12 +1447,11 @@ def main():
     params["bodyBatch"] = 1024 
     params["bdryBatch"] = 1024 
     params["lr"] = 0.0001 
-    params["preLr"] = 0.01 
     params["width"] = 64 
     params["depth"] = 4 
     params["numQuad"] = 40000 
     params["trainStep"] = int(1e4)
-    params["penalty"] = 1e-5
+    params["penalty"] = 500
     params["preStep"] = 0
     params["diff"] = 0.001
     params["writeStep"] = 500
@@ -1459,7 +1487,6 @@ def main():
     valn = femPoissonSquare(50)
 
     compare_fem_model(50, model, valn)
-
 \end{lstlisting}
 
 

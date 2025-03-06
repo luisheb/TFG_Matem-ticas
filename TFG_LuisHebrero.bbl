@@ -86,6 +86,47 @@
     \field{year}{2017}
   \endentry
 
+  \entry{deeplearningSIAM}{article}{}
+    \name{author}{2}{}{%
+      {{hash=HCF}{%
+         family={Higham},
+         familyi={H\bibinitperiod},
+         given={Catherine\bibnamedelima F.},
+         giveni={C\bibinitperiod\bibinitdelim F\bibinitperiod},
+      }}%
+      {{hash=HDJ}{%
+         family={Higham},
+         familyi={H\bibinitperiod},
+         given={Desmond\bibnamedelima J.},
+         giveni={D\bibinitperiod\bibinitdelim J\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{HCFHDJ1}
+    \strng{fullhash}{HCFHDJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{H}
+    \field{sortinithash}{H}
+    \field{abstract}{%
+    Abstract. Multilayered artificial neural networks are becoming a pervasive tool in a host of application fields. At the heart of this deep learning revolution are familiar concepts from applied and computational mathematics, notably from calculus, approximation theory, optimization, and linear algebra. This article provides a very brief introduction to the basic ideas that underlie deep learning from an applied mathematics perspective. Our target audience includes postgraduate and final year undergraduate students in mathematics who are keen to learn about the area. The article may also be useful for instructors in mathematics who wish to enliven their classes with references to the application of deep learning techniques. We focus on three fundamental questions: What is a deep neural network? How is a network trained? What is the stochastic gradient method? We illustrate the ideas with a short MATLAB code that sets up and trains a network. We also demonstrate the use of state-of-the-art software on a large scale image classification problem. We finish with references to the current literature.%
+    }
+    \verb{doi}
+    \verb 10.1137/18M1165748
+    \endverb
+    \verb{eprint}
+    \verb https://doi.org/10.1137/18M1165748
+    \endverb
+    \field{number}{4}
+    \field{pages}{860\bibrangedash 891}
+    \field{title}{Deep Learning: An Introduction for Applied Mathematicians}
+    \verb{url}
+    \verb https://doi.org/10.1137/18M1165748
+    \endverb
+    \field{volume}{61}
+    \field{journaltitle}{SIAM Review}
+    \field{year}{2019}
+  \endentry
+
   \entry{hou2023enhancing}{article}{}
     \name{author}{3}{}{%
       {{hash=HJ}{%
