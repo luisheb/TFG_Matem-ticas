@@ -138,12 +138,12 @@ Una red neuronal, de forma abstracta, es simplemente una función que toma una e
     \label{fig:RedNeuronal}
 \end{figure}
 
-Como se ve en la Figura \ref{fig:RedNeuronal}, la entrada en nuestra función está representada por los dos círculos de la izquierda, que representan los valores de entrada $x_1$ y $x_2$, siendo así la entrada $x\in\mathbb{R}^2$. Estos valores se multiplican por unos pesos ($W^{[2]}$)y se suman a un sesgo $b$. La salida de esta neurona se calcula mediante una función de activación. Así, los valores que ``llegan'' a la segunda capa de nuestra red neuronal serán de la forma
+Como se ve en la Figura \ref{fig:RedNeuronal}, la entrada en nuestra función está representada por los dos círculos de la izquierda, que representan los valores de entrada $x_1$ y $x_2$, siendo así la entrada $x\in\mathbb{R}^2$. Estos valores se multiplican por unos pesos ($W^{[2]}$)y se suman a un sesgo $b^{[2]}$. La salida de esta neurona se calcula mediante una función de activación. Así, los valores que ``llegan'' a la segunda capa de nuestra red neuronal serán de la forma
 \begin{equation*}
     \sigma(W^{[2]}x+b^{[2]})\in\mathbb{R}^2,
 \end{equation*}
 
-Siendo $W^{[2]}\in\mathbb{R}^{2\times2}$ y el vector $b^{[2]}\in\mathbb{R}^2$. A partir de aquí, se repite el proceso para cada capa de la red neuronal, hasta llegar a la capa de salida, que nos dará el valor de salida de nuestra red neuronal. De forma visual, se pueden interpretar las flechas de la Figura \ref{fig:RedNeuronal} como los pesos por los que se va multiplicando.
+Siendo $W^{[2]}\in\mathbb{R}^{2\times2}$ y el vector $b^{[2]}\in\mathbb{R}^2$. A partir de aquí, se repite el proceso para cada capa de la red neuronal, hasta llegar a la capa de salida, que nos dará el valor de salida de nuestra red neuronal. De forma visual, se pueden interpretar las líneas de la Figura \ref{fig:RedNeuronal} como los pesos por los que se va multiplicando.
 
 En la tercera capa de la red neuronal, vemos que los valores que llegan de la capa 2, estos $\sigma(W^{[2]}x+b^{[2]})$, pertenecen a $\mathbb{R}^2$. De este modo, como tenemos 3 neuronas en la tercera capa, para obtener un valor perteneciente a $\mathbb{R}^3$, necesitamos una matriz $W^{[3]}\in\mathbb{R}^{3\times2}$ y un vector $b^{[3]}\in\mathbb{R}^3$. Así, el valor de nuestra red neuronal en la tercera capa será
 \begin{equation*}
@@ -159,7 +159,7 @@ En general, una red neuronal se puede representar como una composición de funci
 
 Nuestra intención con este tipo de funciones es ir variando los valores de las matrices $W$, también conocidos como pesos, y los vectores $b$ también conocidos como sesgos, para que la salida de nuestra red neuronal se acerque lo máximo posible a la salida deseada. 
 
-Para entender esto, vamos a utilizar la red neuronal de la Figura \ref{fig:RedNeuronal} para resolver un problema concreto muy sencillo de clasificación. Supongamos que tenemos una serie de puntos en el plano, de tres tipos distintos, como los de la Figura \ref{fig:Clasificacion}, y queremos clasificarlos en tres grupos, los puntos de tipo azul, rojo y amarillo.
+Para entender esto, vamos a utilizar la red neuronal de la Figura \ref{fig:RedNeuronal} para resolver un problema concreto muy sencillo de clasificación. Supongamos que tenemos una serie de puntos en el plano, de tres tipos distintos, como los de la Figura \ref{fig:Clasificacion}, y queremos clasificarlos en tres grupos, los puntos de tipo azul, rojo y verde.
 
 
 \begin{figure}
@@ -179,7 +179,7 @@ Designamos a $y(x)$ como la salida deseada de nuestra red neuronal, y a $F(x)$ c
 \end{equation*}
 donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal, en nuestro caso, serán 15. Esta función es conocida como función de coste.
 
-Así, lo que queremos hacer es minimizar esta función, es decir, encontrar los pesos que minimicen la función $\mathcal{L}$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado.
+Así, lo que queremos hacer es minimizar esta función, es decir, encontrar los pesos que minimicen la función $\mathcal{L}$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado. El código que se ha utilizado para entrenar la red neuronal y obtener la clasificación de la Figura \ref{fig:ClasificacionFinal} es el que se encuentra en el Anexo \ref{sec:codigo_clasificacion}
 
 \begin{figure}
     \centering
@@ -187,8 +187,6 @@ Así, lo que queremos hacer es minimizar esta función, es decir, encontrar los 
     \caption{Puntos en el plano que marcan las tres categorías}
     \label{fig:ClasificacionFinal}
 \end{figure}
-
-Más adelante entenderemos con más detalle como es este proceso de entrenamiento.
 
 \subsection{Comentarios sobre la función sigmoide}\label{subsec:Sigmoide}
 Como hemos visto con el ejemplo anterior, las redes neuronales se pueden utilizar para generar funciones. A su vez, estas funciones se utilizan para resolver problemas de forma aproximada. En el ejemplo de la Figura \ref{fig:ClasificacionFinal}, la función red neuronal clasifica cualquier parte del plano en una de las tres categorías sombreadas a partir del entrenamiento. Dicho entrenamiento fija los valores de los pesos y sesgos, y por tanto define la función red neuronal (en el ejemplo define la función \eqref{eq:RedNeuronal}).
@@ -201,7 +199,7 @@ Para poder lograr este objetivo, se necesitan las funciones de activación. Como
     F(x)=W^{[4]}(W^{[3]}(W^{[2]}x+b^{[2]})+b^{[3]})+b^{[4]}\in\mathbb{R}^3.
 \end{equation*}
 
-Claramente, una función lineal definida de forma global puede estar muy lejos de aproximar bien funciones generales. De este modo, parece por tanto razonable utilizar funciones de activación no lineales. La función sigmoide es una de las más utilizadas, pero existen otras como la función tangente hiperbólica o la función ReLU. En este trabajo, nos centraremos en la función sigmoide, que se define como
+Claramente, una función lineal definida de forma global puede estar muy lejos de aproximar bien funciones generales. De este modo, parece por tanto razonable utilizar funciones de activación no lineales. La función sigmoide es una de las más utilizadas, pero existen otras como la función tangente hiperbólica o la función ReLU. La función sigmoide, que se define como
 \begin{equation*}
     \sigma(x)=\frac{1}{1+e^{-x}}.
 \end{equation*}
@@ -495,7 +493,7 @@ Este proceso se puede generalizar a problemas en más dimensiones, donde se divi
 
 \begin{mdframed}  
 \begin{exmp}
-    Veamos ahora un ejemplo concreto de la aplicación del FEM a través de la ecuación de Poisson en dos dimensiones. El objetivo es encontrar un campo escalar $ u $ sobre un dominio $\Omega \subset \mathbb{R}^n$ que satisfaga:
+    Veamos ahora un ejemplo concreto de la aplicación del FEM a través de la ecuación de Poisson en dos dimensiones. El objetivo es encontrar un campo escalar $ u $ sobre un dominio $\Omega \subset \mathbb{R}^2$ que satisfaga:
     \begin{equation}
     \begin{aligned}
     - \Delta u &= f \quad \text{en} \ \Omega, \\
@@ -663,7 +661,7 @@ Losshistory, train_state = model.train(
 Aunque en este ejemplo sencillo las PINNs funcionan muy bien, estas pueden presentar errores elevados incluso en sistemas relativamente simples. A continuación, vemos uno de los ejemplos que presentan en Luo et al. en \cite{luo2023residualminimizationpdesfailure} en los que las PINNs fallan.
 
 \begin{mdframed}
-    \begin{exmp}
+    \begin{exmp}\label{exmp:fallo}
         La ecuación considerada es unidimensional y se expresa como
         \begin{equation}
             \left\{
@@ -725,7 +723,7 @@ Aunque en este ejemplo sencillo las PINNs funcionan muy bien, estas pueden prese
             \caption{Error de la red neuronal}
         \end{figure}
 
-        En esta gráfica, las curvas \textit{Error entrenamiento} y \textit{Error test} representan el error de la aproximación en los puntos de entrenamiento y test, respectivamente. Los puntos de entrenamiento corresponden al conjunto de colocación utilizado para aproximar la integral, mientras que los puntos de test pertenecen a un subconjunto del dominio donde se evalúa la aproximación. Por otro lado, el error relativo $L_2$ cuantifica la diferencia entre la solución aproximada por la red neuronal y la solución real, integrando dicha diferencia sobre el dominio $(-1,1)$.
+        En esta gráfica, las curvas \textit{Error entrenamiento} y \textit{Error test} representan el error de la aproximación en los puntos de entrenamiento y test, respectivamente. Los puntos de entrenamiento corresponden al conjunto de colocación utilizado para aproximar la integral, mientras que los puntos de test pertenecen a un subconjunto del dominio donde se evalúa la aproximación. Por otro lado, el error relativo $L_2$ cuantifica la diferencia entre la solución aproximada por la red neuronal y la solución real, integrando dicha diferencia sobre el dominio $(-1,1)$. El código utilizado para este ejemplo se puede encontrar en el Anexo \ref{sec:codigo_pinns}.
     \end{exmp}
 \end{mdframed}
 
@@ -991,7 +989,7 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
         \begin{equation*}
         J_\lambda(u) = \frac{1}{2} \int_\Omega |\nabla u|^2 - \int_\Omega u + \lambda \int_{\partial \Omega} u^2.
         \end{equation*}
-        Para resolver este problema, implementé el método Deep Ritz en Python con PyTorch. La red neuronal que usé tiene la arquitectura 2-8-8-1. En la Figura \ref{fig:poisson_square} se muestra la solución obtenida con $\lambda=500$, y en la Figura \ref{fig:diferencia_cuadrado} se compara con la solución del método de elementos finitos. Se observa que la solución obtenida con el método Deep Ritz presenta diferencias significativas con respecto a la del método de los elementos finitos. De hecho, este resultado, a pesar de ser de los mejores que se pueden lograr con Deep Ritz en este problema, sigue estando lejos de la solución real.
+        Para resolver este problema, implementé el método Deep Ritz en Python con PyTorch. La red neuronal que usé tiene la arquitectura 2-64-64-1. En la Figura \ref{fig:poisson_square} se muestra la solución obtenida con $\lambda=500$, y en la Figura \ref{fig:diferencia_cuadrado} se compara con la solución del método de elementos finitos. Se observa que la solución obtenida con el método Deep Ritz presenta diferencias significativas con respecto a la del método de los elementos finitos. De hecho, este resultado, a pesar de ser de los mejores que se pueden lograr con Deep Ritz en este problema, sigue estando lejos de la solución real.
 
         Siguiendo la intuición del caso unidimensional, al reducir $\lambda$ a $10^5$, esperamos una aproximación mucho peor. Y, efectivamente, la solución resultante no se parece en nada a la real. La Figura \ref{fig:poisson_square_lambda_1e-5} muestra este resultado.
 
@@ -1016,6 +1014,7 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
             \label{fig:poisson_square_lambda_1e-5}
         \end{figure}
 
+        El código que se ha utilizado para implementar el método Deep Ritz en este problema se puede encontrar en el Anexo \ref{sec:codigo_deep_ritz}.
     \end{exmp}
 \end{mdframed}
 
@@ -1034,7 +1033,7 @@ Por otro lado, el método Deep Ritz plantea una alternativa más alineada con la
 En resumen, aunque las redes neuronales ofrecen herramientas novedosas para la resolución de ecuaciones diferenciales, su aplicación en contextos prácticos aún enfrenta numerosos desafíos. Su rendimiento es inferior al de métodos numéricos establecidos en escenarios convencionales, y la interpretabilidad de los resultados sigue siendo limitada. La dificultad para diagnosticar fallos y la falta de garantías teóricas claras refuerzan la idea de que, por el momento, estas técnicas deben verse como complementarias a los métodos clásicos, en lugar de como un reemplazo directo.
 
 \appendix   
-\chapter{Código en Matlab para la red neuronal de clasificación}
+\chapter{Código en Matlab para la red neuronal de clasificación\label{sec:codigo_clasificacion}}
 
 El código aquí escrito está basado en el propuesto por por Catherine et al. en \cite{deeplearningSIAM} pero extendiendolo para incluir más puntos de entrenamiento de distinto tipo.
 
@@ -1260,7 +1259,73 @@ ax2.set_title('Contour Plot')
 plt.show()
 \end{lstlisting}
 
-\chapter{Código en Python método DeepRitz}
+
+\chapter{Código en Python para construir PINNs con la librería DeepXDE\label{sec:codigo_pinns}}
+
+El siguiente código es el utilizado en el ejemplo \ref{exmp:fallo}. Lo primero que se hace es importar las librerias necesarias para el funcionamiento del código. En este caso, se utilizan las librerías de DeepXDE para la implementación de la red neuronal y Matplotlib para la visualización. Además, se define el ecuación en derivadas parciales (EDP) que se va a resolver. 
+
+\begin{lstlisting}[language=Python]
+import deepxde as dde
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf 
+
+def pde(x, u):
+    A = 0.5 * tf.cast(tf.less(x, 0), tf.float32) + 1 * tf.cast(tf.greater_equal(x, 0), tf.float32) 
+    du_x = dde.grad.jacobian(u, x) 
+    dA_du_x = dde.grad.jacobian(A * du_x, x) 
+    f = 0 * tf.cast(tf.less(x, 0), tf.float32) + (-2) * tf.cast(tf.greater_equal(x, 0), tf.float32) 
+    return -dA_du_x - f
+
+\end{lstlisting}
+
+A continueación se define el solución débil de la EDP, que se utilizará como referencia para evaluar el rendimiento de la red neuronal. Además, se definen las condiciones de frontera. En este caso, se utiliza una condición de Dirichlet en la frontera del dominio.
+
+\begin{lstlisting}[language=Python]
+def weak_solution(x):
+    return (-2/3 * x - 2/3) * (x < 0) + (x**2 - (1/3) * x - (2/3)) * (x >= 0)
+
+def boundary(x, on_boundary):
+    return on_boundary
+    
+geom = dde.geometry.Interval(-1, 1)
+bc = dde.DirichletBC(geom, weak_solution, boundary)
+\end{lstlisting}
+
+Seguidamente, deminimos el objeto red neuronal que se va a utilizar para aproximar la solución de la EDP así como el método de optimización. 
+
+\begin{lstlisting}[language=Python]
+data = dde.data.PDE(geom, pde, bc, num_domain=1000, num_boundary=2, num_test=100, solution=weak_solution)
+
+net = dde.maps.FNN([1] + [256] * 3 + [1], "tanh", "Glorot normal")
+
+model = dde.Model(data, net)
+
+model.compile("adam", lr=0.001,metrics=["l2 relative error"])
+\end{lstlisting}
+
+Con todos los parámetros del problema definidos, nos apoyamos en el método \texttt{train} de la librería DeepXDE para entrenar la red neuronal. 
+
+\begin{lstlisting}[language=Python]
+losshistory, train_state = model.train(iterations=10000)
+\end{lstlisting}
+
+Finalmnte, se guarda el historial de pérdidas y se visualiza la solución aproximada. Se generan 1000 puntos uniformemente distribuidos en el intervalo \([-1, 1]\) y se evalúa la red neuronal en esos puntos. Luego, se grafican los resultados.
+
+\begin{lstlisting}[language=Python]
+dde.saveplot(losshistory, train_state, issave=True, isplot=True)
+
+x = geom.uniform_points(1000, True)
+y = model.predict(x, operator=pde)
+plt.figure()
+plt.plot(x, y)
+plt.xlabel("x")
+plt.ylabel("Residuo de la EDP")
+plt.show()
+\end{lstlisting}
+
+
+\chapter{Código en Python método DeepRitz\label{sec:codigo_deep_ritz}}
 
 Este código implementa una red neuronal para resolver ecuaciones en derivadas parciales mediante el método de Ritz. Se describe la construcción del modelo, el proceso de entrenamiento y la evaluación de la solución.
 
