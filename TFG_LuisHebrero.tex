@@ -199,7 +199,7 @@ Para poder lograr este objetivo, se necesitan las funciones de activación. Como
     F(x)=W^{[4]}(W^{[3]}(W^{[2]}x+b^{[2]})+b^{[3]})+b^{[4]}\in\mathbb{R}^3.
 \end{equation*}
 
-Claramente, una función lineal definida de forma global puede estar muy lejos de aproximar bien funciones generales. De este modo, parece por tanto razonable utilizar funciones de activación no lineales. La función sigmoide es una de las más utilizadas, pero existen otras como la función tangente hiperbólica o la función ReLU. La función sigmoide, que se define como
+Claramente, una función lineal definida de forma global puede estar muy lejos de aproximar bien funciones generales. De este modo, parece por tanto razonable utilizar funciones de activación no lineales. La función sigmoide es una de las más utilizadas, pero existen otras como la función tangente hiperbólica o la función ReLU. La función sigmoide se define como:
 \begin{equation*}
     \sigma(x)=\frac{1}{1+e^{-x}}.
 \end{equation*}
@@ -247,7 +247,7 @@ Concretamente, a lo largo del trabajo, nos centraremos en problemas de condició
     u(x) = g(x), \qquad \forall x\in\partial\Omega.
 \end{equation}
 
-En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla la ecuación en un conjunto finito de puntos cumpla las condiciones de frontera. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Para entender la formulación débil de una ecuación en derivadas parciales, es necesario introducir el concepto de derivada débil.
+En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla las condiciones de frontera. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Para entender la formulación débil de una ecuación en derivadas parciales, es necesario introducir el concepto de derivada débil.
 
 \begin{mdframed}
     \begin{defin}
@@ -255,7 +255,7 @@ En la formulación que hemos dado de las ecuaciones en derivadas parciales elíp
         \begin{equation*}
             \int_\Omega w_\alpha(x)v(x) \, dx = (-1)^{|\alpha|} \int_\Omega u(x)D^\alpha v(x) \, dx, \qquad \forall v \in C_0^\infty(\Omega),
         \end{equation*}
-        entonces decimos que $w_\alpha$ es la derivada débil de $u$ de orden $|\alpha| = \alpha_1 + \cdots + \alpha_n$ y escribimos $w_\alpha = D^\alpha u$. Cuando existe la derivada débil es única. En lo sucesivo utilizaremos la misma notación para las derivadas débiles y fuertes.
+        entonces decimos que $w_\alpha$ es la derivada débil de $u$ de orden $|\alpha| = \alpha_1 + \cdots + \alpha_n$ y escribimos $w_\alpha = D^\alpha u$. Cuando existe la derivada débil, es única. En lo sucesivo utilizaremos la misma notación para las derivadas débiles y fuertes.
     \end{defin}
 \end{mdframed}
 También es necesario definir el espacio de Sobolev $H^1(\Omega)$.
@@ -393,13 +393,9 @@ De esta manera, se demuestran las condiciones (a), (b) y (c) del teorema de Lax-
         + \int_\Omega \left( c(x) - \frac{1}{2} \sum_{i=1}^n \frac{\partial b_i}{\partial x_i} \right) |v|^2 dx.
         \end{equation*}
 
-        Asumiendo que 
-        \begin{align*}
-        c(x) - \frac{2}{\tilde{c}} \sum_{i=1}^{n} \|b_i\|^2_{L_{\infty}(\Omega)} \geq 0,
-        \end{align*}
-        llegamos a la desigualdad 
+        Asumiendo que se cumple \eqref{eq:condiciones_LaxMilgram_extra} llegamos a la desigualdad 
         \begin{align}\label{eq:resultado_aplicar_condicion_a}
-        a(v, v) \geq \frac{1}{2} \tilde{c} \sum_{i=1}^{n} \int_{\Omega} \left| \frac{\partial v}{\partial x_i} \right|^2 dx.
+        a(v, v) \geq  \tilde{c} \sum_{i=1}^{n} \int_{\Omega} \left| \frac{\partial v}{\partial x_i} \right|^2 dx.
         \end{align}
         Mediante la desigualdad de Poincaré-Friedrichs, el lado derecho puede acotarse aún más para obtener
         \begin{align}\label{eq:desigualdad_Poincaré_Friedrichs_demo_a}
@@ -425,7 +421,7 @@ Para un problema elíptico con condiciones de contorno Dirichlet homogéneas, se
 
 Por lo visto en la Sección \ref{sec:EDPs}, esta ecuación tiene solución única en $H_0^1(\Omega)$ si se cumple la condición \eqref{eq:condiciones_LaxMilgram_extra}. De este modo, para que la formulación del problema sea válida, asumiremos que se cumple esta condición.
 
-Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Por ejemplo, si estamos trabajando con un problema de una dimensión, con $\Omega =(0,1)$, dividimos $\overline{\Omega} = [0,1]$ en $N$ subintervalos $[x_i,x_{i+1}], \, i = 1, \dots, N-1$, con $x_i = ih$, obteniendo la división de la Figura \ref{fig:DivisionOmega}.
+Lo siguiente que se hace es dividir el dominio $\Omega$ en un conjunto de subdominios más pequeños, llamados elementos finitos. Por ejemplo, si estamos trabajando con un problema en un dominio unidimensional, con $\Omega =(0,1)$, dividimos $\overline{\Omega} = [0,1]$ en $N$ subintervalos $[x_i,x_{i+1}], \, i = 1, \dots, N-1$, con $x_i = ih$, obteniendo la división de la Figura \ref{fig:DivisionOmega}.
 
 \begin{figure}
     \centering
@@ -470,7 +466,7 @@ A esta subdivision, se le asocia una base de polinomios a trozos. Reemplazando a
     \label{fig:BasePolinomios}
 \end{figure}
 
-En este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_{N-1}\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. Con esta definición es claro que todos los $\phi_i\in H_0^1(\Omega)$ pues son funciones derivable en sentido débil que valen $0$ en la frontera de $\Omega =(0,1)$. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar $u_h\in V_h$ tal que
+En este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\dots,\phi_{N-1}\}$, donde $N$ es el número de elementos finitos en los que hemos dividido el dominio. Con esta definición es claro que todos los $\phi_i\in H_0^1(\Omega)$ pues son funciones derivables en sentido débil que valen $0$ en la frontera de $\Omega =(0,1)$. De este modo, al buscar soluciones en este nuevo espacio de funciones, nuestra ecuación diferencial elíptica se convertiría en encontrar $u_h\in V_h$ tal que
 \begin{equation*}
     a(u_h,v_h) = l(v_h) \quad \forall v_h\in V_h.
 \end{equation*}
@@ -489,7 +485,7 @@ Por tanto, resolver la ecuación diferencial se convierte en encontrar $U=(U_1,\
 
 Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matriz de rigidez (con entradas $A_{ij}=a\left( \phi_i,\phi_j\right)$), y $b$ es el vector de términos fuente (con entradas $b_j = l(\phi_j)$). A este nuevo sistema lineal se le pueden aplicar métodos numéricos tradicionales para resolverlo, como la factorización LU, encontrando así los coeficientes $U$ que nos dan $u_h$, la aproximación de $u$.
 
-Este proceso se puede generalizar a problemas en más dimensiones, donde se dividen los dominios en elementos finitos de mayor dimensión, y se construye una base de polinomios a trozos en cada uno de estos elementos. Por ejemplo, en dos dimensiones, un elemento finito sería un triángulo, y la base de polinomios a trozos sería una base de funciones que valen $0$ en los bordes del triángulo y que son lineales en cada uno de los lados del triángulo.
+Este proceso se puede generalizar a problemas en más dimensiones, donde se dividen los dominios en elementos finitos de mayor dimensión, y se construye una base de polinomios a trozos en cada uno de estos elementos. Por ejemplo, en dos dimensiones, un elemento finito sería un triángulo, y la base de polinomios a trozos sería una base de funciones que valen que valen $1$ en uno de los nodes de la partición, $0$ en el resto de nodos y además son lineales en cada uno de los triángulos.
 
 \begin{mdframed}  
 \begin{exmp}
@@ -529,20 +525,13 @@ Este proceso se puede generalizar a problemas en más dimensiones, donde se divi
     
     Antes de seguir avanzando, para este ejemplo específico, tomaremos un dominio cuadrado $\Omega = (0,1)^2$ y $f(x, y) = 1$. Bajo estas condiciones sabemos que existe una solución única en $H_0^1(\Omega)$ para el problema \eqref{eq:forma_debil_poisson}.
 
-    A continuación, usamos el paquete de python Scipy, con el que construimos la malla de elementos finitos y la base de polinomios para resolver el problema (código comentado en el Anexo \ref{sec:codigo_fem_cuadrado}). Con esto, obtenemos el resultado que se puede ver en la Figura \ref{fig:poisson}.
+    A continuación, usamos el paquete de Python Scipy para construir la malla de elementos finitos y la base de polinomios necesarias para resolver el problema (código comentado en el Anexo \ref{sec:codigo_fem_cuadrado}). El resultado obtenido se muestra en la Figura \ref{fig:poisson}, donde la malla de elementos finitos está compuesta por 50 nodos en cada lado.
     \begin{figure}[H] 
         \centering
-        \includegraphics[width=0.7\textwidth]{Figuras/FEMSquare.png}
+        \includegraphics[width=1\textwidth]{Figuras/FEMSquare.png}
         \caption{Solución de la ecuación de Poisson}
         \label{fig:poisson}
     \end{figure}
-    En el que, la malla de elementos finitos se puede ver en la Figura \ref{fig:mesh}.
-    \begin{figure}[H] 
-        \centering
-        \includegraphics[width=0.4\textwidth]{Figuras/FEM_Grid.png}
-        \caption{Malla de elementos finitos}
-        \label{fig:mesh}
-    \end{figure}    
 \end{exmp}
 \end{mdframed}
 
@@ -662,7 +651,7 @@ Aunque en este ejemplo sencillo las PINNs funcionan muy bien, estas pueden prese
 
 \begin{mdframed}
     \begin{exmp}\label{exmp:fallo}
-        La ecuación considerada es unidimensional y se expresa como
+        Consideramos la siguiente ecuación en un dominio unidimensional:
         \begin{equation}
             \left\{
             \begin{aligned}
@@ -838,7 +827,7 @@ por lo que, tal como se estableció en la Sección \ref{sec:EDPs}, el problema \
     y, por lo tanto, \( u = \tilde{u} \). 
 
 
-    Para la implicación en sentido contrario, es fácil demostrar que $J(\cdot)$ es convexa (hacia abajo), es decir:
+    Para la implicación en sentido contrario, es fácil demostrar que $J(\cdot)$ es convexa, es decir:
     \begin{equation*}
     J((1 - \theta)v + \theta w) \leq (1 - \theta)J(v) + \theta J(w) \quad \forall \theta \in [0,1], \quad \forall v, w \in H_0^1(\Omega).
     \end{equation*}   
@@ -969,7 +958,7 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
         \begin{equation*}
         H_0^1(\Omega) = \{ v \in H^1(\Omega) \mid v = 0 \text{ en } \partial \Omega \}.
         \end{equation*}
-        Multiplicamos la ecuación diferencial por \( v \) y integramos en \(\Omega\):
+        Multiplicamos la ecuación diferencial por $v$ e integramos en \(\Omega\):
         \begin{equation*}
         \int_{\Omega} (-\Delta u) v \,dx = \int_{\Omega} 1 \cdot v \,dx.
         \end{equation*}
@@ -995,21 +984,21 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
 
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.6\textwidth]{Figuras/PoissonSquareBien.png}
+            \includegraphics[width=1\textwidth]{Figuras/PoissonSquareBien.png}
             \caption{Solución de la ecuación de Poisson en un cuadrado unitario con $\lambda = 500$.}
             \label{fig:poisson_square}
         \end{figure}
 
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.6\textwidth]{Figuras/DiferenciaCuadrado.png}
-            \caption{Diferencia entre FEM y Deep Ritz con $\lambda = 10^{-5}$.}
+            \includegraphics[width=1\textwidth]{Figuras/DiferenciaCuadrado.png}
+            \caption{Diferencia entre FEM y Deep Ritz con $\lambda = 500$.}
             \label{fig:diferencia_cuadrado}
         \end{figure}
 
         \begin{figure}[H]
             \centering
-            \includegraphics[width=0.6\textwidth]{Figuras/PoissonSquare10e-5.png}
+            \includegraphics[width=1\textwidth]{Figuras/PoissonSquare10e-5.png}
             \caption{Solución de la ecuación de Poisson en un cuadrado unitario con $\lambda = 10^{-5}$.}
             \label{fig:poisson_square_lambda_1e-5}
         \end{figure}
@@ -1035,7 +1024,7 @@ En resumen, aunque las redes neuronales ofrecen herramientas novedosas para la r
 \appendix   
 \chapter{Código en Matlab para la red neuronal de clasificación\label{sec:codigo_clasificacion}}
 
-El código aquí escrito está basado en el propuesto por por Catherine et al. en \cite{deeplearningSIAM} pero extendiendolo para incluir más puntos de entrenamiento de distinto tipo.
+El código aquí escrito está basado en el propuesto por Catherine et al. en \cite{deeplearningSIAM} pero extendiéndolo para incluir más puntos de entrenamiento de distinto tipo.
 
 Lo primero que se hace es declarar cada punto de entrenamiento y su respectiva etiqueta. En este caso, las etiquetas son vectores de 3 componentes, donde cada componente representa la probabilidad de que el punto pertenezca a una de las tres clases. 
 
@@ -1084,7 +1073,7 @@ b4 = 0.5*randn(3,1);
 
 \end{lstlisting}
 
-Finalmente, queda el paso de entreamiento de la red neuronal. Este sigue el algoritmo de retropropagación, donde se calcula el gradiente del coste y se actualizan los pesos y sesgos de la red. 
+Finalmente, queda el paso de entrenamiento de la red neuronal. Este sigue el algoritmo de retropropagación, donde se calcula el gradiente del coste y se actualizan los pesos y sesgos de la red. 
 
 \begin{lstlisting}[language=Matlab]
 eta = 0.05;
@@ -1115,7 +1104,7 @@ end
 
 \end{lstlisting}
 
-Acabado el entrenamiento, el paso final es visualizar los resultados, para ver que reagiones asigna la red neuronal a cada una de las clases existentes.
+Acabado el entrenamiento, el paso final es visualizar los resultados, para ver que regiones asigna la red neuronal a cada una de las clases existentes.
 
 \begin{lstlisting}[language=Matlab]
 figure(2)
@@ -1292,7 +1281,7 @@ geom = dde.geometry.Interval(-1, 1)
 bc = dde.DirichletBC(geom, weak_solution, boundary)
 \end{lstlisting}
 
-Seguidamente, deminimos el objeto red neuronal que se va a utilizar para aproximar la solución de la EDP así como el método de optimización. 
+Seguidamente, definimos el objeto red neuronal que se va a utilizar para aproximar la solución de la EDP así como el método de optimización. 
 
 \begin{lstlisting}[language=Python]
 data = dde.data.PDE(geom, pde, bc, num_domain=1000, num_boundary=2, num_test=100, solution=weak_solution)
