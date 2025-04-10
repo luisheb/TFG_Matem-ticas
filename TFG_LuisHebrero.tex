@@ -386,7 +386,7 @@ De esta manera, se demuestran las condiciones (a), (b) y (c) del teorema de Lax-
         + \int_\Omega c(x) |v|^2 dx,
         \end{equation*}
 
-        donde escribimos \(\frac{\partial v}{\partial x_i} \cdot v\) como \(\frac{1}{2} \frac{\partial}{\partial x_i}(v^2)\). Integrando por partes el segundo término en el lado derecho, obtenemos
+        donde escribimos $\frac{\partial v}{\partial x_i} \cdot v$ como $\frac{1}{2} \frac{\partial}{\partial x_i}(v^2)$. Integrando por partes el segundo término en el lado derecho, obtenemos
 
         \begin{equation*}
         a(v, v) \geq \tilde{c} \sum_{i=1}^n \int_\Omega \left| \frac{\partial v}{\partial x_i} \right|^2 dx
@@ -504,11 +504,11 @@ Este proceso se puede generalizar a problemas en más dimensiones, donde se divi
     \begin{equation*}
     \int_{\Omega} \nabla u \nabla v - \int_{\Omega} div(v \nabla u) = \int_{\Omega} f v
     \end{equation*}
-    Por el teorema de Green, podemos escribir (si \(\partial \Omega\) es suficientemente regular):
+    Por el teorema de Green, podemos escribir (si $\partial \Omega$ es suficientemente regular):
     \begin{equation*}
     \int_{\Omega} \nabla u \nabla v - \int_{\partial \Omega} (v \nabla u) \cdot \mathbf{n} \, dS = \int_{\Omega} f v
     \end{equation*}
-    Finalmente, dado que \(v = 0\) en \(\partial \Omega\), concluimos:
+    Finalmente, dado que $v = 0$ en $\partial \Omega$, concluimos:
     \begin{equation*}
     \int_{\Omega} \nabla u \nabla v = \int_{\Omega} f v
     \end{equation*}
@@ -705,7 +705,7 @@ Aunque en este ejemplo sencillo las PINNs funcionan muy bien, estas pueden prese
             \label{fig:deviation}
         \end{figure}
 
-        Evidentemente, el método no logra obtener la solución exacta \( u \). La diferencia entre \( u \) y \( \hat{u}(\mathbf{x};\theta) \) es del mismo orden de magnitud que \( u \) en sí. En otras palabras, cuanto mayor es el valor absoluto de la solución, mayor es la desviación de la aproximación. Además, al analizar la evolución del error en las gráficas de entrenamiento y test, observamos que la diferencia entre la solución real y la aproximación, medida con la norma \( L_2 \), no disminuye con el número de iteraciones (Error relativo \( L_2 \) en el gráfico).
+        Evidentemente, el método no logra obtener la solución exacta $ u $. La diferencia entre $ u $ y $ \hat{u}(\mathbf{x};\theta) $ es del mismo orden de magnitud que $ u $ en sí. En otras palabras, cuanto mayor es el valor absoluto de la solución, mayor es la desviación de la aproximación. Además, al analizar la evolución del error en las gráficas de entrenamiento y test, observamos que la diferencia entre la solución real y la aproximación, medida con la norma $ L_2 $, no disminuye con el número de iteraciones (Error relativo $ L_2 $ en el gráfico).
         \begin{figure}[H]
             \centering
             \includegraphics[width=0.6\textwidth]{Figuras/test_train_pinn_error.png}
@@ -786,7 +786,7 @@ por lo que, tal como se estableció en la Sección \ref{sec:EDPs}, el problema \
     \end{enumerate}
 \end{lema}
 \begin{dem}
-    Sea \( u \) la única solución débil de \eqref{eq:ProblemaAutoadjuntoDebil} en \( H_0^1(\Omega) \) y, para \( v \in H_0^1(\Omega) \), consideremos \( J(v) - J(u) \):
+    Sea $ u $ la única solución débil de \eqref{eq:ProblemaAutoadjuntoDebil} en $ H_0^1(\Omega) $ y, para $ v \in H_0^1(\Omega) $, consideremos $ J(v) - J(u) $:
     \begin{align*}
     J(v) - J(u) &= \frac{1}{2} a(v,v) - l(v) - \frac{1}{2} a(u,u) + l(u) \\
     &= \frac{1}{2} a(v,v) - \frac{1}{2} a(u,u) - l(v - u) \\
@@ -803,7 +803,7 @@ por lo que, tal como se estableció en la Sección \ref{sec:EDPs}, el problema \
     \begin{equation*}
     a(v - u, v - u) \geq c_0 \| v - u \|_{H_0^1(\Omega)}^2,
     \end{equation*}
-    donde \( c_0 \) es una constante positiva. Así,
+    donde $ c_0 $ es una constante positiva. Así,
     \begin{equation}\label{eq:J(v)-(u)}
     J(v) - J(u) \geq \frac{c_0}{2} \| v - u \|_{H_0^1(\Omega)}^2 \quad \forall v \in H_0^1(\Omega)
     \end{equation}
@@ -811,12 +811,12 @@ por lo que, tal como se estableció en la Sección \ref{sec:EDPs}, el problema \
     \begin{equation}\label{eq:J(v)geqJ(u)}
     J(v) \geq J(u) \quad \forall v \in H_0^1(\Omega)
     \end{equation}
-    es decir, \( u \) minimiza \( J(\cdot) \) sobre \( H_0^1(\Omega) \).
-    De hecho, \( \tilde{u} \) es el único mínimo de \( J(\cdot) \) en \( H_0^1(\Omega) \). En efecto, si \( \tilde{u} \) también minimiza \( J(\cdot) \) en \( H_0^1 (\Omega) \), entonces
+    es decir, $ u $ minimiza $ J(\cdot) $ sobre $ H_0^1(\Omega) $.
+    De hecho, $ \tilde{u} $ es el único mínimo de $ J(\cdot) $ en $ H_0^1(\Omega) $. En efecto, si $ \tilde{u} $ también minimiza $ J(\cdot) $ en $ H_0^1 (\Omega) $, entonces
     \begin{equation}\label{eq:J(v)geq(utilde)}
     J(v) \geq J(\tilde{u}) \quad \forall v \in H_0^1(\Omega).
     \end{equation}
-    Tomando \( v = \tilde{u} \) en \eqref{eq:J(v)geqJ(u)} y \( v = u \) en \eqref{eq:J(v)geq(utilde)}, deducimos que
+    Tomando $ v = \tilde{u} $ en \eqref{eq:J(v)geqJ(u)} y $ v = u $ en \eqref{eq:J(v)geq(utilde)}, deducimos que
     \begin{equation*}
     J(u) = J(\tilde{u});
     \end{equation*}
@@ -824,7 +824,7 @@ por lo que, tal como se estableció en la Sección \ref{sec:EDPs}, el problema \
     \begin{equation*}
     \| \tilde{u} - u \|_{H_0^1(\Omega)} = 0,
     \end{equation*}
-    y, por lo tanto, \( u = \tilde{u} \). 
+    y, por lo tanto, $ u = \tilde{u} $. 
 
 
     Para la implicación en sentido contrario, es fácil demostrar que $J(\cdot)$ es convexa, es decir:
@@ -852,10 +852,10 @@ por lo que, tal como se estableció en la Sección \ref{sec:EDPs}, el problema \
 
 \subsection{Formulación del método ``Deep Ritz''}
 
-El método Deep Ritz, propuesto por E y Yu en \cite{e2017deepritzmethoddeep}, se basa en minimizar el funcional \( J(u) \) (definido en el Lema \ref{lema:MinimoFuncion}) representando la solución desconocida mediante una red neuronal \( \hat{u}_\theta: \mathbb{R}^d \to \mathbb{R} \), en lugar de emplear funciones base del método de los elementos finitos. Es decir, en lugar de aproximar la función \( u \in H_0^1(\Omega) \) que minimiza \( J(u) \) dentro del espacio de elementos finitos \( V_h \), se busca una aproximación en el espacio de funciones red neuronal. Aquí, \( \theta \in \mathbb{R}^{\# \mathcal{N}} \) denota el conjunto de parámetros de la red, donde \( \# \mathcal{N} \) es el número total de parámetros libres.
+El método Deep Ritz, propuesto por E y Yu en \cite{e2017deepritzmethoddeep}, se basa en minimizar el funcional $ J(u) $ (definido en el Lema \ref{lema:MinimoFuncion}) representando la solución desconocida mediante una red neuronal $ \hat{u}_\theta: \mathbb{R}^d \to \mathbb{R} $, en lugar de emplear funciones base del método de los elementos finitos. Es decir, en lugar de aproximar la función $ u \in H_0^1(\Omega) $ que minimiza $ J(u) $ dentro del espacio de elementos finitos $ V_h $, se busca una aproximación en el espacio de funciones red neuronal. Aquí, $ \theta \in \mathbb{R}^{\# \mathcal{N}} $ denota el conjunto de parámetros de la red, donde $ \# \mathcal{N} $ es el número total de parámetros libres.
 
 
-El marco teórico del método Deep Ritz requiere que la red neuronal sea diferenciable, es decir, que utilice funciones de activación diferenciables. En la Figura \ref{fig:net_structure_1}, se muestra la arquitectura de la red neuronal profunda utilizada por E y Yu en \cite{e2017deepritzmethoddeep}.
+El marco teórico del método Deep Ritz requiere que la red neuronal sea diferenciable en el sentido débil. No obstante, E y Yu señalan que el uso de funciones de activación diferenciables mejora los resultados prácticos. La Figura \ref{fig:net_structure_1} muestra la arquitectura de la red neuronal profunda utilizada en \cite{e2017deepritzmethoddeep}.
 
 \begin{figure}[h!]
     \centering
@@ -865,21 +865,21 @@ El marco teórico del método Deep Ritz requiere que la red neuronal sea diferen
     Cada bloque consiste en dos capas completamente conectadas y una conexión de salto.}
     \label{fig:net_structure_1}
 \end{figure}
-Dada una arquitectura de red \( \mathcal{N} \), el espacio de aproximación \( V_{\mathcal{N}} \) utilizado en el método Deep Ritz se define como:
+Dada una arquitectura de red $ \mathcal{N} $, el espacio de aproximación $ V_{\mathcal{N}} $ utilizado en el método Deep Ritz se define como:
 
 \begin{equation*}
 V_{\mathcal{N}} := \{ \hat{u}_\theta: \mathbb{R}^d \to \mathbb{R} \mid \theta \in \mathbb{R}^{\#\mathcal{N}} \}.
 \end{equation*}
 
-Mientras que \( \#\mathcal{N} \) sea finito y las funciones de activación sean diferenciables, se cumple que \( V_{\mathcal{N}} \subset H^1(\Omega) \). Sin embargo, en general, para \( u_{\mathcal{N}} \in V_{\mathcal{N}} \) no se garantiza que \( u_{\mathcal{N}} = 0 \) en \( \partial \Omega \), por lo que \( V_{\mathcal{N}} \not\subset V = H^1_0(\Omega) \). Además, es importante notar que \( V_{\mathcal{N}} \) no es un espacio vectorial, ya que para \( v_1, v_2 \in V_{\mathcal{N}} \) no necesariamente se cumple que \( v_1 + v_2 \in V_{\mathcal{N}} \).
+Mientras que $ \#\mathcal{N} $ sea finito y las funciones de activación sean diferenciables, se cumple que $ V_{\mathcal{N}} \subset H^1(\Omega) $. Sin embargo, en general, para $ u_{\mathcal{N}} \in V_{\mathcal{N}} $ no se garantiza que $ u_{\mathcal{N}} = 0 $ en $ \partial \Omega $, por lo que $ V_{\mathcal{N}} \not\subset V = H^1_0(\Omega) $. Además, es importante notar que $ V_{\mathcal{N}} $ no es un espacio vectorial, ya que para $ v_1, v_2 \in V_{\mathcal{N}} $ no necesariamente se cumple que $ v_1 + v_2 \in V_{\mathcal{N}} $.
 
 Para abordar esta limitación, se introduce el funcional de energía penalizado:
 \begin{equation*}
 J_{\lambda}(v) := J(v) + \frac{\lambda}{2} |v|^2_{\partial \Omega},
 \end{equation*}
-donde \( \lambda \in \mathbb{R}^+ \) es un parámetro de penalización y \( | \cdot |_{\partial \Omega} \) denota la norma \( L^2 \) en la frontera del dominio. El término de penalización adicional impone que \( v \) sea próximo a cero en \( \partial \Omega \).
+donde $ \lambda \in \mathbb{R}^+ $ es un parámetro de penalización y $ | \cdot |_{\partial \Omega} $ denota la norma $ L^2 $ en la frontera del dominio. El término de penalización adicional impone que $ v $ sea próximo a cero en $ \partial \Omega $.
 
-Esta formulación permite el uso de redes neuronales en la aproximación de ecuaciones diferenciales parciales sin necesidad de definir funciones de base explícitas, facilitando la resolución de problemas de altas dimensiones donde los métodos clásicos pueden volverse ineficientes. No obstante, igual que en el caso de las PINN el problema de la formulación residía en que se aproximaba el residuo de forma fuerte, en el método Deep Ritz, el problema radica en que se minimiza el funcional \( J_{\lambda} \) en lugar de \( J \), es decir, se altera el problema para imponer las condiciones de contorno, variando así la solución. Para ver esto de forma más clara, vamos a aplicar el método Deep Ritz a la ecuación de Poisson en una dimensión.
+Esta formulación permite el uso de redes neuronales en la aproximación de ecuaciones diferenciales parciales sin necesidad de definir funciones de base explícitas, facilitando la resolución de problemas de altas dimensiones donde los métodos clásicos pueden volverse ineficientes. No obstante, igual que en el caso de las PINN el problema de la formulación residía en que se aproximaba el residuo de forma fuerte, en el método Deep Ritz, el problema radica en que se minimiza el funcional $ J_{\lambda} $ en lugar de $ J $, es decir, se altera el problema para imponer las condiciones de contorno, variando así la solución. Para ver esto de forma más clara, vamos a aplicar el método Deep Ritz a la ecuación de Poisson en una dimensión.
 
 
 \begin{mdframed}  
@@ -892,7 +892,7 @@ Esta formulación permite el uso de redes neuronales en la aproximación de ecua
         \begin{equation*}
         u(x) = -x^2/2 + x/2.
         \end{equation*}
-        En forma débil, la ecuación \eqref{eq:ejemplo_poisson} se puede escribir como: encontrar \( u \in H^1(0,1) \) tal que:
+        En forma débil, la ecuación \eqref{eq:ejemplo_poisson} se puede escribir como: encontrar $ u \in H^1(0,1) $ tal que:
         \begin{equation*}
             \int_0^1 u'v' = \int_0^1 v \quad \forall v \in H^1(0,1).
         \end{equation*}
@@ -901,40 +901,40 @@ Esta formulación permite el uso de redes neuronales en la aproximación de ecua
             a(u,v) &= \int_0^1 u'v', \\
             l(v) &= \int_0^1 v.
         \end{align*}
-        Por lo tanto, el funcional \( J(u) \) asociado a este problema es:
+        Por lo tanto, el funcional $ J(u) $ asociado a este problema es:
         \begin{equation*}
             J(u) = \frac{1}{2} \int_0^1 (u')^2 - \int_0^1 u.
         \end{equation*}
-        Con esta información podemos plantear el método de Ritz para este problema como encontrar \( \hat{u}_\theta \in V_{\mathcal{N}} \) tal que: 
+        Con esta información podemos plantear el método de Ritz para este problema como encontrar $ \hat{u}_\theta \in V_{\mathcal{N}} $ tal que: 
         \begin{align*}
         \argmin_{\{\hat{u}_\theta:\; \theta \in \mathbb{R}^{\#\mathcal{N}} \}} \left( \frac{1}{2} \int_\Omega \left((\hat{u}_\theta')^2 - \int_\Omega \hat{u}_\theta + \lambda (\hat{u}_\theta(0)^2 + \hat{u}_\theta(1)^2)\right)\right) =\\
         \argmin_{\{\hat{u}_\theta:\; \theta \in \mathbb{R}^{\#\mathcal{N}} \}} \left(\frac{1}{2} \int_0^1 \left((\hat{u}_\theta')^2 - \int_0^1 \hat{u}_\theta + \lambda (\hat{u}_\theta(0)^2 + \hat{u}_\theta(1)^2)\right)\right),
         \end{align*}
-        donde \(\hat{u}_\theta\) es una función de una red neuronal. Así, el funcional que estamos minimizando, $J_\lambda: H^1(0,1) \to \mathbb{R}$ se define como:
+        donde $\hat{u}_\theta$ es una función de una red neuronal. Así, el funcional que estamos minimizando, $J_\lambda: H^1(0,1) \to \mathbb{R}$ se define como:
         \begin{equation*}
         J_\lambda(u) = \frac{1}{2} \int_0^1 \left((u')^2 - \int_0^1 u + \lambda (u(0)^2 + u(1)^2)\right).
         \end{equation*}
-        Si buscamos el mínimo de \( J_\lambda \), vamos a encontrar que $u$ verifica la siguiente ecuación:
+        Si buscamos el mínimo de $ J_\lambda $, vamos a encontrar que $u$ verifica la siguiente ecuación:
         \begin{equation*}
         J_\lambda'(u)v := \lim_{\beta \to 0} \frac{J_\lambda(u + \beta v) - J_\lambda(u)}{\beta} = 0, \qquad \forall v \in H^1(0,1).
         \end{equation*}
-        Es fácil ver que \(u \in H^1(0,1)\) verifica
+        Es fácil ver que $u \in H^1(0,1)$ verifica
         \begin{equation*}
         \int_0^1 u'v' - \int_0^1 v + 2\lambda u(0)v(0) + 2\lambda u(1)v(1) = 0, \quad \forall v \in H^1(0,1).
         \end{equation*}
-        Consideramos ahora el siguiente problema: encontrar \(u \in C^2(0,1)\) tal que 
+        Consideramos ahora el siguiente problema: encontrar $u \in C^2(0,1)$ tal que 
         \begin{equation*}
         -u'' = f, \quad u'(0) = 2\lambda u(0), \quad u'(1) = -2\lambda u(1),
         \end{equation*}
-        que tiene como solución para \(f = 1\)
+        que tiene como solución para $f = 1$
         \begin{equation*}
         u_\lambda = -x^2/2 + x/2 + 1/(4\lambda).
         \end{equation*}
-        La solución débil de este problema es: encontrar \(u \in H^1(0,1)\) tal que 
+        La solución débil de este problema es: encontrar $u \in H^1(0,1)$ tal que 
         \begin{equation*}
         \int_0^1 u'v' + 2\lambda u(1)v(1) + 2\lambda u(0)v(0) = \int_0^1 v, \quad \forall v \in H^1(0,1).
         \end{equation*}
-        O lo que es lo mismo, encontrar \(u \in H^1(0,1)\) tal que 
+        O lo que es lo mismo, encontrar $u \in H^1(0,1)$ tal que 
         \begin{equation*}
         \int_0^1 u'v' + 2\lambda v(1)u(1) + 2\lambda v(0)u(0) = \int_0^1 v, \quad \forall v \in H^1(0,1).
         \end{equation*}
@@ -954,11 +954,11 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
         u = 0, & \text{en } \partial \Omega.
         \end{cases}            
         \end{equation}
-        Para aplicar el método, lo primero que necesitamos es definir el funcional $J_\lambda(u)$ asociado a este problema. Para ello lo primero que tenemos que hacer es obtener la forma débil de la ecuación. Sea \( v \) una función en el espacio de funciones \(H_0^1(\Omega) \), donde:
+        Para aplicar el método, lo primero que necesitamos es definir el funcional $J_\lambda(u)$ asociado a este problema. Para ello lo primero que tenemos que hacer es obtener la forma débil de la ecuación. Sea $ v $ una función en el espacio de funciones $H_0^1(\Omega) $, donde:
         \begin{equation*}
         H_0^1(\Omega) = \{ v \in H^1(\Omega) \mid v = 0 \text{ en } \partial \Omega \}.
         \end{equation*}
-        Multiplicamos la ecuación diferencial por $v$ e integramos en \(\Omega\):
+        Multiplicamos la ecuación diferencial por $v$ e integramos en $\Omega$:
         \begin{equation*}
         \int_{\Omega} (-\Delta u) v \,dx = \int_{\Omega} 1 \cdot v \,dx.
         \end{equation*}
@@ -966,7 +966,7 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
         \begin{equation*}
         \int_{\Omega} (-\Delta u) v \,dx = \int_{\Omega} \nabla u \cdot \nabla v \,dx - \int_{\partial\Omega} \frac{\partial u}{\partial n} v \,ds.
         \end{equation*}
-        Dado que \( v = 0 \) en \( \partial \Omega \), el término de la frontera desaparece, dejando la forma débil:
+        Dado que $ v = 0 $ en $ \partial \Omega $, el término de la frontera desaparece, dejando la forma débil:
         \begin{equation*}
         \int_{\Omega} \nabla u \cdot \nabla v \,dx = \int_{\Omega} v \,dx, \quad \forall v \in H_0^1(\Omega).
         \end{equation*}
@@ -1299,7 +1299,7 @@ Con todos los parámetros del problema definidos, nos apoyamos en el método \te
 losshistory, train_state = model.train(iterations=10000)
 \end{lstlisting}
 
-Finalmnte, se guarda el historial de pérdidas y se visualiza la solución aproximada. Se generan 1000 puntos uniformemente distribuidos en el intervalo \([-1, 1]\) y se evalúa la red neuronal en esos puntos. Luego, se grafican los resultados.
+Finalmnte, se guarda el historial de pérdidas y se visualiza la solución aproximada. Se generan 1000 puntos uniformemente distribuidos en el intervalo $[-1, 1]$ y se evalúa la red neuronal en esos puntos. Luego, se grafican los resultados.
 
 \begin{lstlisting}[language=Python]
 dde.saveplot(losshistory, train_state, issave=True, isplot=True)
