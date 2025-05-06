@@ -255,7 +255,7 @@ Concretamente, a lo largo del trabajo, nos centraremos en problemas de condició
     u(x) = g(x), \qquad \forall x\in\partial\Omega.
 \end{equation}
 
-En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte, es decir, una función que cumpla las condiciones de frontera. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Para entender la formulación débil de una ecuación en derivadas parciales, es necesario introducir el concepto de derivada débil.
+En la formulación que hemos dado de las ecuaciones en derivadas parciales elípticas, nos estábamos refiriendo a su formulación en forma fuerte. No obstante, en muchos casos, no es posible encontrar una solución en forma fuerte. En estos casos, se recurre a la  formulación débil de la ecuación, que permite encontrar una solución en un espacio de funciones más amplio. Para entender la formulación débil de una ecuación en derivadas parciales, es necesario introducir el concepto de derivada débil.
 
 \begin{mdframed}
     \begin{defin}
@@ -317,16 +317,16 @@ De este modo, nuestro problema elíptico en forma débil se puede expresar de la
 Para demostrar la existencia y unicidad de solución débil, se aplica el teorema de Lax-Milgram. 
 
 \begin{teor}[Lax-Milgram]
-    Sea $V$ un espacio de Hilbert con una norma asociada $\|\cdot\|_V$, y sea $a:V\times V\rightarrow\mathbb{R}$ una forma bilineal y $l:V\rightarrow\mathbb{R}$ un funcional lineal. Si se cumplen las siguientes condiciones
+    Sea $V$ un espacio de Hilbert con una norma asociada $\|\cdot\|_V$, y sea $a:V\times V\rightarrow\mathbb{R}$ una forma bilineal y $l:V\rightarrow\mathbb{R}$ un funcional lineal. Supongamos que se cumplen las siguientes condiciones
     \begin{itemize}
         \item[(a)] $\exists c_0 > 0 \quad \forall v \in V \quad a(v,v) \geq c_0\|v\|^2$,
-        \item[(b)] $\exists c_1 > 0 \quad \forall v, w \in V \quad |a(w,v)| \leq c_1\|w\|\|v\|$,
+        \item[(b)] $\exists c_1 > 0 \quad \forall v, w \in V \quad |a(w,v)| \leq c_1\|w\|\|v\|$.
     \end{itemize}
-    y sea $l(\cdot)$ un funcional lineal en $V$ tal que:
+    Sea $l(\cdot)$ un funcional lineal en $V$ tal que:
     \begin{itemize}
         \item[(c)] $\exists c_2 > 0 \quad \forall v \in V \quad |l(v)| \leq c_2\|v\|$.
     \end{itemize}
-    entonces, existe una única solución débil $u\in V$ tal que
+    Entonces, existe una única solución débil $u\in V$ tal que
     \begin{equation*}
         a(u,v) = l(v) \quad \forall v\in V.
     \end{equation*}
@@ -413,7 +413,7 @@ De esta manera, se demuestran las condiciones (a), (b) y (c) del teorema de Lax-
         \begin{equation}\label{eq:desigualdad_final_demo_a}
         a(v, v) \geq c_0 \left( \int_{\Omega} |v|^2 dx + \sum_{i=1}^{n} \int_{\Omega} \left| \frac{\partial v}{\partial x_i} \right|^2 dx \right),
         \end{equation}
-        donde $c_0 = \tilde{c}/(1 + c_{\star})$, y por queda demostrado (a).
+        donde $c_0 = \tilde{c}/(1 + c_{\star})$, y por tanto queda demostrado (a).
     \end{itemize}
     Se comprueban así las condiciones (a), (b) y (c) del teorema de Lax-Milgram y concluimos que existe una única solución débil en $H^1_0(\Omega)$ para la ecuación \eqref{eq:ProblemaDebilFormaBilineal}.
 \end{dem}
@@ -480,7 +480,7 @@ En este ejemplo, nuestro espacio de funciones será $V_h = \text{span}\{\phi_1,\
 \end{equation*}
 Nótese que las condiciones de contorno van implícitas en la definición de $V_h$ pues todos los $\phi_i\in H_0^1(\Omega)$. 
 
-Con todo, de forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones de dimensión infinita, como es $H_0^1(\Omega)$, se busca una solución en un espacio de funciones de dimensión finita, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio, lo hemos dividido en subdominios más pequeños a partir de los cuales hemos construido nuestro nuevo espacio de funciones. 
+Con todo, de forma intuitiva, lo que se hace es que en vez de buscar una solución en un espacio de funciones de dimensión infinita, como es $H_0^1(\Omega)$, se busca una solución en un espacio de funciones de dimensión finita, como es $V_h$. Para poder hacer eso, que nos simplifica mucho el problema, lo que hemos hecho es que nuestro dominio lo hemos dividido en subdominios más pequeños a partir de los cuales hemos construido nuestro nuevo espacio de funciones. 
 
 Ahora, encontrar una solución se convierte en encontrar los coeficientes en la base de polinomios a trozos, es decir, los $U_i$ en la siguiente ecuación
 \begin{equation}
@@ -496,7 +496,7 @@ Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matri
 Este proceso se puede generalizar a problemas en más dimensiones, donde se dividen los dominios en elementos finitos de mayor dimensión, y se construye una base de polinomios a trozos en cada uno de estos elementos. Por ejemplo, en dos dimensiones, un elemento finito sería un triángulo, y la base de polinomios a trozos sería una base de funciones que valen que valen $1$ en uno de los nodes de la partición, $0$ en el resto de nodos y además son lineales en cada uno de los triángulos.
 
 \begin{mdframed}  
-\begin{exmp}
+\begin{exmp}\label{ej:fem}
     Veamos ahora un ejemplo concreto de la aplicación del FEM a través de la ecuación de Poisson en dos dimensiones. El objetivo es encontrar un campo escalar $ u $ sobre un dominio $\Omega \subset \mathbb{R}^2$ que satisfaga:
     \begin{equation}
     \begin{aligned}
@@ -571,7 +571,7 @@ Con las PINNs nosotros queremos encontrar una función $\hat{u}$ que minimice el
     &\int_{\partial\Omega} \left( \hat{u} (\mathbf{x}) - g(\mathbf{x})\right)^2.
 \end{align*}
 
-Para poder computar estas integrales, se utiliza una regla de cuadratura que las aproxime mediante sumas ponderadas de los valores de las funciones en un conjunto discreto de puntos. En este contexto, los puntos de evaluación se denominan puntos de colocación o collocation points. Para la primera expresión, los puntos de colocación que se usarán los denominaremos $\mathcal{T}_f$, mientras que para la segunda los denominaremos $\mathcal{T}_b$. 
+Para poder calcular estas integrales, se utiliza una regla de cuadratura que las aproxima mediante sumas ponderadas de los valores de las funciones en un conjunto discreto de puntos. En este contexto, los puntos de evaluación se denominan puntos de colocación o collocation points. Para la primera expresión, los puntos de colocación que se usarán los denominaremos $\mathcal{T}_f$, mientras que para la segunda los denominaremos $\mathcal{T}_b$. 
 
 Por tanto, en el caso de las PINNs, la función de coste se compone de la suma ponderada de dos términos. El primero garantiza que la red neuronal aproxime la solución de la ecuación diferencial en un conjunto discreto de puntos. El segundo asegura que dicha aproximación cumpla las condiciones de contorno de Dirichlet en otro conjunto finito de puntos.
 
@@ -583,7 +583,7 @@ donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un tér
     \label{eq:Lf_Lb}
     \begin{split}
         \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} | -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) \\ &+ \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) |^2, \\ 
-        \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right|^2,
+        \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right|^2.
     \end{split}
 \end{equation}
 
@@ -713,14 +713,14 @@ Aunque en este ejemplo sencillo las PINNs funcionan muy bien, estas pueden prese
             \label{fig:deviation}
         \end{figure}
 
-        Evidentemente, el método no logra obtener la solución exacta $ u $. La diferencia entre $ u $ y $ \hat{u}(\mathbf{x};\theta) $ es del mismo orden de magnitud que $ u $ en sí. En otras palabras, cuanto mayor es el valor absoluto de la solución, mayor es la desviación de la aproximación. Además, al analizar la evolución del error en las gráficas de entrenamiento y test, observamos que la diferencia entre la solución real y la aproximación, medida con la norma $ L_2 $, no disminuye con el número de iteraciones (Error relativo $ L_2 $ en el gráfico).
+        Evidentemente, el método no logra obtener la solución exacta $ u $. La diferencia entre $ u $ y $ \hat{u}(\mathbf{x};\theta) $ es del mismo orden de magnitud que $ u $ en sí. En otras palabras, cuanto mayor es el valor absoluto de la solución, mayor es la desviación de la aproximación. Además, al analizar la evolución del error en las gráficas de entrenamiento y test, observamos que la diferencia entre la solución real y la aproximación, medida con la norma $ L^2 $, no disminuye con el número de iteraciones (Error relativo $ L^2 $ en el gráfico).
         \begin{figure}[H]
             \centering
             \includegraphics[width=0.6\textwidth]{Figuras/test_train_pinn_error.png}
             \caption{Error de la red neuronal}
         \end{figure}
 
-        En esta gráfica, las curvas \textit{Error entrenamiento} y \textit{Error test} representan el error de la aproximación en los puntos de entrenamiento y test, respectivamente. Los puntos de entrenamiento corresponden al conjunto de colocación utilizado para aproximar la integral, mientras que los puntos de test pertenecen a un subconjunto del dominio donde se evalúa la aproximación. Por otro lado, el error relativo $L_2$ cuantifica la diferencia entre la solución aproximada por la red neuronal y la solución real, integrando dicha diferencia sobre el dominio $(-1,1)$. El código utilizado para este ejemplo se puede encontrar en el Anexo \ref{sec:codigo_pinns}.
+        En esta gráfica, las curvas \textit{Error entrenamiento} y \textit{Error test} representan el error de la aproximación en los puntos de entrenamiento y test, respectivamente. Los puntos de entrenamiento corresponden al conjunto de colocación utilizado para aproximar la integral, mientras que los puntos de test pertenecen a un subconjunto del dominio donde se evalúa la aproximación. Por otro lado, el error relativo $L^2$ cuantifica la diferencia entre la solución aproximada por la red neuronal y la solución real, integrando dicha diferencia sobre el dominio $(-1,1)$. El código utilizado para este ejemplo se puede encontrar en el Anexo \ref{sec:codigo_pinns}.
     \end{exmp}
 \end{mdframed}
 
@@ -728,7 +728,7 @@ Como hemos visto, las PINNs presentan errores significativos en ciertos problema
 
 Otro obstáculo importante es la ausencia de una justificación teórica que determine cuáles son los hiperparámetros óptimos. Este problema añade incertidumbre al proceso de ajuste de la red, lo que complica la obtención de resultados precisos. Finalmente, otro aspecto problemático de las PINNs es que aproximan el residuo de forma fuerte. Esto significa que, si no existe una solución en el sentido fuerte (como ocurre en el ejemplo mostrado), la red neuronal no puede aproximar de forma adecuada la solución débil.
 
-De estos problemas, los dos primeros son característicos del uso de redes neuronales, mientras que el tercero es específico del método. Con esto en mente, exploraremos un enfoque alternativo que considere la forma débil en la composición del residuo, lo que podría permitir superar esta limitación.
+De estos problemas, los dos primeros son característicos del uso de redes neuronales, mientras que el tercero es específico del método. Con esto en mente, exploraremos un enfoque alternativo que considere la forma débil en la definición del residuo, lo que podría permitir superar esta limitación.
 
 
 \section{El ``Deep Ritz Method''} \label{sec:DeepRitz}
@@ -904,7 +904,7 @@ Esta formulación permite el uso de redes neuronales en la aproximación de ecua
         \begin{equation*}
             \int_0^1 u'v' = \int_0^1 v \quad \forall v \in H^1(0,1).
         \end{equation*}
-        en cuyo caso, la forma bilienal $a$ y lienal $l$ asociadas son:
+        en cuyo caso, la forma bilineal $a$ y lineal $l$ asociadas son:
         \begin{align*}
             a(u,v) &= \int_0^1 u'v', \\
             l(v) &= \int_0^1 v.
@@ -962,33 +962,25 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
         u = 0, & \text{en } \partial \Omega.
         \end{cases}            
         \end{equation}
-        Para aplicar el método, lo primero que necesitamos es definir el funcional $J_\lambda(u)$ asociado a este problema. Para ello lo primero que tenemos que hacer es obtener la forma débil de la ecuación. Sea $ v $ una función en el espacio de funciones $H_0^1(\Omega) $, donde:
+        Para aplicar el método, lo primero que necesitamos es definir el funcional $J_\lambda(u)$ asociado a este problema. Para ello, partimos de la forma débil del mismo, ya obtenida en el Ejemplo \ref{ej:fem}. Sea $v$ una función del espacio de funciones $H_0^1(\Omega)$, definido como:
         \begin{equation*}
-        H_0^1(\Omega) = \{ v \in H^1(\Omega) \mid v = 0 \text{ en } \partial \Omega \}.
+        H_0^1(\Omega) = \{ v \in H^1(\Omega) \mid v = 0 \text{ en } \partial \Omega \},
         \end{equation*}
-        Multiplicamos la ecuación diferencial por $v$ e integramos en $\Omega$:
+        la forma débil del problema \eqref{eq:poisson_square} consiste en encontrar $u \in H_0^1(\Omega)$ tal que:
         \begin{equation*}
-        \int_{\Omega} (-\Delta u) v \,dx = \int_{\Omega} 1 \cdot v \,dx.
+        \int_{\Omega} \nabla u\nabla v \; dx = \int_{\Omega} v \; dx, \quad \forall v \in H_0^1(\Omega).
         \end{equation*}
-        Integramos por partes:
+        El funcional de energía asociado se define entonces como:
         \begin{equation*}
-        \int_{\Omega} (-\Delta u) v \,dx = \int_{\Omega} \nabla u \cdot \nabla v \,dx - \int_{\partial\Omega} \frac{\partial u}{\partial n} v \,ds.
-        \end{equation*}
-        Dado que $ v = 0 $ en $ \partial \Omega $, el término de la frontera desaparece, dejando la forma débil:
-        \begin{equation*}
-        \int_{\Omega} \nabla u \cdot \nabla v \,dx = \int_{\Omega} v \,dx, \quad \forall v \in H_0^1(\Omega).
-        \end{equation*}
-        El funcional asociado a este problema se define como:
-        \begin{equation*}
-        J(u) = \frac{1}{2} \int_{\Omega} |\nabla u|^2 \,dx - \int_{\Omega} u \,dx.
+        J(u) = \frac{1}{2} \int_{\Omega} |\nabla u|^2 \;dx - \int_{\Omega} u \;dx.
         \end{equation*}
         Así, el funcional $J_\lambda(u)$ se define como:
         \begin{equation*}
         J_\lambda(u) = \frac{1}{2} \int_\Omega |\nabla u|^2 - \int_\Omega u + \lambda \int_{\partial \Omega} u^2.
         \end{equation*}
-        Para resolver este problema, implementé el método Deep Ritz en Python con PyTorch. La red neuronal que usé tiene la arquitectura 2-64-64-1. En la Figura \ref{fig:poisson_square} se muestra la solución obtenida con $\lambda=500$, y en la Figura \ref{fig:diferencia_cuadrado} se compara con la solución del método de elementos finitos. Se observa que la solución obtenida con el método Deep Ritz presenta diferencias significativas con respecto a la del método de los elementos finitos. De hecho, este resultado, a pesar de ser de los mejores que se pueden lograr con Deep Ritz en este problema, sigue estando lejos de la solución real.
+        Para resolver este problema, implementé el método Deep Ritz en Python utilizando la biblioteca PyTorch. La red neuronal empleada tiene una arquitectura 2-64-64-1. La Figura \ref{fig:poisson_square} muestra la solución obtenida con $\lambda = 500$, mientras que la Figura \ref{fig:diferencia_cuadrado} presenta la diferencia con la solución obtenida mediante el método de los elementos finitos en el Ejemplo \ref{ej:fem}, donde se utilizó una malla cuadrada con 50 nodos por lado. En dicho ejemplo, el error cometido respecto a la solución con una malla de 100 nodos por lado fue de $3.12 \cdot 10^{-5}$, medido en norma $L^2$. En cambio, la solución proporcionada por el método Deep Ritz muestra diferencias notables respecto a la obtenida por elementos finitos. De hecho, a pesar de corresponder a uno de los mejores resultados que se pueden alcanzar con este enfoque para este problema concreto, la solución sigue alejada de la real.
 
-        Siguiendo la intuición del caso unidimensional, al reducir $\lambda$ a $10^5$, esperamos una aproximación mucho peor. Y, efectivamente, la solución resultante no se parece en nada a la real. La Figura \ref{fig:poisson_square_lambda_1e-5} muestra este resultado.
+        Siguiendo la intuición del caso unidimensional, al reducir $\lambda$ a $10^{-5}$, esperamos una aproximación mucho peor. Y, efectivamente, la solución resultante no se parece en nada a la real. La Figura \ref{fig:poisson_square_lambda_1e-5} muestra este resultado.
 
         \begin{figure}[H]
             \centering

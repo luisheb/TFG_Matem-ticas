@@ -41,14 +41,3 @@ plt.colorbar(c, ax=ax2)
 ax2.set_title("Contour Plot")
 
 plt.show()
-
-plt.figure(figsize=(6,6))
-for i in range(n + 1):
-    plt.plot(X[i, :], Y[i, :], 'k-', linewidth=0.5)  # Horizontal lines
-    plt.plot(X[:, i], Y[:, i], 'k-', linewidth=0.5)  # Vertical lines
-
-plt.xlim(0, 1)
-plt.ylim(0, 1)
-plt.gca().set_aspect('equal')  # Keep aspect ratio square
-plt.title("FEM Grid")
-plt.show()
