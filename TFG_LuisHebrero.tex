@@ -119,7 +119,7 @@ The main objective is to assess to what extent these tools can compete with trad
 Para poder entender las aproximaciones a las EDPs mediante redes neuronales, es necesario tener un conocimiento previo de las redes neuronales y de las ecuaciones en derivadas parciales. En este capítulo, se introducirán los conceptos básicos de ambos temas, así como las herramientas matemáticas necesarias para comprender el resto del trabajo.
 
 \section{Introducción a las redes neuronales}\label{sec:RedesNeuronales}
-Una red neuronal, de forma abstracta, es simplemente una función que toma una entrada y produce una salida. Es decir, una red neuronal, es una función $F$ que toma un vector de entrada $x$ y produce un vector de salida $y$, siendo $F: \mathbb{R}^n \rightarrow \mathbb{R}^m$. La red neuronal se compone de una serie de capas, cada una de las cuales está formada por un conjunto de neuronas. Cada neurona de una capa recibe una serie de entradas, las procesa y produce una salida. La salida de cada neurona se calcula mediante una función de activación, que puede ser de distintos tipos, como la función sigmoide, la función tangente hiperbólica o la función ReLU. Para entender este concepto nos vamos a centrar en el caso concreto de la red neuronal de la Figura \ref{fig:RedNeuronal}.
+Una red neuronal, de forma abstracta, es simplemente una función que toma una entrada y produce una salida. Es decir, es una función $F$ que toma un vector de entrada $x$ y produce un vector de salida $y$, siendo $F: \mathbb{R}^n \rightarrow \mathbb{R}^m$. La red neuronal se compone de una serie de capas, cada una de las cuales está formada por un conjunto de neuronas. Cada neurona de una capa recibe una serie de entradas, las procesa y produce una salida. La salida de cada neurona se calcula mediante una función de activación, que puede ser de distintos tipos, como la función sigmoide, la función tangente hiperbólica o la función ReLU. Para entender este concepto nos vamos a centrar en el caso concreto de la red neuronal de la Figura \ref{fig:RedNeuronal}.
 
 
 \begin{figure}
@@ -146,7 +146,7 @@ Una red neuronal, de forma abstracta, es simplemente una función que toma una e
     \label{fig:RedNeuronal}
 \end{figure}
 
-Como se ve en la Figura \ref{fig:RedNeuronal}, la entrada en nuestra función está representada por los dos círculos de la izquierda, que representan los valores de entrada $x_1$ y $x_2$, siendo así la entrada $x\in\mathbb{R}^2$. Estos valores se multiplican por unos pesos ($W^{[2]}$) y se suman a un sesgo $b^{[2]}$. La salida de esta neurona se calcula mediante una función de activación. Así, los valores que ``llegan'' a la segunda capa de nuestra red neuronal serán de la forma
+Como se ve en la Figura \ref{fig:RedNeuronal}, la entrada en nuestra función está representada por los dos círculos de la izquierda, que representan los valores de entrada $x_1$ y $x_2$, siendo así la entrada $x\in\mathbb{R}^2$. Estos valores se multiplican por unos pesos ($W^{[2]}$) y se suman a un sesgo $b^{[2]}$. La salida de esta neurona se obtiene aplicando una función de activación $\sigma$. De modo que, los valores que ``llegan'' a la segunda capa de nuestra red neuronal serán de la forma
 \begin{equation*}
     \sigma(W^{[2]}x+b^{[2]})\in\mathbb{R}^2,
 \end{equation*}
@@ -179,7 +179,7 @@ Para entender esto, vamos a utilizar la red neuronal de la Figura \ref{fig:RedNe
 
 De este modo, la red neuronal recibirá como entrada un punto del plano, e indicará a qué categoría pertenece, devolviendo el vector $(1,0,0)^T$ si es de la categoría azul, $(0,1,0)^T$ si es de la categoría roja y $(0,0,1)^T$ si es de la categoría verde.
 
-El siguiente paso consiste en entrenar la red neuronal, es decir, ajustar los pesos y sesgos de la red neuronal para que la salida se acerque lo máximo posible a la salida deseada. Es decir, que cuando se introduzca un punto de un tipo concreto, la salida lo asigne a la categoría adecuada. 
+El siguiente paso consiste en entrenar la red neuronal, es decir, ajustar los pesos y sesgos de la red neuronal para que la salida se acerque lo máximo posible a la salida deseada. Esto significa que, cuando se introduzca un punto de un tipo concreto, la salida lo asigne a la categoría adecuada. 
 
 Designamos a $y(x)$ como la salida deseada de nuestra red neuronal, y a $F(x)$ como la salida real. Así, el error vendrá dado en función de los pesos y sesgos de la siguiente forma
 \begin{equation*}
@@ -187,7 +187,7 @@ Designamos a $y(x)$ como la salida deseada de nuestra red neuronal, y a $F(x)$ c
 \end{equation*}
 donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal (15 en este caso). Esta función es conocida como función de coste.
 
-Así, lo que queremos hacer es minimizar esta función, es decir, encontrar los pesos que minimicen la función $\mathcal{L}$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado. El código que se ha utilizado para entrenar la red neuronal y obtener la clasificación de la Figura \ref{fig:ClasificacionFinal} es el que se encuentra en el Anexo \ref{sec:codigo_clasificacion}
+A continuación, lo que queremos hacer es minimizar esta función, es decir, encontrar los pesos que minimicen la función $\mathcal{L}$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado. El código que se ha utilizado para entrenar la red neuronal y obtener la clasificación de la Figura \ref{fig:ClasificacionFinal} es el que se encuentra en el Anexo \ref{sec:codigo_clasificacion}
 
 \begin{figure}
     \centering
