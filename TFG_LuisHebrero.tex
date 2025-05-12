@@ -102,14 +102,14 @@ Las redes neuronales son un modelo matemático inspirado en el funcionamiento ce
 
 Se analizan distintas estrategias para construir redes neuronales capaces de resolver este tipo de ecuaciones, centrándonos especialmente en los métodos conocidos como Physics-Informed Neural Networks (PINNs) y en el enfoque Deep Ritz. A través de ejemplos concretos, se estudia cómo estas redes pueden entrenarse para minimizar funcionales asociados al problema original.
 
-El objetivo principal es evaluar hasta qué punto estas herramientas pueden competir con los métodos numéricos tradicionales. A lo largo del trabajo, se contrastan las ventajas teóricas que ofrecen las redes neuronales —como la posibilidad de operar sin una malla explícita o adaptarse a geometrías complejas— con las limitaciones prácticas que surgen durante su implementación. 
+El objetivo principal es evaluar hasta qué punto estas herramientas pueden competir con los métodos numéricos tradicionales. A lo largo del trabajo, se contrastan las ventajas teóricas que ofrecen las redes neuronales con las limitaciones prácticas que surgen durante su implementación. 
 \end{abstract}
 \begin{abstract}[english]
 Neural networks are a mathematical model inspired by the functioning of the brain and are essentially used to approximate functions—functions that classify data, predict values, or even anticipate the next word in a sentence. This thesis explores how this function approximation capability can be applied to solving partial differential equations (PDEs).
 
 Various strategies are analyzed for building neural networks capable of solving such equations, with a particular focus on methods known as Physics-Informed Neural Networks (PINNs) and the Deep Ritz approach. Through concrete examples, the study examines how these networks can be trained to minimize functions associated with the original problem.
 
-The main objective is to assess to what extent these tools can compete with traditional numerical methods. Throughout the work, the theoretical advantages offered by neural networks—such as the ability to operate without an explicit mesh or to adapt to complex geometries—are compared with the practical limitations encountered during their implementation.
+The main objective is to assess to what extent these tools can compete with traditional numerical methods. Throughout the work, the theoretical advantages offered by neural networks are compared with the practical limitations encountered during their implementation.
 \end{abstract}
 \mainmatter
 
@@ -146,7 +146,7 @@ Una red neuronal, de forma abstracta, es simplemente una función que toma una e
     \label{fig:RedNeuronal}
 \end{figure}
 
-Como se ve en la Figura \ref{fig:RedNeuronal}, la entrada en nuestra función está representada por los dos círculos de la izquierda, que representan los valores de entrada $x_1$ y $x_2$, siendo así la entrada $x\in\mathbb{R}^2$. Estos valores se multiplican por unos pesos ($W^{[2]}$)y se suman a un sesgo $b^{[2]}$. La salida de esta neurona se calcula mediante una función de activación. Así, los valores que ``llegan'' a la segunda capa de nuestra red neuronal serán de la forma
+Como se ve en la Figura \ref{fig:RedNeuronal}, la entrada en nuestra función está representada por los dos círculos de la izquierda, que representan los valores de entrada $x_1$ y $x_2$, siendo así la entrada $x\in\mathbb{R}^2$. Estos valores se multiplican por unos pesos ($W^{[2]}$) y se suman a un sesgo $b^{[2]}$. La salida de esta neurona se calcula mediante una función de activación. Así, los valores que ``llegan'' a la segunda capa de nuestra red neuronal serán de la forma
 \begin{equation*}
     \sigma(W^{[2]}x+b^{[2]})\in\mathbb{R}^2,
 \end{equation*}
@@ -177,15 +177,15 @@ Para entender esto, vamos a utilizar la red neuronal de la Figura \ref{fig:RedNe
     \label{fig:Clasificacion}
 \end{figure}
 
-De este modo, nuestra red neuronal recibirá como entrada un punto del plano, y nos dirá a qué categoría pertenece, devolviendo $(1,0,0)^T$ si es de la categoría azul, $(0,1,0)^T$ si es de la categoría roja y $(0,0,1)^T$ si es de la categoría amarilla.
+De este modo, la red neuronal recibirá como entrada un punto del plano, e indicará a qué categoría pertenece, devolviendo el vector $(1,0,0)^T$ si es de la categoría azul, $(0,1,0)^T$ si es de la categoría roja y $(0,0,1)^T$ si es de la categoría verde.
 
-Lo siguiente que queremos hacer será entrenar la red neuronal, es decir, ajustar los pesos y sesgos de la red neuronal para que la salida se acerque lo máximo posible a la salida deseada. Es decir, que cuando se introduzca un punto de un tipo concreto, la salida lo asigne a la categoría adecuada. 
+El siguiente paso consiste en entrenar la red neuronal, es decir, ajustar los pesos y sesgos de la red neuronal para que la salida se acerque lo máximo posible a la salida deseada. Es decir, que cuando se introduzca un punto de un tipo concreto, la salida lo asigne a la categoría adecuada. 
 
 Designamos a $y(x)$ como la salida deseada de nuestra red neuronal, y a $F(x)$ como la salida real. Así, el error vendrá dado en función de los pesos y sesgos de la siguiente forma
 \begin{equation*}
     \mathcal{L}(W^{[2]},W^{[3]},W^{[4]},b^{[2]},b^{[3]},b^{[4]})=\frac{1}{2}\sum_{x\in X}\|y(x)-F(x)\|^2,
 \end{equation*}
-donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal, en nuestro caso, serán 15. Esta función es conocida como función de coste.
+donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal (15 en este caso). Esta función es conocida como función de coste.
 
 Así, lo que queremos hacer es minimizar esta función, es decir, encontrar los pesos que minimicen la función $\mathcal{L}$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado. El código que se ha utilizado para entrenar la red neuronal y obtener la clasificación de la Figura \ref{fig:ClasificacionFinal} es el que se encuentra en el Anexo \ref{sec:codigo_clasificacion}
 
@@ -420,7 +420,7 @@ De esta manera, se demuestran las condiciones (a), (b) y (c) del teorema de Lax-
 
 \section{Métodos numéricos tradicionales: el método de los elementos finitos}\label{sc:FEM}
 
-El método de los elementos finitos (FEM por su siglas en inglés) es una técnica numérica para resolver ecuaciones en derivadas parciales. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
+El método de los elementos finitos (FEM por sus siglas en inglés) es una técnica numérica para resolver ecuaciones en derivadas parciales. Este método es ampliamente utilizado en ingeniería y ciencias aplicadas porque permite aproximar soluciones en dominios complejos.
 
 Para un problema elíptico con condiciones de contorno Dirichlet homogéneas, se parte de la ecuación en su formulación débil. Como hemos visto en el apartado anterior, este problema se puede formular de forma simplificada como encontrar $u\in H_0^1(\Omega)$ tal que
 \begin{equation*}
@@ -493,7 +493,7 @@ Por tanto, resolver la ecuación diferencial se convierte en encontrar $U=(U_1,\
 
 Esto se traduce en un sistema lineal de la forma $AU = b$, donde $A$ es la matriz de rigidez (con entradas $A_{ij}=a\left( \phi_i,\phi_j\right)$), y $b$ es el vector de términos fuente (con entradas $b_j = l(\phi_j)$). A este nuevo sistema lineal se le pueden aplicar métodos numéricos tradicionales para resolverlo, como la factorización LU, encontrando así los coeficientes $U$ que nos dan $u_h$, la aproximación de $u$.
 
-Este proceso se puede generalizar a problemas en más dimensiones, donde se dividen los dominios en elementos finitos de mayor dimensión, y se construye una base de polinomios a trozos en cada uno de estos elementos. Por ejemplo, en dos dimensiones, un elemento finito sería un triángulo, y la base de polinomios a trozos sería una base de funciones que valen que valen $1$ en uno de los nodes de la partición, $0$ en el resto de nodos y además son lineales en cada uno de los triángulos.
+Este proceso se puede generalizar a problemas en más dimensiones, donde se dividen los dominios en elementos finitos de mayor dimensión, y se construye una base de polinomios a trozos en cada uno de estos elementos. Por ejemplo, en dos dimensiones, un elemento finito sería un triángulo, y la base de polinomios a trozos sería una base de funciones que valen 1 en uno de los nodos de la partición, 0 en el resto de nodos, y además son funciones lineales en cada uno de los triángulos.
 
 \begin{mdframed}  
 \begin{exmp}\label{ej:fem}
@@ -587,8 +587,7 @@ donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un tér
     \end{split}
 \end{equation}
 
-Como hemos indicado, aquí $\mathcal{T}_f$ y $\mathcal{T}_b$ representan conjuntos de puntos en el dominio $\Omega$ y en la frontera $\partial\Omega$, respectivamente. De este modo, las funciones, $\mathcal{L}_f$ y $\mathcal{L}_b$, representan la aproximación al residuo fuerte, y la condición de contorno, por una regla de cuadratura. 
-
+Como hemos indicado, aquí $\mathcal{T}_f$ y $\mathcal{T}_b$ representan conjuntos de puntos en el dominio $\Omega$ y en la frontera $\partial\Omega$, respectivamente. Por tanto, las funciones, $\mathcal{L}_f$ y $\mathcal{L}_b$, representan la aproximación al residuo fuerte, y la condición de contorno, por una regla de cuadratura. 
 
 
 Existe mucha literatura sobre como tomar los puntos de colocación pues, al igual que en FEM la malla impacta el resultado, en las PINNs, el conjunto $\mathcal{T}$ determina como de bien nuestra red neuronal se ajusta a la solución \cite{münzer2022curriculumtrainingbasedstrategydistributingcollocation}, \cite{aikawa2024improving}, \cite{matsubara2023goodlatticetrainingphysicsinformed}, \cite{subramanian2022adaptiveselfsupervisionalgorithmsphysicsinformed}, \cite{hou2023enhancing}.  
@@ -879,13 +878,13 @@ Dada una arquitectura de red $ \mathcal{N} $, el espacio de aproximación $ V_{\
 V_{\mathcal{N}} := \{ \hat{u}_\theta: \mathbb{R}^d \to \mathbb{R} \mid \theta \in \mathbb{R}^{\#\mathcal{N}} \}.
 \end{equation*}
 
-Mientras que $ \#\mathcal{N} $ sea finito y las funciones de activación sean diferenciables, se cumple que $ V_{\mathcal{N}} \subset H^1(\Omega) $. Sin embargo, en general, para $ u_{\mathcal{N}} \in V_{\mathcal{N}} $ no se garantiza que $ u_{\mathcal{N}} = 0 $ en $ \partial \Omega $, por lo que $ V_{\mathcal{N}} \not\subset V = H^1_0(\Omega) $. Además, es importante notar que $ V_{\mathcal{N}} $ no es un espacio vectorial, ya que para $ v_1, v_2 \in V_{\mathcal{N}} $ no necesariamente se cumple que $ v_1 + v_2 \in V_{\mathcal{N}} $.
+Mientras que $ \#\mathcal{N} $ sea finito y las funciones de activación sean diferenciables, se cumple que $ V_{\mathcal{N}} \subset H^1(\Omega) $. Sin embargo, en general, para $ u_{\mathcal{N}} \in V_{\mathcal{N}} $ no se garantiza que $ u_{\mathcal{N}} = 0 $ en $ \partial \Omega $, por lo que $ V_{\mathcal{N}} \not\subset V = H^1_0(\Omega) $. Además, es importante notar que $ V_{\mathcal{N}} $ no es un espacio vectorial, ya que para $ u_1, u_2 \in V_{\mathcal{N}} $ no necesariamente se cumple que $ u_1 + u_2 \in V_{\mathcal{N}} $.
 
 Para abordar esta limitación, se introduce el funcional de energía penalizado:
 \begin{equation*}
-J_{\lambda}(v) := J(v) + \frac{\lambda}{2} |v|^2_{\partial \Omega},
+J_{\lambda}(u) := J(u) + \frac{\lambda}{2} |u|^2_{\partial \Omega},
 \end{equation*}
-donde $ \lambda \in \mathbb{R}^+ $ es un parámetro de penalización y $ | \cdot |_{\partial \Omega} $ denota la norma $ L^2 $ en la frontera del dominio. El término de penalización adicional impone que $ v $ sea próximo a cero en $ \partial \Omega $.
+donde $ \lambda \in \mathbb{R}^+ $ es un parámetro de penalización y $ | \cdot |_{\partial \Omega} $ denota la norma $ L^2 $ en la frontera del dominio. El término de penalización adicional impone que $ u $ sea próximo a cero en $ \partial \Omega $.
 
 Esta formulación permite el uso de redes neuronales en la aproximación de ecuaciones diferenciales parciales sin necesidad de definir funciones de base explícitas, facilitando la resolución de problemas de altas dimensiones donde los métodos clásicos pueden volverse ineficientes. No obstante, igual que en el caso de las PINN el problema de la formulación residía en que se aproximaba el residuo de forma fuerte, en el método Deep Ritz, el problema radica en que se minimiza el funcional $ J_{\lambda} $ en lugar de $ J $, es decir, se altera el problema para imponer las condiciones de contorno, variando así la solución. Para ver esto de forma más clara, vamos a aplicar el método Deep Ritz a la ecuación de Poisson en una dimensión.
 
