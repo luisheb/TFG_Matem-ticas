@@ -187,12 +187,12 @@ Designamos a $y(x)$ como la salida deseada de nuestra red neuronal, y a $F(x)$ c
 \end{equation*}
 donde $X$ es el conjunto de puntos que tenemos para entrenar la red neuronal (15 en este caso). Esta función es conocida como función de coste.
 
-A continuación, lo que queremos hacer es minimizar esta función, es decir, encontrar los pesos que minimicen la función $\mathcal{L}$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado. El código que se ha utilizado para entrenar la red neuronal y obtener la clasificación de la Figura \ref{fig:ClasificacionFinal} es el que se encuentra en el Anexo \ref{sec:codigo_clasificacion}
+A continuación, lo que queremos hacer es minimizar esta función, es decir, encontrar los pesos que minimicen la función $\mathcal{L}$. Para ello, se utilizan algoritmos de optimización, como el descenso del gradiente. Este proceso es conocido como el entrenamiento de la red neuronal. Si se logra con éxito, la red neuronal será capaz de clasificar correctamente los puntos en el plano. En este caso concreto, al entrenar la red neuronal, se obtiene la clasificación de la Figura \ref{fig:ClasificacionFinal}, en la que simplemente hemos aplicado nuestra función para cada punto del plano y lo hemos sombreado de acuerdo a la clasificación que se le ha dado. El código que se ha utilizado para entrenar la red neuronal y obtener la clasificación de la Figura \ref{fig:ClasificacionFinal} es el que se encuentra en el Anexo~\ref{sec:codigo_clasificacion}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\textwidth]{Figuras/classifier_back.png}
-    \caption{Puntos en el plano que marcan las tres categorías}
+    \caption{Clasificación final aprendida por la red neuronal}
     \label{fig:ClasificacionFinal}
 \end{figure}
 
@@ -214,7 +214,7 @@ Claramente, una función lineal definida de forma global puede estar muy lejos d
 
 Esta función tiene la ventaja de que su derivada es fácil de calcular, y es precisamente esta derivada la que se utiliza en el algoritmo de entrenamiento de la red neuronal.
 
-Un resultado relevante para justificar el uso de funciones de activación no lineales es el siguiente propuesto por Pinkus \cite[Theorem 3.1]{pinkus1999approximation}. Este resultado es para redes neuronales de una sola capa.
+Un resultado relevante para justificar el uso de funciones de activación no lineales es el siguiente propuesto por Pinkus \cite[Theorem 3.1]{pinkus1999approximation}, formulado para redes neuronales de una sola capa.
 
 \begin{teor}[Pinkus]
     Sea $\sigma\in C(\mathbb{R})$ y sea $\mathcal{M}(\sigma) = \text{span}\{\sigma(w\cdot x + b): b \in \mathbb{R}, w \in \mathbb{R}^n\}$, se cumple que:
@@ -281,7 +281,7 @@ También es necesario definir el espacio de Sobolev $H^1(\Omega)$.
 \end{defin}
 \end{mdframed}
     
-Definimos demás el espacio $H_0^1(\Omega)$. Este espacio es el cierre de las funciones de $C_0^\infty(\Omega)$ en la norma de $H^1(\Omega)$. Es decir, $H_0^1(\Omega)$ es el conjunto de funciones $u\in H^1(\Omega)$ que se obtienen como límite en $H^1(\Omega)$ de una serie de funciones $\{u_m\}_{m=1}^\infty$ todas ellas en $C_0^\infty(\Omega)$. Si $\partial\Omega$ es suficientemente regular, $H_0^1(\Omega)$ es el siguiente conjunto:
+Definimos además el espacio $H_0^1(\Omega)$. Este espacio es el cierre de las funciones de $C_0^\infty(\Omega)$ en la norma de $H^1(\Omega)$. Es decir, $H_0^1(\Omega)$ es el conjunto de funciones $u\in H^1(\Omega)$ que se obtienen como límite en $H^1(\Omega)$ de una serie de funciones $\{u_m\}_{m=1}^\infty$ todas ellas en $C_0^\infty(\Omega)$. Si $\partial\Omega$ es suficientemente regular, $H_0^1(\Omega)$ es el siguiente conjunto:
 \begin{equation}
     H_0^1(\Omega)=\{u\in H^1(\Omega): u=0 \text{ en } \partial\Omega\}.
 \end{equation}
@@ -533,7 +533,7 @@ Este proceso se puede generalizar a problemas en más dimensiones, donde se divi
     
     Antes de seguir avanzando, para este ejemplo específico, tomaremos un dominio cuadrado $\Omega = (0,1)^2$ y $f(x, y) = 1$. Bajo estas condiciones sabemos que existe una solución única en $H_0^1(\Omega)$ para el problema \eqref{eq:forma_debil_poisson}.
 
-    A continuación, usamos el paquete de Python Scipy para construir la malla de elementos finitos y la base de polinomios necesarias para resolver el problema (código comentado en el Anexo \ref{sec:codigo_fem_cuadrado}). El resultado obtenido se muestra en la Figura \ref{fig:poisson}, donde la malla de elementos finitos está compuesta por 50 nodos en cada lado.
+    A continuación, usamos el paquete de Python Scipy para construir la malla de elementos finitos y la base de polinomios necesarias para resolver el problema (código comentado en el Anexo \ref{sec:codigo_fem_cuadrado}). El resultado obtenido se muestra en la Figura~\ref{fig:poisson}, donde la malla de elementos finitos está compuesta por 50 nodos en cada lado.
     \begin{figure}[H] 
         \centering
         \includegraphics[width=1\textwidth]{Figuras/FEMSquare.png}
@@ -609,7 +609,7 @@ A continuación, vamos a ver dos ejemplos para ver como se aplican las PINNs a p
         \begin{equation*}
         u(-1) = 0, \quad u(1) = 0.
         \end{equation*}
-        En esta ecuación la solución exacta es  conocida $ u(x) = \sin(\pi x)$. Para resolver este problema con una PINN, nos asistimos de la librería de python DeepXDE \cite{lu2021deepxde}, la cual tiene implementada la funcionalidad necesaria para entrenar una red neuronal que aproxime EDPs. Así, comenzamos definiendo el intervalo en el que se encuentra el dominio y los puntos de colocación
+        En esta ecuación la solución exacta es  conocida $ u(x) = \sin(\pi x)$. Para resolver este problema con una PINN, utilizamos la librería de python DeepXDE \cite{lu2021deepxde}, la cual tiene implementada la funcionalidad necesaria para entrenar una red neuronal que aproxime EDPs. Así, comenzamos definiendo el intervalo en el que se encuentra el dominio y los puntos de colocación
         
 \begin{lstlisting}[language=Python]
     geom = dde.geometry.Interval(-1, 1)
@@ -950,7 +950,7 @@ Esta formulación permite el uso de redes neuronales en la aproximación de ecua
     
 Con este ejemplo, nos damos cuenta de que el método Deep Ritz, en su formulación utilizada aquí, no aproxima exactamente el problema original, sino que en su lugar resuelve una ecuación con condiciones de frontera modificadas. Esto introduce un sesgo en la solución obtenida, lo que implica que el método no es exacto para el problema original de Poisson con condiciones de Dirichlet homogéneas. Siendo más específicos, el método Deep Ritz estaría aproximando la solución $u_\lambda(x) = -x^2/2 + x/2 + 1/(4\lambda)$ en lugar de la solución exacta $u(x) = -x^2/2 + x/2$, lo que implica un error de $O(1/\lambda)$ en la solución obtenida. 
 
-A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado y en una L, para lo cual he tenido que programar el método Deep Ritz en Python usando PyTorch. El objetivo con este ejemplo es entender cómo se comporta el método Deep Ritz ante los distintos valores que puede tomar el parámetro de penalización $\lambda$.
+A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado y en una L, para lo cual hemos implementado el método Deep Ritz en Python usando PyTorch. El objetivo con este ejemplo es entender cómo se comporta el método Deep Ritz ante los distintos valores que puede tomar el parámetro de penalización $\lambda$.
 
 \begin{mdframed}
     \begin{exmp}
@@ -977,9 +977,9 @@ A continuación, vamos a plantear la ecuación de Poisson en un dominio cuadrado
         \begin{equation*}
         J_\lambda(u) = \frac{1}{2} \int_\Omega |\nabla u|^2 - \int_\Omega u + \lambda \int_{\partial \Omega} u^2.
         \end{equation*}
-        Para resolver este problema, implementé el método Deep Ritz en Python utilizando la biblioteca PyTorch. La red neuronal empleada tiene una arquitectura 2-64-64-1. La Figura \ref{fig:poisson_square} muestra la solución obtenida con $\lambda = 500$, mientras que la Figura \ref{fig:diferencia_cuadrado} presenta la diferencia con la solución obtenida mediante el método de los elementos finitos en el Ejemplo \ref{ej:fem}, donde se utilizó una malla cuadrada con 50 nodos por lado. La aproximación de elementos finitos que se toma como solución de referencia tiene un error en $L^2$ de $3.12\cdot10^{-5}$ (medido con una aproximación de elementos finitos en una malla con el doble de nodos). Por tanto, es suficientemente precisa para poder tomarla como referencia. En la Figura \ref{fig:diferencia_cuadrado} podemos observar el error en la aproximación obtenida con el método Deep Ritz. El error relativo máximo en los puntos de la malla es del orden de $10^{-1}$. De hecho, solo comparando a ojo las Figuras \ref{fig:poisson_square} y \ref{fig:poisson} ya se aprecia un error considerable en la aproximación del método Deep Ritz. Por tanto, a pesar de corresponder a uno de los mejores resultados que se pueden alcanzar con este enfoque para este problema concreto, la solución sigue alejada de la real.
+        Para resolver este problema, implementamos el método Deep Ritz en Python utilizando la biblioteca PyTorch. La red neuronal empleada tiene una arquitectura 2-64-64-1. La Figura \ref{fig:poisson_square} muestra la solución obtenida con $\lambda = 500$, mientras que la Figura \ref{fig:diferencia_cuadrado} presenta la diferencia con la solución obtenida mediante el método de los elementos finitos en el Ejemplo \ref{ej:fem}, donde se utilizó una malla cuadrada con 50 nodos por lado. La aproximación de elementos finitos que se toma como solución de referencia tiene un error en $L^2$ de $3.12\cdot10^{-5}$ (medido con una aproximación de elementos finitos en una malla con el doble de nodos). Por tanto, es suficientemente precisa para poder tomarla como referencia. En la Figura \ref{fig:diferencia_cuadrado} podemos observar el error en la aproximación obtenida con el método Deep Ritz. El error relativo máximo en los puntos de la malla es del orden de $10^{-1}$. De hecho, solo comparando a ojo las Figuras \ref{fig:poisson_square} y \ref{fig:poisson} ya se aprecia un error considerable en la aproximación del método Deep Ritz. Por tanto, a pesar de corresponder a uno de los mejores resultados que se pueden alcanzar con este enfoque para este problema concreto, la solución sigue alejada de la real.
 
-        Siguiendo la intuición del caso unidimensional, al reducir $\lambda$ a $10^{-5}$, esperamos una aproximación mucho peor. Y, efectivamente, la solución resultante no se parece en nada a la real. La Figura \ref{fig:poisson_square_lambda_1e-5} muestra este resultado.
+        Siguiendo la intuición del caso unidimensional, al reducir $\lambda$ a $10^{-5}$, esperamos una aproximación mucho peor. Efectivamente, la solución resultante no se parece en nada a la real. La Figura \ref{fig:poisson_square_lambda_1e-5} muestra este resultado.
 
         \begin{figure}[H]
             \centering
@@ -1016,7 +1016,7 @@ El uso de redes neuronales para la aproximación de ecuaciones en derivadas parc
 
 Los enfoques basados en redes neuronales, como las PINNs (Physics-Informed Neural Networks), presentan limitaciones importantes al forzar el cumplimiento de la ecuación diferencial en su forma fuerte. Esto implica que, en situaciones donde no existe una solución en este sentido, la red neuronal no puede aproximar correctamente la solución débil. Además, la falta de garantías de convergencia y la ausencia de una base matemática sólida para la selección de hiperparámetros complican su aplicación efectiva.
 
-Por otro lado, el método Deep Ritz plantea una alternativa más alineada con la formulación variacional de los problemas elípticos, minimizando un funcional en lugar de imponer restricciones puntuales. Sin embargo, el uso de penalizaciones para imponer condiciones de contorno introduce modificaciones en el problema original, lo que afecta la precisión de la solución obtenida. A pesar de ello, este enfoque podría ser más viable en problemas de alta dimensionalidad, donde los métodos tradicionales pierden eficiencia.
+Por otro lado, el método Deep Ritz plantea una alternativa más alineada con la formulación variacional de los problemas elípticos, minimizando un funcional en lugar de imponer restricciones puntuales. Sin embargo, el uso de penalizaciones para imponer condiciones de contorno introduce modificaciones en el problema original, lo que afecta a la precisión de la solución obtenida. A pesar de ello, este enfoque podría ser más viable en problemas de alta dimensionalidad, donde los métodos tradicionales pierden eficiencia.
 
 En resumen, aunque las redes neuronales ofrecen herramientas novedosas para la resolución de ecuaciones diferenciales, su aplicación en contextos prácticos aún enfrenta numerosos desafíos. Su rendimiento es inferior al de métodos numéricos establecidos en escenarios convencionales, y la interpretabilidad de los resultados sigue siendo limitada. La dificultad para diagnosticar fallos y la falta de garantías teóricas claras refuerzan la idea de que, por el momento, estas técnicas deben verse como complementarias a los métodos clásicos, en lugar de como un reemplazo directo.
 
@@ -1477,7 +1477,7 @@ def plot_loss(loss_history):
     plt.show()
 \end{lstlisting}
 
-La función \texttt{principal} define los parámetros, inicializa la red, ejecuta el entrenamiento y evaluación y grafica los resultados. Los parámetros utilizados tienen el siguiente significado:
+La función \texttt{main} define los parámetros, inicializa la red, ejecuta el entrenamiento y evaluación y grafica los resultados. Los parámetros utilizados tienen el siguiente significado:
 \begin{itemize}
     \item \texttt{d}: Dimensionalidad del problema (2 para el cuadrado).
     \item \texttt{dd}: Dimensionalidad de la salida (1 para un escalar).
