@@ -146,7 +146,7 @@ Una red neuronal, de forma abstracta, es simplemente una función que toma una e
     \label{fig:RedNeuronal}
 \end{figure}
 
-Como se ve en la Figura \ref{fig:RedNeuronal}, la entrada en nuestra función está representada por los dos círculos de la izquierda, que representan los valores de entrada $x_1$ y $x_2$, siendo así la entrada $x\in\mathbb{R}^2$. Estos valores se multiplican por unos pesos ($W^{[2]}$) y se suman a un sesgo $b^{[2]}$. La salida de esta neurona se obtiene aplicando una función de activación $\sigma$. De modo que, los valores que ``llegan'' a la segunda capa de nuestra red neuronal serán de la forma
+Como se ve en la Figura \ref{fig:RedNeuronal}, la entrada en nuestra función está representada por los dos círculos de la izquierda, que representan los valores de entrada $x_1$ y $x_2$, siendo así la entrada $x\in\mathbb{R}^2$. Estos valores se multiplican por unos pesos ($W^{[2]}$) y se suman a un sesgo $b^{[2]}$. Finalmente, la salida de esta capa se obtiene aplicando una función de activación $\sigma$. De modo que, los valores que ``llegan'' a la segunda capa de nuestra red neuronal serán de la forma
 \begin{equation*}
     \sigma(W^{[2]}x+b^{[2]})\in\mathbb{R}^2,
 \end{equation*}
@@ -221,9 +221,7 @@ Un resultado relevante para justificar el uso de funciones de activación no lin
     
     Para cualquier $f \in C(\mathbb{R}^n)$, cualquier conjunto compacto $K\in \mathbb{R}^n$ y cualquier $\epsilon > 0$, existe una función $g\in \mathcal{M}(\sigma)$ tal que $\max_{x\in K}|f(x)-g(x)|<\epsilon$ si y solo si $\sigma$ no es una función polinómica.
 \end{teor}
-De forma más intuitiva, cualquier función $f \in C(\mathbb{R}^n)$, se puede aproximar tan bien como se quiera con una red neuronal de una sola capa si y solo si la función de activación no es polinómica.
-
-Este resultado nos aporta una intuición de por qué las funciones de activación no lineales son necesarias para aproximar funciones de forma general pues, de no ser funciones no lineales, habría muchas funciones que no podríamos aproximar. 
+De forma más intuitiva, cualquier función $f \in C(\mathbb{R}^n)$, se puede aproximar tan bien como se quiera con una red neuronal de una sola capa si y solo si la función de activación no es polinómica. Este resultado muestra que las funciones de activación no lineales son necesarias, ya que sin ellas habría muchas funciones que no podríamos aproximar.
 
 \section{Conceptos preliminares sobre las ecuaciones en derivadas parciales} \label{sec:EDPs}
 
@@ -415,7 +413,7 @@ De esta manera, se demuestran las condiciones (a), (b) y (c) del teorema de Lax-
         \end{equation}
         donde $c_0 = \tilde{c}/(1 + c_{\star})$, y por tanto queda demostrado (a).
     \end{itemize}
-    Se comprueban así las condiciones (a), (b) y (c) del teorema de Lax-Milgram y concluimos que existe una única solución débil en $H^1_0(\Omega)$ para la ecuación \eqref{eq:ProblemaDebilFormaBilineal}.
+    Se comprueban así las condiciones (a), (b) y (c) del teorema de Lax-Milgram y concluimos que existe una única solución débil en $H^1_0(\Omega)$ para la ecuación \eqref{eq:ProblemaDebilFormaBilineal}.\qed
 \end{dem}
 
 \section{Métodos numéricos tradicionales: el método de los elementos finitos}\label{sc:FEM}
@@ -549,7 +547,7 @@ Este proceso se puede generalizar a problemas en más dimensiones, donde se divi
 \subsection{Introducción}
 Las PINNs, o Physics-Informed Neural Networks, son una técnica que combina la resolución de ecuaciones en derivadas parciales con redes neuronales. La idea es que, en vez de resolver la ecuación diferencial directamente o con métodos numéricos tradicionales, se entrena una red neuronal para que aproxime la solución de la ecuación. 
 
-Como habíamos comentado en la Sección \ref{sec:RedesNeuronales}, las redes neuronales son capaces de aproximar cualquier función, por lo que, en teoría, pueden aproximar cualquier solución de una ecuación diferencial. De este modo, las PINNs van a aprovechar esto, definiendo la aproximación de nuestra solución ${u}$, como la salida de la función red neuronal $\hat{u}(x;\mathbf{\theta})$,  donde $\theta$ hace referencia a los pesos y sesgos vistos en la Sección \ref{sec:RedesNeuronales}. Así, la función en la Figura \ref{fig:PIN} sería la aproximación de la solución de la ecuación diferencial.
+Como se comentó en la Sección \ref{sec:RedesNeuronales}, las redes neuronales tienen la capacidad de aproximar cualquier función continua definida en un dominio compacto. Por ello, pueden emplearse para aproximar soluciones de ecuaciones diferenciales. Las PINNs se basan en esta idea y definen la aproximación de la solución $u$ como la salida de la red neuronal $\hat{u}_\theta$, donde $\theta \in \mathbb{R}^{\# \mathcal{N}}$ representa los pesos y sesgos (con $\# \mathcal{N}$ indicando el número total de parámetros libres). La función mostrada en la Figura \ref{fig:PIN} corresponde, por tanto, a la aproximación de la solución de la ecuación diferencial.
 \begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.6]{Figuras/neural_network_improved.pdf}
@@ -565,10 +563,10 @@ Consideramos una EDP de la forma vista en la Sección \ref{sec:EDPs}, es decir, 
 \end{equation} 
 donde $\Omega \subset \mathbb{R}^n$ es un dominio abierto y acotado y las funciones $a_{ij}(\mathbf{x})$, $b_i(\mathbf{x})$, $c(\mathbf{x})$, $f(\mathbf{x})$ y $g(\mathbf{x})$ son conocidas. La incógnita es la función $u: \Omega \to \mathbb{R}$ que satisface la ecuación diferencial y las condiciones de contorno. Para poder construir y ajustar los pesos de una red neuronal que aproxime $u$ es esencial tener una función de coste, es decir, una función que nos indique la calidad de nuestra aproximación. 
 
-Con las PINNs nosotros queremos encontrar una función $\hat{u}$ que minimice el residuo en $\Omega$ y que cumpla las condiciones de contorno en $\partial\Omega$. Para ello, lo que queremos es la $\hat{u}$ que haga que las siguientes expresiones sean mínimas:
+Con las PINNs nosotros queremos encontrar una función $\hat{u}_\theta$ que minimice el residuo en $\Omega$ y que cumpla las condiciones de contorno en $\partial\Omega$. Para ello, lo que queremos es la $\hat{u}_\theta$ que haga que las siguientes expresiones sean mínimas:
 \begin{align*}
-    &\int_{\Omega} \left( -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) \right)^2, \\ 
-    &\int_{\partial\Omega} \left( \hat{u} (\mathbf{x}) - g(\mathbf{x})\right)^2.
+    &\int_{\Omega} \left( -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}_\theta}{\partial x_i}\right) + \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}_\theta}{\partial x_i} + c(\mathbf{x})\hat{u}_\theta - f(\mathbf{x}) \right)^2, \\ 
+    &\int_{\partial\Omega} \left( \hat{u}_\theta (\mathbf{x}) - g(\mathbf{x})\right)^2.
 \end{align*}
 
 Para poder calcular estas integrales, se utiliza una regla de cuadratura que las aproxima mediante sumas ponderadas de los valores de las funciones en un conjunto discreto de puntos. En este contexto, los puntos de evaluación se denominan puntos de colocación o collocation points. Para la primera expresión, los puntos de colocación que se usarán los denominaremos $\mathcal{T}_f$, mientras que para la segunda los denominaremos $\mathcal{T}_b$. 
@@ -582,8 +580,8 @@ donde $w_f$ y $w_b$ son pesos que se ajustan para dar más importancia a un tér
 \begin{equation}
     \label{eq:Lf_Lb}
     \begin{split}
-        \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} | -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i}\right) \\ &+ \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}}{\partial x_i} + c(\mathbf{x})\hat{u} - f(\mathbf{x}) |^2, \\ 
-        \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left| \hat{u} (\mathbf{x}) - g(\mathbf{x})\right|^2.
+        \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} | -\sum_{i,j=1}^{n} \frac{\partial}{\partial x_j}\left( a_{ij}(\mathbf{x})\frac{\partial \hat{u}_\theta}{\partial x_i}\right) \\ &+ \sum_{i=1}^{n} b_i(\mathbf{x})\frac{\partial \hat{u}_\theta}{\partial x_i} + c(\mathbf{x})\hat{u}_\theta - f(\mathbf{x}) |^2, \\ 
+        \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} \left| \hat{u}_\theta (\mathbf{x}) - g(\mathbf{x})\right|^2.
     \end{split}
 \end{equation}
 
@@ -596,7 +594,7 @@ Es importante destacar que con esta formulación, se impone que el residuo en fo
 
 Dada la función de coste y la distribución de los puntos de colocación, el siguiente paso es el entrenamiento. Esto se reduce a resolver un problema de optimización: encontrar los parámetros $\theta$ que minimizan la función de coste $\mathcal{L}(\boldsymbol{\theta}; \mathcal{T})$. Para ello, es habitual emplear métodos de optimización basados en gradientes, como Adam o L-BFGS. 
 
-Una ventaja fundamental del uso de redes neuronales en este contexto es la diferenciación automática, una técnica numérica muy potente que facilita la obtención de las derivadas de $\hat{u}$ con respecto a sus entradas de forma exacta y eficiente.
+Una ventaja fundamental del uso de redes neuronales en este contexto es la diferenciación automática, una técnica numérica muy potente que facilita la obtención de las derivadas de $\hat{u}_\theta$ con respecto a sus entradas de forma exacta y eficiente.
 A continuación, vamos a ver dos ejemplos para ver como se aplican las PINNs a problemas concretos.
 
 \begin{mdframed}
@@ -640,10 +638,10 @@ Losshistory, train_state = model.train(
     \end{equation*}
     donde
     \begin{align*}
-        \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} | \hat{u}_{xx} +\pi^2 \sin(\pi x)|^2, \\ 
-        \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} | \hat{u} (\mathbf{x})|^2,
+        \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} \left| \frac{\partial^2\hat{u}_\theta}{\partial x^2} +\pi^2 \sin(\pi x)\right|^2, \\ 
+        \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} | \hat{u}_\theta (\mathbf{x})|^2.
     \end{align*}
-    por los argumentos con los que se han inicializado las funciones, $\mathcal{T}_f$ serán 16 puntos aleatorios en el intervalo $[-1,1]$ y $\mathcal{T}_b = \{0,1\}$ . Con todo, el resultado de ejecutar este código será el de la Figura \ref{fig:poisson_PINN}.
+    Por los argumentos con los que se han inicializado las funciones, $\mathcal{T}_f$ serán 16 puntos aleatorios en el intervalo $[-1,1]$ y $\mathcal{T}_b = \{0,1\}$ . Con todo, el resultado de ejecutar este código será el de la Figura \ref{fig:poisson_PINN}.
 
     \begin{figure}[H] 
         \centering
@@ -699,11 +697,11 @@ Aunque en este ejemplo sencillo las PINNs funcionan muy bien, estas pueden prese
         donde
         \begin{align*}
             \mathcal{L}_f(\boldsymbol{\theta}; \mathcal{T}_f) &= \frac{1}{|\mathcal{T}_f|} \sum_{\mathbf{x} \in \mathcal{T}_f} |D_{x}(A(x)D_{x} w(x))+f(x)|^2, \\ 
-            \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} |\hat{u} (\mathbf{x})|^2,
+            \mathcal{L}_b(\boldsymbol{\theta}; \mathcal{T}_b) &= \frac{1}{|\mathcal{T}_b|} \sum_{\mathbf{x} \in \mathcal{T}_b} |\hat{u}_\theta (\mathbf{x})|^2,
         \end{align*}
         En este caso, $\mathcal{T}_b=\{-1,1\}$ y $\mathcal{T}_f$ es un conjunto de 1000 puntos muestreados uniformemente en el intervalo $(-1,1)$. Es decir, $|\mathcal{T}_f|=1000$ y $|\mathcal{T}_b|=2$.
 
-        Bajo esta configuración, obtenemos la función de red $\hat{u}(\mathbf{x};\theta)$ numéricamente a través del método PINN y la comparamos con la solución débil en la Figura \ref{fig:deviation}. 
+        Bajo esta configuración, obtenemos la función de red $\hat{u}_\theta(\mathbf{x})$ numéricamente a través del método PINN y la comparamos con la solución débil en la Figura \ref{fig:deviation}. 
 
         \begin{figure}[H] 
             \centering
@@ -712,7 +710,7 @@ Aunque en este ejemplo sencillo las PINNs funcionan muy bien, estas pueden prese
             \label{fig:deviation}
         \end{figure}
 
-        Evidentemente, el método no logra obtener la solución exacta $ u $. La diferencia entre $ u $ y $ \hat{u}(\mathbf{x};\theta) $ es del mismo orden de magnitud que $ u $ en sí. En otras palabras, cuanto mayor es el valor absoluto de la solución, mayor es la desviación de la aproximación. Además, al analizar la evolución del error en las gráficas de entrenamiento y test, observamos que la diferencia entre la solución real y la aproximación, medida con la norma $ L^2 $, no disminuye con el número de iteraciones (Error relativo $ L^2 $ en el gráfico).
+        Evidentemente, el método no logra obtener la solución exacta $ u $. La diferencia entre $ u $ y $ \hat{u}_\theta(\mathbf{x}) $ es del mismo orden de magnitud que $ u $ en sí. En otras palabras, cuanto mayor es el valor absoluto de la solución, mayor es la desviación de la aproximación. Además, al analizar la evolución del error en las gráficas de entrenamiento y test, observamos que la diferencia entre la solución real y la aproximación, medida con la norma $ L^2 $, no disminuye con el número de iteraciones (Error relativo $ L^2 $ en el gráfico).
         \begin{figure}[H]
             \centering
             \includegraphics[width=0.6\textwidth]{Figuras/test_train_pinn_error.png}
